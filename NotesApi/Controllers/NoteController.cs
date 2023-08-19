@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,9 +7,9 @@ namespace NotesApi.Controllers
     [ApiController]
     public class NoteController : ControllerBase
     {
-        private readonly NotesContext _context;
+        private readonly SalesContext _context;
 
-        public NoteController(NotesContext context)
+        public NoteController(SalesContext context)
         {
             _context = context;
         }
