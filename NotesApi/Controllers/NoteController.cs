@@ -86,7 +86,7 @@ namespace NotesApi.Controllers
         {
           if (_context.Notes == null)
           {
-              return Problem("Entity set 'NotesContext.Notes'  is null.");
+              return Problem("Entity set 'NotesContext.Notes' is null.");
           }
             _context.Notes.Add(note);
             await _context.SaveChangesAsync();
