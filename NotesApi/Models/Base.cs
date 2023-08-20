@@ -1,9 +1,11 @@
 
 
+using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 public enum ErrorCodes
 {
@@ -193,6 +195,7 @@ public class Condition
     }
 
     public string Column { get; set; }
+
     public Operators Operator { get; set; }
     public object? Value { get; set; }
     public object? Value2 { get; set; }
@@ -247,13 +250,163 @@ public class QueryResult<Q, T>
 
 #pragma warning disable CS8604
 
-public abstract class Business<TOutput> where TOutput : class
+public class Business<TOutput> where TOutput : Entity
 {
+    private string entityName;
     private DbContext Db { get; set; }
 
-    protected Business(DbContext db)
+    public Business(DbContext db)
     {
         Db = db;
+        entityName = typeof(TOutput).ToString();
+    }
+
+    public IDbContextTransaction BeginTransaction()
+    {
+        return Db.Database.BeginTransaction();
+    }
+
+    public void CommitTransaction(IDbContextTransaction transaction)
+    {
+        transaction.Commit();
+        transaction.Dispose();
+    }
+
+    public void RevokeTransaction(IDbContextTransaction transaction)
+    {
+        transaction.Rollback();
+        transaction.Dispose();
+    }
+
+    public TOutput GetById(Guid id, int maxDepth = 2)
+    {
+        var query = Db.Set<TOutput>().AsQueryable();
+        var props = typeof(TOutput).GetProperties();
+        var entityType = Db.Model.FindEntityType(typeof(TOutput));
+        if (entityType is null)
+        {
+            throw new Exception($"Not entity type found matching {typeof(TOutput)}");
+        }
+
+        if (maxDepth > 0)
+        {
+            foreach (var prop in props)
+            {
+                // Check if the property is a navigation property
+                var navigation = entityType.FindNavigation(prop.Name);
+                if (navigation != null)
+                {
+                    // Include the navigation property in the query
+                    query = query.Include(prop.Name);
+
+                    if (maxDepth > 1)
+                    {
+                        // Check if the navigation property is an entity type
+                        var relatedEntityType = navigation.ForeignKey.PrincipalEntityType;
+                        if (relatedEntityType != null)
+                        {
+                            // Iterate over the navigation properties of the related entity type
+                            foreach (var relatedNavigation in relatedEntityType.GetNavigations())
+                            {
+                                // Include the related navigation property in the query
+                                query = query.Include($"{prop.Name}.{relatedNavigation.Name}");
+                            }
+                        }
+                    }
+                }
+
+                // Check if the property is a collection navigation property
+                if (typeof(IEnumerable).IsAssignableFrom(prop.PropertyType) &&
+                    prop.PropertyType.IsGenericType &&
+                    Db.Model.FindEntityType(prop.PropertyType.GetGenericArguments()[0]) != null)
+                {
+                    // Include the navigation property in the query
+                    query = query.Include(prop.Name);
+                }
+            }
+        }
+
+        var entity = query.FirstOrDefault(x => x.Id == id);
+        if (entity == null)
+        {
+            throw new KeyNotFoundException($"No {entityName} entity found for given {id}");
+        }
+
+        return entity;
+    }
+
+    public TOutput Create(TOutput entity)
+    {
+        var dbSet = Db.Set<TOutput>();
+        dbSet.Add(entity);
+        Db.SaveChanges();
+        var added = dbSet.Find(entity.Id);
+        if (added is null)
+        {
+            throw new Exception($"Could not retrieve created {entityName} entity.");
+        }
+        return added;
+    }
+
+    public TOutput Update(Guid id, TOutput entity)
+    {
+        var dbSet = Db.Set<TOutput>();
+        var existing = dbSet.Find(id);
+        if (existing is null)
+        {
+            throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
+        }
+        Db.Entry(entity).State = EntityState.Modified;
+        Db.SaveChanges();
+        var updated = dbSet.Find(entity.Id);
+        if (updated is null)
+        {
+            throw new Exception($"Could not retrieve updated {entityName} entity.");
+        }
+        return updated;
+    }
+
+    public TOutput Modify<TInput>(Guid id, TInput entity)
+    {
+        var dbSet = Db.Set<TOutput>();
+        var existing = dbSet.Find(id);
+        if (existing is null)
+        {
+            throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
+        }
+        var inputProps = typeof(TInput).GetProperties();
+        var outputProps = typeof(TOutput).GetProperties();
+
+        foreach (var prop in inputProps)
+        {
+            var match = outputProps.FirstOrDefault(p => p.Name == prop.Name);
+            if (match is not null)
+            {
+                match.SetValue(existing, prop.GetValue(entity));
+            }
+        }
+
+        Db.SaveChanges();
+        var modified = dbSet.Find(existing.Id);
+        if (modified is null)
+        {
+            throw new Exception($"Could not retrieve modified {entityName} entity.");
+        }
+        return modified;
+    }
+
+    public TOutput Delete(Guid id)
+    {
+        var dbSet = Db.Set<TOutput>();
+        var existing = dbSet.Find(id);
+        if (existing is null)
+        {
+            throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
+        }
+        dbSet.Remove(existing);
+        Db.SaveChanges();
+
+        return existing;
     }
 
     public QueryResult<ClientQuery, TOutput> GetAll(ClientQuery clientQuery, DataQuery query, int maxDepth = 2)
@@ -304,7 +457,6 @@ public abstract class Business<TOutput> where TOutput : class
 
         return orderedQuery;
     }
-
 
     public Expression<Func<T, bool>> BuildWhereExpression<T>(List<Condition> conditions)
     {
