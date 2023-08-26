@@ -28,10 +28,10 @@ public record AccountView(Guid Id, string Label) : IRecord
     public AccountView() : this(Guid.Empty, string.Empty) { }
 }
 
-public record AccountQuery
+public record AccountQuery 
 (
     string? Label
-);
+) : ClientQuery;
 
 public record AccountCreate
 (

@@ -19,14 +19,11 @@ namespace AccountsApi.Controllers
 
         // GET: api/Account
         [HttpGet]
-        public ActionResult<QueryResult<ClientQuery, AccountView>> GetAccounts()
+        public ActionResult<QueryResult<ClientQuery, AccountView>> GetAccounts([FromQuery] AccountQuery query)
         {
-
-            if (_context.Accounts == null)
-            {
-                return NotFound();
-            }
-            var result = _business.GetAll(new ClientQuery(), new DataQuery());
+            var dataQuery = _business.ConvertClientToDataQuery(query);
+            //TODO: convert params to where conditions
+            var result = _business.GetAll(query, dataQuery);
             return result;
         }
 

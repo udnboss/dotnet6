@@ -204,12 +204,12 @@ public class Condition
     public List<object>? Values { get; set; }
 }
 
-public class ClientQuery
+public record ClientQuery
 {
-    public string? Sort { get; set; }
-    public string? Order { get; set; }
-    public int? Page { get; set; }
-    public int? Size { get; set; }
+    public string? _Sort { get; set; }
+    public string? _Order { get; set; }
+    public int? _Page { get; set; }
+    public int? _Size { get; set; }
 }
 
 public class DataQuery
@@ -282,6 +282,31 @@ public abstract class Business<TEntity, TEntityView, TEntityUpdate, TEntityModif
         transaction.Dispose();
     }
 
+    public DataQuery ConvertClientToDataQuery(ClientQuery query)
+    {
+        var dataQuery = new DataQuery
+        {
+            Limit = query._Size ?? 0,
+            Offset = query._Page.HasValue ? query._Page.Value - 1 : 0 * query._Size ?? 0
+        };
+
+        if (query._Sort is not null)
+        {
+            var sortProps = query._Sort.Split(',').ToList();
+            var sortDirs = query._Order is not null ? query._Order.Split(',').ToList() : new List<string>();
+
+            for(var i = 0; i < sortProps.Count; i++)
+            {
+                if( sortDirs.Count > i)
+                {
+                    dataQuery.Sort.Add(new Sort(sortProps[i]) { Direction = sortDirs.Count > i && sortDirs[i] == "desc" ? SortDirection.Desc : SortDirection.Asc });
+                }
+            }
+        }
+
+        return dataQuery;
+    }
+    
     public virtual TEntityView GetById(Guid id, int maxDepth = 2)
     {
         var query = Db.Set<TEntity>().AsQueryable();
