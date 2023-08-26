@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,17 +9,17 @@ namespace AccountsApi.Controllers
     public class AccountController : ControllerBase
     {
         private readonly SalesContext _context;
-        private Business<Account> _business;
+        private AccountBusiness _business;
 
         public AccountController(SalesContext context)
         {
             _context = context;
-            _business = new Business<Account>(_context);
+            _business = new AccountBusiness(_context);
         }
 
         // GET: api/Account
         [HttpGet]
-        public ActionResult<QueryResult<ClientQuery, Account>> GetAccounts()
+        public ActionResult<QueryResult<ClientQuery, AccountView>> GetAccounts()
         {
 
             if (_context.Accounts == null)
@@ -31,7 +32,7 @@ namespace AccountsApi.Controllers
 
         // GET: api/Account/5
         [HttpGet("{id}")]
-        public ActionResult<Account> GetAccount(Guid id)
+        public ActionResult<AccountView> GetAccount(Guid id)
         {
             if (_context.Accounts == null)
             {
@@ -51,7 +52,7 @@ namespace AccountsApi.Controllers
         // PUT: api/Account/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public ActionResult<Account> PutAccount(Guid id, Account account)
+        public ActionResult<AccountView> PutAccount(Guid id, AccountUpdate account)
         {
             try 
             {
@@ -84,7 +85,7 @@ namespace AccountsApi.Controllers
         // PATCH: api/Account/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
-        public ActionResult<Account> PatchAccount(Guid id, Account account)
+        public ActionResult<AccountView> PatchAccount(Guid id, JsonElement account)
         {
             try 
             {
@@ -118,7 +119,7 @@ namespace AccountsApi.Controllers
         // POST: api/Account
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public ActionResult<Account> PostAccount(Account account)
+        public ActionResult<AccountView> PostAccount(AccountCreate account)
         {
             if (_context.Accounts == null)
             {
@@ -132,7 +133,7 @@ namespace AccountsApi.Controllers
 
         // DELETE: api/Account/5
         [HttpDelete("{id}")]
-        public ActionResult<Account> DeleteAccount(Guid id)
+        public ActionResult<AccountView> DeleteAccount(Guid id)
         {
             try 
             {

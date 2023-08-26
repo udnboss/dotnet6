@@ -1,6 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+public interface IRecord
+{
+    public Guid Id { get; }
+}
+
 [Table("account")]
 public class Account : Entity
 {
@@ -12,6 +17,17 @@ public class Account : Entity
     public string Label { get; set; }
 }
 
+public record AccountSimple
+(
+    Guid Id,
+    string Label
+) : IRecord;
+
+public record AccountView(Guid Id, string Label) : IRecord
+{
+    public AccountView() : this(Guid.Empty, string.Empty) { }
+}
+
 public record AccountQuery
 (
     string? Label
@@ -21,16 +37,16 @@ public record AccountCreate
 (
     [Required] Guid Id,
     [Required] string Label
-);
+) : IRecord;
 
 public record AccountUpdate
 (
     [Required] Guid Id,
     [Required] string Label
-);
+) : IRecord;
 
 public record AccountModify
 (
-    Guid? Id,
+    Guid Id,
     string? Label
-);
+) : IRecord;

@@ -4,6 +4,8 @@ using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq.Expressions;
+using System.Text.Json;
+// using System.Linq.Dynamic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -232,6 +234,8 @@ public class Entity
     [Column("id")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
+
+    public Entity() {}
 }
 
 public class QueryResult<Q, T>
@@ -250,15 +254,15 @@ public class QueryResult<Q, T>
 
 #pragma warning disable CS8604
 
-public class Business<TOutput> where TOutput : Entity
+public abstract class Business<TEntity, TEntityView, TEntityUpdate, TEntityModify, TEntityCreate> where TEntity : Entity, new() where TEntityView : IRecord, new() where TEntityUpdate : IRecord where TEntityModify : IRecord where TEntityCreate : IRecord
 {
-    private string entityName;
-    private DbContext Db { get; set; }
+    protected string entityName;
+    protected DbContext Db { get; set; }
 
     public Business(DbContext db)
     {
         Db = db;
-        entityName = typeof(TOutput).ToString();
+        entityName = typeof(TEntity).ToString();
     }
 
     public IDbContextTransaction BeginTransaction()
@@ -278,14 +282,14 @@ public class Business<TOutput> where TOutput : Entity
         transaction.Dispose();
     }
 
-    public TOutput GetById(Guid id, int maxDepth = 2)
+    public virtual TEntityView GetById(Guid id, int maxDepth = 2)
     {
-        var query = Db.Set<TOutput>().AsQueryable();
-        var props = typeof(TOutput).GetProperties();
-        var entityType = Db.Model.FindEntityType(typeof(TOutput));
+        var query = Db.Set<TEntity>().AsQueryable();
+        var props = typeof(TEntity).GetProperties();
+        var entityType = Db.Model.FindEntityType(typeof(TEntity));
         if (entityType is null)
         {
-            throw new Exception($"Not entity type found matching {typeof(TOutput)}");
+            throw new Exception($"Not entity type found matching {typeof(TEntity)}");
         }
 
         if (maxDepth > 0)
@@ -326,7 +330,9 @@ public class Business<TOutput> where TOutput : Entity
             }
         }
 
-        var entity = query.FirstOrDefault(x => x.Id == id);
+        var PropsStr = string.Join(", ", props.Select(p => p.Name).ToList());
+
+        var entity = query.Select(x => new TEntityView { }).FirstOrDefault(x => x.Id == id);
         if (entity == null)
         {
             throw new KeyNotFoundException($"No {entityName} entity found for given {id}");
@@ -335,50 +341,33 @@ public class Business<TOutput> where TOutput : Entity
         return entity;
     }
 
-    public TOutput Create(TOutput entity)
+    public virtual TEntityView Create(TEntityCreate entity)
     {
-        var dbSet = Db.Set<TOutput>();
-        dbSet.Add(entity);
+        var dbSet = Db.Set<TEntity>();
+        var dbEntity = new TEntity {
+            Id = new Guid()
+        };
+        dbSet.Add(dbEntity);
         Db.SaveChanges();
-        var added = dbSet.Find(entity.Id);
-        if (added is null)
-        {
-            throw new Exception($"Could not retrieve created {entityName} entity.");
-        }
-        return added;
+
+        return GetById(dbEntity.Id);
     }
 
-    public TOutput Update(Guid id, TOutput entity)
+    public virtual TEntityView Update(Guid id, TEntityUpdate entity)
     {
-        var dbSet = Db.Set<TOutput>();
+        var dbSet = Db.Set<TEntity>();
         var existing = dbSet.Find(id);
         if (existing is null)
         {
             throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
         }
-        Db.Entry(entity).State = EntityState.Modified;
-        Db.SaveChanges();
-        var updated = dbSet.Find(entity.Id);
-        if (updated is null)
-        {
-            throw new Exception($"Could not retrieve updated {entityName} entity.");
-        }
-        return updated;
-    }
 
-    public TOutput Modify<TInput>(Guid id, TInput entity)
-    {
-        var dbSet = Db.Set<TOutput>();
-        var existing = dbSet.Find(id);
-        if (existing is null)
-        {
-            throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
-        }
-        var inputProps = typeof(TInput).GetProperties();
-        var outputProps = typeof(TOutput).GetProperties();
+        var inputProps = typeof(TEntityUpdate).GetProperties();
+        var outputProps = typeof(TEntity).GetProperties();
 
         foreach (var prop in inputProps)
         {
+            if (prop.Name == "Id") continue;
             var match = outputProps.FirstOrDefault(p => p.Name == prop.Name);
             if (match is not null)
             {
@@ -387,47 +376,83 @@ public class Business<TOutput> where TOutput : Entity
         }
 
         Db.SaveChanges();
-        var modified = dbSet.Find(existing.Id);
-        if (modified is null)
-        {
-            throw new Exception($"Could not retrieve modified {entityName} entity.");
-        }
-        return modified;
+        var updated = GetById(id);
+        return updated;
     }
 
-    public TOutput Delete(Guid id)
+    public virtual TEntityView Modify(Guid id, JsonElement entity)
     {
-        var dbSet = Db.Set<TOutput>();
+        var dbSet = Db.Set<TEntity>();
         var existing = dbSet.Find(id);
         if (existing is null)
         {
             throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
         }
+        
+        var validProps = typeof(TEntityModify).GetProperties();
+        var outputProps = typeof(TEntity).GetProperties();
+
+        foreach (JsonProperty prop in entity.EnumerateObject())
+        {
+            if (prop.Name.ToLower() == "id") continue;
+            var match = outputProps.FirstOrDefault(p => p.Name.ToLower() == prop.Name.ToLower());
+            if (match is not null)
+            {
+                match.SetValue(existing, prop.Value.GetString());//TODO: proper mapping of type
+            }
+        }
+
+        Db.SaveChanges();
+        var updated = GetById(id);
+        return updated;
+    }
+
+    public virtual TEntityView Delete(Guid id)
+    {
+        var dbSet = Db.Set<TEntity>();
+        var existing = dbSet.Find(id);
+        if (existing is null)
+        {
+            throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
+        }
+        var beforeDelete = GetById(id);
         dbSet.Remove(existing);
         Db.SaveChanges();
 
-        return existing;
+        return beforeDelete;
     }
 
-    public QueryResult<ClientQuery, TOutput> GetAll(ClientQuery clientQuery, DataQuery query, int maxDepth = 2)
+    public virtual QueryResult<ClientQuery, TEntityView> GetAll(ClientQuery clientQuery, DataQuery query, int maxDepth = 2)
     {
-        var whereExpression = BuildWhereExpression<TOutput>(query.Where);
-        var q = Db.Set<TOutput>().Where(whereExpression).Skip(query.Offset).Take(query.Limit);
+        var q = Db.Set<TEntity>().Skip(query.Offset);
+        
+        if( query.Limit > 0) {
+            q = q.Take(query.Limit);
+        }
+
+        if( query.Where.Count > 0 )
+        {
+            var whereExpression = BuildWhereExpression<TEntity>(query.Where);
+            q = q.Where(whereExpression);
+        }
+        
         var sortedQ = OrderByProperties(q, query.Sort);
         var data = sortedQ != null ? sortedQ.ToList() : q.ToList();
+        var dataView = data.Select(x => new TEntityView { }).ToList();
 
-        var result = new QueryResult<ClientQuery, TOutput>(clientQuery)
+        var result = new QueryResult<ClientQuery, TEntityView>(clientQuery)
         {
             Count = data.Count,
-            Result = data,
+            Result = dataView,
             Total = data.Count
         };
+
         return result;
     }
 
-    public IOrderedQueryable<TOutput>? OrderByProperties(IQueryable<TOutput> query, List<Sort> propertyNames)
+    private IOrderedQueryable<TEntity>? OrderByProperties(IQueryable<TEntity> query, List<Sort> propertyNames)
     {
-        IOrderedQueryable<TOutput>? orderedQuery = null;
+        IOrderedQueryable<TEntity>? orderedQuery = null;
         int i = 0;
         foreach (var item in propertyNames)
         {
@@ -435,13 +460,13 @@ public class Business<TOutput> where TOutput : Entity
             var sortOrder = item.Direction;
 
             // Create a parameter expression for the input object
-            var parameter = Expression.Parameter(typeof(TOutput), "x");
+            var parameter = Expression.Parameter(typeof(TEntity), "x");
 
             // Create an expression for the property
             var propertyExpression = Expression.Property(parameter, propertyName);
 
             // Create the lambda expression
-            var lambda = Expression.Lambda<Func<TOutput, object>>(propertyExpression, parameter);
+            var lambda = Expression.Lambda<Func<TEntity, object>>(propertyExpression, parameter);
 
             // Apply the ordering to the query
             if (i == 0)
@@ -458,7 +483,7 @@ public class Business<TOutput> where TOutput : Entity
         return orderedQuery;
     }
 
-    public Expression<Func<T, bool>> BuildWhereExpression<T>(List<Condition> conditions)
+    private Expression<Func<T, bool>> BuildWhereExpression<T>(List<Condition> conditions)
     {
         // Create a parameter expression for the input object
         var parameter = Expression.Parameter(typeof(T), "x");
@@ -542,7 +567,7 @@ public class Business<TOutput> where TOutput : Entity
 
 
             // Combine the binary expression with the final expression
-            if (finalExpression == null)
+            if (finalExpression is null)
             {
                 finalExpression = binaryExpression;
             }
@@ -551,6 +576,9 @@ public class Business<TOutput> where TOutput : Entity
                 finalExpression = Expression.AndAlso(finalExpression, binaryExpression);
             }
         }
+
+        finalExpression ??= Expression.Equal(Expression.Constant(1), Expression.Constant(1));
+        
 
         // Create and return the final lambda expression
         return Expression.Lambda<Func<T, bool>>(finalExpression, parameter);
