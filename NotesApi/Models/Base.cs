@@ -208,8 +208,8 @@ public record ClientQuery
 {
     public string? _Sort { get; set; }
     public string? _Order { get; set; }
-    public int? _Page { get; set; }
-    public int? _Size { get; set; }
+    public int? _Page { get; set; } = 1;
+    public int? _Size { get; set; } = 30;
 }
 
 public class DataQuery
@@ -220,11 +220,11 @@ public class DataQuery
         Where = new List<Condition>();
     }
 
-    public List<Sort> Sort { get; set; }
-    public List<Condition> Where { get; set; }
+    public List<Sort> Sort { get; set; } = new List<Sort>();
+    public List<Condition> Where { get; set; } = new List<Condition>();
 
-    public int Limit { get; set; }
-    public int Offset { get; set; }
+    public int Limit { get; set; } = 0;
+    public int Offset { get; set; } = 0;
 }
 
 
@@ -235,7 +235,7 @@ public class Entity
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
 
-    public Entity() {}
+    public Entity() { }
 }
 
 public class QueryResult<Q, T>
@@ -254,7 +254,13 @@ public class QueryResult<Q, T>
 
 #pragma warning disable CS8604
 
-public abstract class Business<TEntity, TEntityView, TEntityUpdate, TEntityModify, TEntityCreate> where TEntity : Entity, new() where TEntityView : IRecord, new() where TEntityUpdate : IRecord where TEntityModify : IRecord where TEntityCreate : IRecord
+public abstract class Business<TEntity, TEntityView, TEntityUpdate, TEntityModify, TEntityCreate, TEntityClientQuery>
+    where TEntity : Entity, new()
+    where TEntityView : IRecord, new()
+    where TEntityUpdate : IRecord
+    where TEntityModify : IRecord
+    where TEntityCreate : IRecord
+    where TEntityClientQuery : ClientQuery, new()
 {
     protected string entityName;
     protected DbContext Db { get; set; }
@@ -282,7 +288,7 @@ public abstract class Business<TEntity, TEntityView, TEntityUpdate, TEntityModif
         transaction.Dispose();
     }
 
-    public DataQuery ConvertClientToDataQuery(ClientQuery query)
+    public virtual DataQuery ConvertToDataQuery(TEntityClientQuery query)
     {
         var dataQuery = new DataQuery
         {
@@ -295,9 +301,9 @@ public abstract class Business<TEntity, TEntityView, TEntityUpdate, TEntityModif
             var sortProps = query._Sort.Split(',').ToList();
             var sortDirs = query._Order is not null ? query._Order.Split(',').ToList() : new List<string>();
 
-            for(var i = 0; i < sortProps.Count; i++)
+            for (var i = 0; i < sortProps.Count; i++)
             {
-                if( sortDirs.Count > i)
+                if (sortDirs.Count > i)
                 {
                     dataQuery.Sort.Add(new Sort(sortProps[i]) { Direction = sortDirs.Count > i && sortDirs[i] == "desc" ? SortDirection.Desc : SortDirection.Asc });
                 }
@@ -306,7 +312,19 @@ public abstract class Business<TEntity, TEntityView, TEntityUpdate, TEntityModif
 
         return dataQuery;
     }
-    
+
+    public virtual TEntityClientQuery ConvertToClientQuery(DataQuery query)
+    {
+        var clientQuery = new TEntityClientQuery
+        {
+            _Order = string.Join(",", query.Sort.Select(x => x.Direction.ToSortDirectionString())),
+            _Page = query.Offset == 0 || query.Limit == 0 ? 1 : (query.Offset / query.Limit) + 1,
+            _Size = query.Limit,
+            _Sort = string.Join(",", query.Sort.Select(x => x.Column))
+        };
+        return clientQuery;
+    }
+
     public virtual TEntityView GetById(Guid id, int maxDepth = 2)
     {
         var query = Db.Set<TEntity>().AsQueryable();
@@ -369,7 +387,8 @@ public abstract class Business<TEntity, TEntityView, TEntityUpdate, TEntityModif
     public virtual TEntityView Create(TEntityCreate entity)
     {
         var dbSet = Db.Set<TEntity>();
-        var dbEntity = new TEntity {
+        var dbEntity = new TEntity
+        {
             Id = new Guid()
         };
         dbSet.Add(dbEntity);
@@ -413,7 +432,7 @@ public abstract class Business<TEntity, TEntityView, TEntityUpdate, TEntityModif
         {
             throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
         }
-        
+
         var validProps = typeof(TEntityModify).GetProperties();
         var outputProps = typeof(TEntity).GetProperties();
 
@@ -447,20 +466,31 @@ public abstract class Business<TEntity, TEntityView, TEntityUpdate, TEntityModif
         return beforeDelete;
     }
 
+    public virtual QueryResult<ClientQuery, TEntityView> GetAll(int maxDepth = 2)
+    {
+        return GetAll(new ClientQuery(), new DataQuery(), maxDepth);
+    }
+
     public virtual QueryResult<ClientQuery, TEntityView> GetAll(ClientQuery clientQuery, DataQuery query, int maxDepth = 2)
     {
-        var q = Db.Set<TEntity>().Skip(query.Offset);
-        
-        if( query.Limit > 0) {
+        var q = Db.Set<TEntity>().AsQueryable();
+
+        if (query.Offset > 0)
+        {
+            q = q.Skip(query.Offset);
+        }
+
+        if (query.Limit > 0)
+        {
             q = q.Take(query.Limit);
         }
 
-        if( query.Where.Count > 0 )
+        if (query.Where.Count > 0)
         {
             var whereExpression = BuildWhereExpression<TEntity>(query.Where);
             q = q.Where(whereExpression);
         }
-        
+
         var sortedQ = OrderByProperties(q, query.Sort);
         var data = sortedQ != null ? sortedQ.ToList() : q.ToList();
         var dataView = data.Select(x => new TEntityView { }).ToList();
@@ -603,7 +633,7 @@ public abstract class Business<TEntity, TEntityView, TEntityUpdate, TEntityModif
         }
 
         finalExpression ??= Expression.Equal(Expression.Constant(1), Expression.Constant(1));
-        
+
 
         // Create and return the final lambda expression
         return Expression.Lambda<Func<T, bool>>(finalExpression, parameter);

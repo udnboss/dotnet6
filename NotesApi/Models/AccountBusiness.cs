@@ -1,14 +1,35 @@
 using System.Linq.Expressions;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
 
-public class AccountBusiness : Business<Account, AccountView, AccountUpdate, AccountModify, AccountCreate>
+public class AccountBusiness : Business<Account, AccountView, AccountUpdate, AccountModify, AccountCreate, AccountQuery>
 {
     public AccountBusiness(DbContext db) : base(db)
     {
     }
-    
+
+    public override DataQuery ConvertToDataQuery(AccountQuery query)
+    {
+        var dataQuery = base.ConvertToDataQuery(query);
+
+        dataQuery.Where.Add(new Condition(column: "Label", _operator: Operators.Contains, value: query.Label));
+
+        return dataQuery;
+    }
+
+    public override AccountQuery ConvertToClientQuery(DataQuery query)
+    {
+        var clientQuery = base.ConvertToClientQuery(query);
+
+        foreach(var c in query.Where)
+        {
+            if(c.Column == "Label") clientQuery.Label = c.Value as string;
+        }        
+
+        return clientQuery;
+    }
     public override AccountView GetById(Guid id, int maxDepth = 2)
     {
         var query = Db.Set<Account>()

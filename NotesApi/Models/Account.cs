@@ -9,7 +9,8 @@ public interface IRecord
 [Table("account")]
 public class Account : Entity
 {
-    public Account() {
+    public Account()
+    {
         Label = string.Empty;
     }
 
@@ -28,10 +29,11 @@ public record AccountView(Guid Id, string Label) : IRecord
     public AccountView() : this(Guid.Empty, string.Empty) { }
 }
 
-public record AccountQuery 
-(
-    string? Label
-) : ClientQuery;
+public record AccountQuery : ClientQuery
+{
+    public string? Label { get; set; }
+    public AccountQuery() { }
+}
 
 public record AccountCreate
 (

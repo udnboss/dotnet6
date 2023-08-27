@@ -21,8 +21,8 @@ namespace AccountsApi.Controllers
         [HttpGet]
         public ActionResult<QueryResult<ClientQuery, AccountView>> GetAccounts([FromQuery] AccountQuery query)
         {
-            var dataQuery = _business.ConvertClientToDataQuery(query);
-            //TODO: convert params to where conditions
+            var dataQuery = _business.ConvertToDataQuery(query);
+
             var result = _business.GetAll(query, dataQuery);
             return result;
         }
