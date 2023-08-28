@@ -227,6 +227,10 @@ public class DataQuery
     public int Offset { get; set; } = 0;
 }
 
+public interface IRecord
+{
+    public Guid Id { get; }
+}
 
 public class Entity
 {
@@ -468,10 +472,10 @@ public abstract class Business<TEntity, TEntityView, TEntityUpdate, TEntityModif
 
     public virtual QueryResult<ClientQuery, TEntityView> GetAll(int maxDepth = 2)
     {
-        return GetAll(new ClientQuery(), new DataQuery(), maxDepth);
+        return GetAll(new TEntityClientQuery(), new DataQuery(), maxDepth);
     }
 
-    public virtual QueryResult<ClientQuery, TEntityView> GetAll(ClientQuery clientQuery, DataQuery query, int maxDepth = 2)
+    public virtual QueryResult<ClientQuery, TEntityView> GetAll(TEntityClientQuery clientQuery, DataQuery query, int maxDepth = 2)
     {
         var q = Db.Set<TEntity>().AsQueryable();
 

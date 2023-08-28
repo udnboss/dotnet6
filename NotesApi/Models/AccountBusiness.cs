@@ -30,6 +30,7 @@ public class AccountBusiness : Business<Account, AccountView, AccountUpdate, Acc
 
         return clientQuery;
     }
+    
     public override AccountView GetById(Guid id, int maxDepth = 2)
     {
         var query = Db.Set<Account>()
@@ -136,12 +137,14 @@ public class AccountBusiness : Business<Account, AccountView, AccountUpdate, Acc
         return beforeDelete;
     }
 
-    public override QueryResult<ClientQuery, AccountView> GetAll(ClientQuery clientQuery, DataQuery query, int maxDepth = 2)
+    public override QueryResult<ClientQuery, AccountView> GetAll(AccountQuery clientQuery, DataQuery query, int maxDepth = 2)
     {
         var q = Db.Set<Account>().Skip(query.Offset);
                            
         if ( query.Limit > 0) 
             q = q.Take(query.Limit);
+
+        // if (!string.IsNullOrWhiteSpace(clientQuery.Label))
 
         if ( query.Where.Count > 0 )
         {
@@ -150,7 +153,7 @@ public class AccountBusiness : Business<Account, AccountView, AccountUpdate, Acc
                 if (c.Column == "Label" && c.Operator == Operators.Contains && c.Value != null) 
                 {
                     var v = c.Value.ToString();
-                    if(!string.IsNullOrWhiteSpace(v))
+                    if(!string.IsNullOrWhiteSpace(v) && v.Length > 2)
                         q = q.Where(x => x.Label != null && x.Label.Contains(v));
                 }
                     
