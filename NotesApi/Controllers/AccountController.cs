@@ -8,10 +8,10 @@ namespace AccountsApi.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly SalesContext _context;
+        private readonly MyContext _context;
         private AccountBusiness _business;
 
-        public AccountController(SalesContext context)
+        public AccountController(MyContext context)
         {
             _context = context;
             _business = new AccountBusiness(_context);
@@ -31,11 +31,6 @@ namespace AccountsApi.Controllers
         [HttpGet("{id}")]
         public ActionResult<AccountView> GetAccount(Guid id)
         {
-            if (_context.Accounts == null)
-            {
-                return NotFound();
-            }
-
             var account = _business.GetById(id);
 
             if (account == null)
@@ -118,11 +113,6 @@ namespace AccountsApi.Controllers
         [HttpPost]
         public ActionResult<AccountView> PostAccount(AccountCreate account)
         {
-            if (_context.Accounts == null)
-            {
-                return Problem("Entity set 'AccountsContext.Accounts' is null.");
-            }
-
             var created = _business.Create(account);
 
             return created;
@@ -148,7 +138,7 @@ namespace AccountsApi.Controllers
 
         private bool AccountExists(Guid id)
         {
-            return (_context.Accounts?.Any(e => e.Id == id)).GetValueOrDefault();
+            return _context.Set<Account>().Any(e => e.Id == id);
         }
     }
 }

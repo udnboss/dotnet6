@@ -15,11 +15,13 @@ create table [user] (
   , login_id text not null
   , primary key (id)
   , foreign key (login_id) references login(id) on delete cascade on delete cascade
+  , check ([name] >= 3)
 );
 
 drop table if exists [role];
 create table [role] (
   id text not null
+  , code text not null
   , name text not null
   , primary key (id)
   , unique (name)
@@ -28,6 +30,7 @@ create table [role] (
 drop table if exists [permission];
 create table [permission] (
   id text not null
+  , code text not null
   , name text not null
   , entity text not null
   , action text not null
@@ -65,10 +68,8 @@ drop table if exists [category];
 create table [category] (
   id text
   , name text not null
-  , category_id text
   , primary key (id)
   , unique (name)
-  , foreign key (category_id) references category(id) on delete cascade on delete cascade
 );
 
 drop table if exists [company];
@@ -87,7 +88,7 @@ create table [company] (
 
 drop table if exists [currency];
 create table [currency] (
-  id text not null
+  id text
   , name text not null
   , symbol text not null
   , primary key (id)
@@ -177,7 +178,6 @@ create index ix_rolePermission_permission_id on rolePermission (permission_id);
 create index ix_account_label on account (label);
 
 create index ix_category_name on category (name);
-create index ix_category_category_id on category (category_id);
 
 create index ix_company_name on company (name);
 
