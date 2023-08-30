@@ -17,6 +17,8 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
         
             dataQuery.Where.Add(new Condition(column: "Name", _operator: Operators.Contains, value: query.Name));
             
+            dataQuery.Where.Add(new Condition(column: "Code", _operator: Operators.Contains, value: query.Code));
+            
 
         return dataQuery;
     }
@@ -30,6 +32,8 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
             
             if(c.Column == "Name") clientQuery.Name = c.Value as string;
             
+            if(c.Column == "Code") clientQuery.Code = c.Value as string;
+            
         }        
 
         return clientQuery;
@@ -39,7 +43,12 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
     {
         var query = Db.Set<Role>()
             .Select(x => new RoleView { 
-                Id = x.Id, Code = x.Code, Name = x.Name  
+                Id = x.Id,
+                  Code = x.Code,
+                  Name = x.Name,
+                  RolePermissions = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, RoleId = x.Id }) { Result = x.RolePermissions!.Select(y1 => new RolePermissionView { Id = y1.Id,
+                      RoleId = y1.RoleId,
+                      PermissionId = y1.PermissionId }).Take(10) }  
             })
             .AsQueryable();
 
@@ -62,7 +71,12 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
         dbSet.Add(dbEntity);
         Db.SaveChanges();
         var added = dbSet.Select(x => new RoleView { 
-                Id = x.Id, Code = x.Code, Name = x.Name
+                Id = x.Id,
+                  Code = x.Code,
+                  Name = x.Name,
+                  RolePermissions = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, RoleId = x.Id }) { Result = x.RolePermissions!.Select(y1 => new RolePermissionView { Id = y1.Id,
+                      RoleId = y1.RoleId,
+                      PermissionId = y1.PermissionId }).Take(10) }
             })
             .FirstOrDefault(x => x.Id == dbEntity.Id);
         
@@ -161,6 +175,14 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
                         var v = c.Value.ToString();
                         if(!string.IsNullOrWhiteSpace(v))
                             q = q.Where(x => x.Name != null && x.Name.Contains(v));
+                    }
+
+
+                    if (c.Column == "Code" && c.Operator == Operators.Contains && c.Value != null) 
+                    {
+                        var v = c.Value.ToString();
+                        if(!string.IsNullOrWhiteSpace(v))
+                            q = q.Where(x => x.Code != null && x.Code.Contains(v));
                     }                   
             }
         }
@@ -182,7 +204,12 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
         }
         
         var data = (sortedQ ?? q)
-            .Select(x => new RoleView { Id = x.Id, Code = x.Code, Name = x.Name })
+            .Select(x => new RoleView { Id = x.Id,
+                  Code = x.Code,
+                  Name = x.Name,
+                  RolePermissions = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, RoleId = x.Id }) { Result = x.RolePermissions!.Select(y1 => new RolePermissionView { Id = y1.Id,
+                      RoleId = y1.RoleId,
+                      PermissionId = y1.PermissionId }).Take(10) } })
             .ToList();
 
         var result = new QueryResult<ClientQuery, RoleView>(clientQuery)

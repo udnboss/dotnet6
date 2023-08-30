@@ -43,7 +43,11 @@ public class ItemBusiness : Business<Item, ItemView, ItemUpdate, ItemModify, Ite
     {
         var query = Db.Set<Item>()
             .Select(x => new ItemView { 
-                Id = x.Id, Name = x.Name, CategoryId = x.CategoryId  
+                Id = x.Id,
+                  Name = x.Name,
+                  CategoryId = x.CategoryId,
+                  Category = new CategoryView { Id = x.Category!.Id,
+                      Name = x.Category!.Name }  
             })
             .AsQueryable();
 
@@ -66,7 +70,11 @@ public class ItemBusiness : Business<Item, ItemView, ItemUpdate, ItemModify, Ite
         dbSet.Add(dbEntity);
         Db.SaveChanges();
         var added = dbSet.Select(x => new ItemView { 
-                Id = x.Id, Name = x.Name, CategoryId = x.CategoryId
+                Id = x.Id,
+                  Name = x.Name,
+                  CategoryId = x.CategoryId,
+                  Category = new CategoryView { Id = x.Category!.Id,
+                      Name = x.Category!.Name }
             })
             .FirstOrDefault(x => x.Id == dbEntity.Id);
         
@@ -195,7 +203,11 @@ public class ItemBusiness : Business<Item, ItemView, ItemUpdate, ItemModify, Ite
         }
         
         var data = (sortedQ ?? q)
-            .Select(x => new ItemView { Id = x.Id, Name = x.Name, CategoryId = x.CategoryId })
+            .Select(x => new ItemView { Id = x.Id,
+                  Name = x.Name,
+                  CategoryId = x.CategoryId,
+                  Category = new CategoryView { Id = x.Category!.Id,
+                      Name = x.Category!.Name } })
             .ToList();
 
         var result = new QueryResult<ClientQuery, ItemView>(clientQuery)

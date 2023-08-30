@@ -39,7 +39,11 @@ public class CategoryBusiness : Business<Category, CategoryView, CategoryUpdate,
     {
         var query = Db.Set<Category>()
             .Select(x => new CategoryView { 
-                Id = x.Id, Name = x.Name  
+                Id = x.Id,
+                  Name = x.Name,
+                  Items = new QueryResult<ItemQuery, ItemView>(new ItemQuery() { _Size = 10, _Page = 1, CategoryId = x.Id }) { Result = x.Items!.Select(y1 => new ItemView { Id = y1.Id,
+                      Name = y1.Name,
+                      CategoryId = y1.CategoryId }).Take(10) }  
             })
             .AsQueryable();
 
@@ -62,7 +66,11 @@ public class CategoryBusiness : Business<Category, CategoryView, CategoryUpdate,
         dbSet.Add(dbEntity);
         Db.SaveChanges();
         var added = dbSet.Select(x => new CategoryView { 
-                Id = x.Id, Name = x.Name
+                Id = x.Id,
+                  Name = x.Name,
+                  Items = new QueryResult<ItemQuery, ItemView>(new ItemQuery() { _Size = 10, _Page = 1, CategoryId = x.Id }) { Result = x.Items!.Select(y1 => new ItemView { Id = y1.Id,
+                      Name = y1.Name,
+                      CategoryId = y1.CategoryId }).Take(10) }
             })
             .FirstOrDefault(x => x.Id == dbEntity.Id);
         
@@ -182,7 +190,11 @@ public class CategoryBusiness : Business<Category, CategoryView, CategoryUpdate,
         }
         
         var data = (sortedQ ?? q)
-            .Select(x => new CategoryView { Id = x.Id, Name = x.Name })
+            .Select(x => new CategoryView { Id = x.Id,
+                  Name = x.Name,
+                  Items = new QueryResult<ItemQuery, ItemView>(new ItemQuery() { _Size = 10, _Page = 1, CategoryId = x.Id }) { Result = x.Items!.Select(y1 => new ItemView { Id = y1.Id,
+                      Name = y1.Name,
+                      CategoryId = y1.CategoryId }).Take(10) } })
             .ToList();
 
         var result = new QueryResult<ClientQuery, CategoryView>(clientQuery)

@@ -17,6 +17,8 @@ public class PermissionBusiness : Business<Permission, PermissionView, Permissio
         
             dataQuery.Where.Add(new Condition(column: "Name", _operator: Operators.Contains, value: query.Name));
             
+            dataQuery.Where.Add(new Condition(column: "Code", _operator: Operators.Contains, value: query.Code));
+            
             dataQuery.Where.Add(new Condition(column: "Entity", _operator: Operators.IsIn, value: query.Entity));
             
             dataQuery.Where.Add(new Condition(column: "Action", _operator: Operators.IsIn, value: query.Action));
@@ -34,6 +36,8 @@ public class PermissionBusiness : Business<Permission, PermissionView, Permissio
             
             if(c.Column == "Name") clientQuery.Name = c.Value as string;
             
+            if(c.Column == "Code") clientQuery.Code = c.Value as string;
+            
             if(c.Column == "Entity") clientQuery.Entity = c.Value as string;
             
             if(c.Column == "Action") clientQuery.Action = c.Value as string;
@@ -47,7 +51,14 @@ public class PermissionBusiness : Business<Permission, PermissionView, Permissio
     {
         var query = Db.Set<Permission>()
             .Select(x => new PermissionView { 
-                Id = x.Id, Code = x.Code, Name = x.Name, Entity = x.Entity, Action = x.Action  
+                Id = x.Id,
+                  Code = x.Code,
+                  Name = x.Name,
+                  Entity = x.Entity,
+                  Action = x.Action,
+                  Roles = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, PermissionId = x.Id }) { Result = x.Roles!.Select(y1 => new RolePermissionView { Id = y1.Id,
+                      RoleId = y1.RoleId,
+                      PermissionId = y1.PermissionId }).Take(10) }  
             })
             .AsQueryable();
 
@@ -70,7 +81,14 @@ public class PermissionBusiness : Business<Permission, PermissionView, Permissio
         dbSet.Add(dbEntity);
         Db.SaveChanges();
         var added = dbSet.Select(x => new PermissionView { 
-                Id = x.Id, Code = x.Code, Name = x.Name, Entity = x.Entity, Action = x.Action
+                Id = x.Id,
+                  Code = x.Code,
+                  Name = x.Name,
+                  Entity = x.Entity,
+                  Action = x.Action,
+                  Roles = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, PermissionId = x.Id }) { Result = x.Roles!.Select(y1 => new RolePermissionView { Id = y1.Id,
+                      RoleId = y1.RoleId,
+                      PermissionId = y1.PermissionId }).Take(10) }
             })
             .FirstOrDefault(x => x.Id == dbEntity.Id);
         
@@ -172,6 +190,14 @@ public class PermissionBusiness : Business<Permission, PermissionView, Permissio
                     }
 
 
+                    if (c.Column == "Code" && c.Operator == Operators.Contains && c.Value != null) 
+                    {
+                        var v = c.Value.ToString();
+                        if(!string.IsNullOrWhiteSpace(v))
+                            q = q.Where(x => x.Code != null && x.Code.Contains(v));
+                    }
+
+
                     if (c.Column == "Entity" && c.Operator == Operators.IsIn && c.Value != null) 
                     {
                         var v = c.Value.ToString();
@@ -206,7 +232,14 @@ public class PermissionBusiness : Business<Permission, PermissionView, Permissio
         }
         
         var data = (sortedQ ?? q)
-            .Select(x => new PermissionView { Id = x.Id, Code = x.Code, Name = x.Name, Entity = x.Entity, Action = x.Action })
+            .Select(x => new PermissionView { Id = x.Id,
+                  Code = x.Code,
+                  Name = x.Name,
+                  Entity = x.Entity,
+                  Action = x.Action,
+                  Roles = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, PermissionId = x.Id }) { Result = x.Roles!.Select(y1 => new RolePermissionView { Id = y1.Id,
+                      RoleId = y1.RoleId,
+                      PermissionId = y1.PermissionId }).Take(10) } })
             .ToList();
 
         var result = new QueryResult<ClientQuery, PermissionView>(clientQuery)

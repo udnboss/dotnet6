@@ -39,7 +39,29 @@ public class CustomerBusiness : Business<Customer, CustomerView, CustomerUpdate,
     {
         var query = Db.Set<Customer>()
             .Select(x => new CustomerView { 
-                Id = x.Id, Name = x.Name, Address = x.Address, Contact = x.Contact, CurrencyId = x.CurrencyId, PaymentTerm = x.PaymentTerm  
+                Id = x.Id,
+                  Name = x.Name,
+                  Address = x.Address,
+                  Contact = x.Contact,
+                  CurrencyId = x.CurrencyId,
+                  Currency = new CurrencyView { Id = x.Currency!.Id,
+                      Name = x.Currency!.Name,
+                      Symbol = x.Currency!.Symbol },
+                  PaymentTerm = x.PaymentTerm,
+                  Sales = new QueryResult<SaleQuery, SaleView>(new SaleQuery() { _Size = 10, _Page = 1, CustomerId = x.Id }) { Result = x.Sales!.Select(y1 => new SaleView { Id = y1.Id,
+                      CompanyId = y1.CompanyId,
+                      AccountId = y1.AccountId,
+                      CustomerId = y1.CustomerId,
+                      CurrencyId = y1.CurrencyId,
+                      Place = y1.Place,
+                      Number = y1.Number,
+                      Date = y1.Date,
+                      Total = y1.Total,
+                      TotalItems = y1.TotalItems,
+                      Reference = y1.Reference,
+                      Confirmed = y1.Confirmed,
+                      ReferenceDate = y1.ReferenceDate,
+                      DueDate = y1.DueDate }).Take(10) }  
             })
             .AsQueryable();
 
@@ -62,7 +84,29 @@ public class CustomerBusiness : Business<Customer, CustomerView, CustomerUpdate,
         dbSet.Add(dbEntity);
         Db.SaveChanges();
         var added = dbSet.Select(x => new CustomerView { 
-                Id = x.Id, Name = x.Name, Address = x.Address, Contact = x.Contact, CurrencyId = x.CurrencyId, PaymentTerm = x.PaymentTerm
+                Id = x.Id,
+                  Name = x.Name,
+                  Address = x.Address,
+                  Contact = x.Contact,
+                  CurrencyId = x.CurrencyId,
+                  Currency = new CurrencyView { Id = x.Currency!.Id,
+                      Name = x.Currency!.Name,
+                      Symbol = x.Currency!.Symbol },
+                  PaymentTerm = x.PaymentTerm,
+                  Sales = new QueryResult<SaleQuery, SaleView>(new SaleQuery() { _Size = 10, _Page = 1, CustomerId = x.Id }) { Result = x.Sales!.Select(y1 => new SaleView { Id = y1.Id,
+                      CompanyId = y1.CompanyId,
+                      AccountId = y1.AccountId,
+                      CustomerId = y1.CustomerId,
+                      CurrencyId = y1.CurrencyId,
+                      Place = y1.Place,
+                      Number = y1.Number,
+                      Date = y1.Date,
+                      Total = y1.Total,
+                      TotalItems = y1.TotalItems,
+                      Reference = y1.Reference,
+                      Confirmed = y1.Confirmed,
+                      ReferenceDate = y1.ReferenceDate,
+                      DueDate = y1.DueDate }).Take(10) }
             })
             .FirstOrDefault(x => x.Id == dbEntity.Id);
         
@@ -182,7 +226,29 @@ public class CustomerBusiness : Business<Customer, CustomerView, CustomerUpdate,
         }
         
         var data = (sortedQ ?? q)
-            .Select(x => new CustomerView { Id = x.Id, Name = x.Name, Address = x.Address, Contact = x.Contact, CurrencyId = x.CurrencyId, PaymentTerm = x.PaymentTerm })
+            .Select(x => new CustomerView { Id = x.Id,
+                  Name = x.Name,
+                  Address = x.Address,
+                  Contact = x.Contact,
+                  CurrencyId = x.CurrencyId,
+                  Currency = new CurrencyView { Id = x.Currency!.Id,
+                      Name = x.Currency!.Name,
+                      Symbol = x.Currency!.Symbol },
+                  PaymentTerm = x.PaymentTerm,
+                  Sales = new QueryResult<SaleQuery, SaleView>(new SaleQuery() { _Size = 10, _Page = 1, CustomerId = x.Id }) { Result = x.Sales!.Select(y1 => new SaleView { Id = y1.Id,
+                      CompanyId = y1.CompanyId,
+                      AccountId = y1.AccountId,
+                      CustomerId = y1.CustomerId,
+                      CurrencyId = y1.CurrencyId,
+                      Place = y1.Place,
+                      Number = y1.Number,
+                      Date = y1.Date,
+                      Total = y1.Total,
+                      TotalItems = y1.TotalItems,
+                      Reference = y1.Reference,
+                      Confirmed = y1.Confirmed,
+                      ReferenceDate = y1.ReferenceDate,
+                      DueDate = y1.DueDate }).Take(10) } })
             .ToList();
 
         var result = new QueryResult<ClientQuery, CustomerView>(clientQuery)

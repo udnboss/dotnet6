@@ -15,6 +15,10 @@ public class SaleItemBusiness : Business<SaleItem, SaleItemView, SaleItemUpdate,
         var dataQuery = base.ConvertToDataQuery(query);
 
         
+            dataQuery.Where.Add(new Condition(column: "SaleId", _operator: Operators.IsIn, value: query.SaleId));
+            
+            dataQuery.Where.Add(new Condition(column: "ItemId", _operator: Operators.IsIn, value: query.ItemId));
+            
 
         return dataQuery;
     }
@@ -26,6 +30,10 @@ public class SaleItemBusiness : Business<SaleItem, SaleItemView, SaleItemUpdate,
         foreach(var c in query.Where)
         {
             
+            if(c.Column == "SaleId") clientQuery.SaleId = c.Value as Guid?;
+            
+            if(c.Column == "ItemId") clientQuery.ItemId = c.Value as Guid?;
+            
         }        
 
         return clientQuery;
@@ -35,7 +43,30 @@ public class SaleItemBusiness : Business<SaleItem, SaleItemView, SaleItemUpdate,
     {
         var query = Db.Set<SaleItem>()
             .Select(x => new SaleItemView { 
-                Id = x.Id, SaleId = x.SaleId, ItemId = x.ItemId, Description = x.Description, Quantity = x.Quantity, Price = x.Price, Total = x.Total  
+                Id = x.Id,
+                  SaleId = x.SaleId,
+                  ItemId = x.ItemId,
+                  Description = x.Description,
+                  Quantity = x.Quantity,
+                  Price = x.Price,
+                  Total = x.Total,
+                  Sale = new SaleView { Id = x.Sale!.Id,
+                      CompanyId = x.Sale!.CompanyId,
+                      AccountId = x.Sale!.AccountId,
+                      CustomerId = x.Sale!.CustomerId,
+                      CurrencyId = x.Sale!.CurrencyId,
+                      Place = x.Sale!.Place,
+                      Number = x.Sale!.Number,
+                      Date = x.Sale!.Date,
+                      Total = x.Sale!.Total,
+                      TotalItems = x.Sale!.TotalItems,
+                      Reference = x.Sale!.Reference,
+                      Confirmed = x.Sale!.Confirmed,
+                      ReferenceDate = x.Sale!.ReferenceDate,
+                      DueDate = x.Sale!.DueDate },
+                  Item = new ItemView { Id = x.Item!.Id,
+                      Name = x.Item!.Name,
+                      CategoryId = x.Item!.CategoryId }  
             })
             .AsQueryable();
 
@@ -58,7 +89,30 @@ public class SaleItemBusiness : Business<SaleItem, SaleItemView, SaleItemUpdate,
         dbSet.Add(dbEntity);
         Db.SaveChanges();
         var added = dbSet.Select(x => new SaleItemView { 
-                Id = x.Id, SaleId = x.SaleId, ItemId = x.ItemId, Description = x.Description, Quantity = x.Quantity, Price = x.Price, Total = x.Total
+                Id = x.Id,
+                  SaleId = x.SaleId,
+                  ItemId = x.ItemId,
+                  Description = x.Description,
+                  Quantity = x.Quantity,
+                  Price = x.Price,
+                  Total = x.Total,
+                  Sale = new SaleView { Id = x.Sale!.Id,
+                      CompanyId = x.Sale!.CompanyId,
+                      AccountId = x.Sale!.AccountId,
+                      CustomerId = x.Sale!.CustomerId,
+                      CurrencyId = x.Sale!.CurrencyId,
+                      Place = x.Sale!.Place,
+                      Number = x.Sale!.Number,
+                      Date = x.Sale!.Date,
+                      Total = x.Sale!.Total,
+                      TotalItems = x.Sale!.TotalItems,
+                      Reference = x.Sale!.Reference,
+                      Confirmed = x.Sale!.Confirmed,
+                      ReferenceDate = x.Sale!.ReferenceDate,
+                      DueDate = x.Sale!.DueDate },
+                  Item = new ItemView { Id = x.Item!.Id,
+                      Name = x.Item!.Name,
+                      CategoryId = x.Item!.CategoryId }
             })
             .FirstOrDefault(x => x.Id == dbEntity.Id);
         
@@ -172,7 +226,30 @@ public class SaleItemBusiness : Business<SaleItem, SaleItemView, SaleItemUpdate,
         }
         
         var data = (sortedQ ?? q)
-            .Select(x => new SaleItemView { Id = x.Id, SaleId = x.SaleId, ItemId = x.ItemId, Description = x.Description, Quantity = x.Quantity, Price = x.Price, Total = x.Total })
+            .Select(x => new SaleItemView { Id = x.Id,
+                  SaleId = x.SaleId,
+                  ItemId = x.ItemId,
+                  Description = x.Description,
+                  Quantity = x.Quantity,
+                  Price = x.Price,
+                  Total = x.Total,
+                  Sale = new SaleView { Id = x.Sale!.Id,
+                      CompanyId = x.Sale!.CompanyId,
+                      AccountId = x.Sale!.AccountId,
+                      CustomerId = x.Sale!.CustomerId,
+                      CurrencyId = x.Sale!.CurrencyId,
+                      Place = x.Sale!.Place,
+                      Number = x.Sale!.Number,
+                      Date = x.Sale!.Date,
+                      Total = x.Sale!.Total,
+                      TotalItems = x.Sale!.TotalItems,
+                      Reference = x.Sale!.Reference,
+                      Confirmed = x.Sale!.Confirmed,
+                      ReferenceDate = x.Sale!.ReferenceDate,
+                      DueDate = x.Sale!.DueDate },
+                  Item = new ItemView { Id = x.Item!.Id,
+                      Name = x.Item!.Name,
+                      CategoryId = x.Item!.CategoryId } })
             .ToList();
 
         var result = new QueryResult<ClientQuery, SaleItemView>(clientQuery)

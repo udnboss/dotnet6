@@ -51,6 +51,10 @@ public class MyContext : DbContext
                 {
                     property.SetValueConverter(guidToStringConverter);
                 }
+                else if (property.ClrType == typeof(string))
+                {
+                    property.SetCollation("NOCASE");
+                }
             }
         }
     }

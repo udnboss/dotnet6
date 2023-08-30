@@ -43,7 +43,13 @@ public class UserBusiness : Business<User, UserView, UserUpdate, UserModify, Use
     {
         var query = Db.Set<User>()
             .Select(x => new UserView { 
-                Id = x.Id, Name = x.Name, Email = x.Email, LoginId = x.LoginId  
+                Id = x.Id,
+                  Name = x.Name,
+                  Email = x.Email,
+                  LoginId = x.LoginId,
+                  Login = new LoginView { Id = x.Login!.Id,
+                      Email = x.Login!.Email,
+                      Password = x.Login!.Password }  
             })
             .AsQueryable();
 
@@ -66,7 +72,13 @@ public class UserBusiness : Business<User, UserView, UserUpdate, UserModify, Use
         dbSet.Add(dbEntity);
         Db.SaveChanges();
         var added = dbSet.Select(x => new UserView { 
-                Id = x.Id, Name = x.Name, Email = x.Email, LoginId = x.LoginId
+                Id = x.Id,
+                  Name = x.Name,
+                  Email = x.Email,
+                  LoginId = x.LoginId,
+                  Login = new LoginView { Id = x.Login!.Id,
+                      Email = x.Login!.Email,
+                      Password = x.Login!.Password }
             })
             .FirstOrDefault(x => x.Id == dbEntity.Id);
         
@@ -203,7 +215,13 @@ public class UserBusiness : Business<User, UserView, UserUpdate, UserModify, Use
         }
         
         var data = (sortedQ ?? q)
-            .Select(x => new UserView { Id = x.Id, Name = x.Name, Email = x.Email, LoginId = x.LoginId })
+            .Select(x => new UserView { Id = x.Id,
+                  Name = x.Name,
+                  Email = x.Email,
+                  LoginId = x.LoginId,
+                  Login = new LoginView { Id = x.Login!.Id,
+                      Email = x.Login!.Email,
+                      Password = x.Login!.Password } })
             .ToList();
 
         var result = new QueryResult<ClientQuery, UserView>(clientQuery)

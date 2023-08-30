@@ -21,7 +21,8 @@ public record RolePermissionView : IRecord
 
 public record RolePermissionQuery : ClientQuery
 {
-    
+     public Guid? RoleId { get; set; } = null;
+     public Guid? PermissionId { get; set; } = null;
     public RolePermissionQuery() { }
 }
 

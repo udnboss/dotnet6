@@ -15,6 +15,10 @@ public class RolePermissionBusiness : Business<RolePermission, RolePermissionVie
         var dataQuery = base.ConvertToDataQuery(query);
 
         
+            dataQuery.Where.Add(new Condition(column: "RoleId", _operator: Operators.IsIn, value: query.RoleId));
+            
+            dataQuery.Where.Add(new Condition(column: "PermissionId", _operator: Operators.IsIn, value: query.PermissionId));
+            
 
         return dataQuery;
     }
@@ -26,6 +30,10 @@ public class RolePermissionBusiness : Business<RolePermission, RolePermissionVie
         foreach(var c in query.Where)
         {
             
+            if(c.Column == "RoleId") clientQuery.RoleId = c.Value as Guid?;
+            
+            if(c.Column == "PermissionId") clientQuery.PermissionId = c.Value as Guid?;
+            
         }        
 
         return clientQuery;
@@ -35,7 +43,17 @@ public class RolePermissionBusiness : Business<RolePermission, RolePermissionVie
     {
         var query = Db.Set<RolePermission>()
             .Select(x => new RolePermissionView { 
-                Id = x.Id, RoleId = x.RoleId, PermissionId = x.PermissionId  
+                Id = x.Id,
+                  RoleId = x.RoleId,
+                  PermissionId = x.PermissionId,
+                  Role = new RoleView { Id = x.Role!.Id,
+                      Code = x.Role!.Code,
+                      Name = x.Role!.Name },
+                  Permission = new PermissionView { Id = x.Permission!.Id,
+                      Code = x.Permission!.Code,
+                      Name = x.Permission!.Name,
+                      Entity = x.Permission!.Entity,
+                      Action = x.Permission!.Action }  
             })
             .AsQueryable();
 
@@ -58,7 +76,17 @@ public class RolePermissionBusiness : Business<RolePermission, RolePermissionVie
         dbSet.Add(dbEntity);
         Db.SaveChanges();
         var added = dbSet.Select(x => new RolePermissionView { 
-                Id = x.Id, RoleId = x.RoleId, PermissionId = x.PermissionId
+                Id = x.Id,
+                  RoleId = x.RoleId,
+                  PermissionId = x.PermissionId,
+                  Role = new RoleView { Id = x.Role!.Id,
+                      Code = x.Role!.Code,
+                      Name = x.Role!.Name },
+                  Permission = new PermissionView { Id = x.Permission!.Id,
+                      Code = x.Permission!.Code,
+                      Name = x.Permission!.Name,
+                      Entity = x.Permission!.Entity,
+                      Action = x.Permission!.Action }
             })
             .FirstOrDefault(x => x.Id == dbEntity.Id);
         
@@ -181,7 +209,17 @@ public class RolePermissionBusiness : Business<RolePermission, RolePermissionVie
         }
         
         var data = (sortedQ ?? q)
-            .Select(x => new RolePermissionView { Id = x.Id, RoleId = x.RoleId, PermissionId = x.PermissionId })
+            .Select(x => new RolePermissionView { Id = x.Id,
+                  RoleId = x.RoleId,
+                  PermissionId = x.PermissionId,
+                  Role = new RoleView { Id = x.Role!.Id,
+                      Code = x.Role!.Code,
+                      Name = x.Role!.Name },
+                  Permission = new PermissionView { Id = x.Permission!.Id,
+                      Code = x.Permission!.Code,
+                      Name = x.Permission!.Name,
+                      Entity = x.Permission!.Entity,
+                      Action = x.Permission!.Action } })
             .ToList();
 
         var result = new QueryResult<ClientQuery, RolePermissionView>(clientQuery)

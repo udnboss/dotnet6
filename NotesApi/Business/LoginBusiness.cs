@@ -39,7 +39,9 @@ public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify
     {
         var query = Db.Set<Login>()
             .Select(x => new LoginView { 
-                Id = x.Id, Email = x.Email, Password = x.Password  
+                Id = x.Id,
+                  Email = x.Email,
+                  Password = x.Password  
             })
             .AsQueryable();
 
@@ -62,7 +64,9 @@ public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify
         dbSet.Add(dbEntity);
         Db.SaveChanges();
         var added = dbSet.Select(x => new LoginView { 
-                Id = x.Id, Email = x.Email, Password = x.Password
+                Id = x.Id,
+                  Email = x.Email,
+                  Password = x.Password
             })
             .FirstOrDefault(x => x.Id == dbEntity.Id);
         
@@ -182,7 +186,9 @@ public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify
         }
         
         var data = (sortedQ ?? q)
-            .Select(x => new LoginView { Id = x.Id, Email = x.Email, Password = x.Password })
+            .Select(x => new LoginView { Id = x.Id,
+                  Email = x.Email,
+                  Password = x.Password })
             .ToList();
 
         var result = new QueryResult<ClientQuery, LoginView>(clientQuery)

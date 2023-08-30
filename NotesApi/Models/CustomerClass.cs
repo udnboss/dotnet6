@@ -10,8 +10,8 @@ public class Customer : Entity
     [Column("contact")] public string? Contact { get; set; }
     [Column("currency_id")] public Guid? CurrencyId { get; set; }
     [ForeignKey("CurrencyId")] public Currency? Currency { get; set; }
-    [Column("payment_term")] public int? PaymentTerm { get; set; }
-    [InverseProperty("Customer")] public ICollection<Sale>? Sales { get; set; }
+    [Column("payment_term")][Range(int.MinValue, int.MaxValue)] public int? PaymentTerm { get; set; }
+    [InverseProperty("Customer")] public IEnumerable<Sale>? Sales { get; set; }
 }
 
 public record CustomerView : IRecord
@@ -22,7 +22,7 @@ public record CustomerView : IRecord
     [Column("currency_id")] public Guid? CurrencyId { get; set; }
     [ForeignKey("CurrencyId")] public CurrencyView? Currency { get; set; }
     [Column("payment_term")] public int? PaymentTerm { get; set; }
-    [InverseProperty("Customer")] public ICollection<Sale>? Sales { get; set; }
+    [InverseProperty("Customer")] public QueryResult<SaleQuery, SaleView>? Sales { get; set; }
 }
 
 public record CustomerQuery : ClientQuery
@@ -37,8 +37,7 @@ public record CustomerCreate : IRecord
     [Column("address")] public string? Address { get; set; }
     [Column("contact")] public string? Contact { get; set; }
     [Column("currency_id")] public Guid? CurrencyId { get; set; }
-    [Column("payment_term")] public int? PaymentTerm { get; set; }
-    [InverseProperty("Customer")] public ICollection<Sale>? Sales { get; set; }
+    [Column("payment_term")][Range(int.MinValue, int.MaxValue)] public int? PaymentTerm { get; set; }
 }
 
 public record CustomerUpdate : IRecord
@@ -47,8 +46,7 @@ public record CustomerUpdate : IRecord
     [Column("address")] public string? Address { get; set; }
     [Column("contact")] public string? Contact { get; set; }
     [Column("currency_id")] public Guid? CurrencyId { get; set; }
-    [Column("payment_term")] public int? PaymentTerm { get; set; }
-    [InverseProperty("Customer")] public ICollection<Sale>? Sales { get; set; }
+    [Column("payment_term")][Range(int.MinValue, int.MaxValue)] public int? PaymentTerm { get; set; }
 }
 
 public record CustomerModify : IRecord
@@ -57,6 +55,5 @@ public record CustomerModify : IRecord
     [Column("address")] public string? Address { get; set; }
     [Column("contact")] public string? Contact { get; set; }
     [Column("currency_id")] public Guid? CurrencyId { get; set; }
-    [Column("payment_term")] public int? PaymentTerm { get; set; }
-    [InverseProperty("Customer")] public ICollection<Sale>? Sales { get; set; }
+    [Column("payment_term")][Range(int.MinValue, int.MaxValue)] public int? PaymentTerm { get; set; }
 }

@@ -35,7 +35,9 @@ public class CurrencyBusiness : Business<Currency, CurrencyView, CurrencyUpdate,
     {
         var query = Db.Set<Currency>()
             .Select(x => new CurrencyView { 
-                Id = x.Id, Name = x.Name, Symbol = x.Symbol  
+                Id = x.Id,
+                  Name = x.Name,
+                  Symbol = x.Symbol  
             })
             .AsQueryable();
 
@@ -58,7 +60,9 @@ public class CurrencyBusiness : Business<Currency, CurrencyView, CurrencyUpdate,
         dbSet.Add(dbEntity);
         Db.SaveChanges();
         var added = dbSet.Select(x => new CurrencyView { 
-                Id = x.Id, Name = x.Name, Symbol = x.Symbol
+                Id = x.Id,
+                  Name = x.Name,
+                  Symbol = x.Symbol
             })
             .FirstOrDefault(x => x.Id == dbEntity.Id);
         
@@ -172,7 +176,9 @@ public class CurrencyBusiness : Business<Currency, CurrencyView, CurrencyUpdate,
         }
         
         var data = (sortedQ ?? q)
-            .Select(x => new CurrencyView { Id = x.Id, Name = x.Name, Symbol = x.Symbol })
+            .Select(x => new CurrencyView { Id = x.Id,
+                  Name = x.Name,
+                  Symbol = x.Symbol })
             .ToList();
 
         var result = new QueryResult<ClientQuery, CurrencyView>(clientQuery)

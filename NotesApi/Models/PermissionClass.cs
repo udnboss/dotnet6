@@ -9,7 +9,7 @@ public class Permission : Entity
     [Column("name")][Required] public string Name { get; set; }
     [Column("entity")][Required] public string Entity { get; set; }
     [Column("action")][Required] public string Action { get; set; }
-    [InverseProperty("Permission")] public ICollection<RolePermission>? Roles { get; set; }
+    [InverseProperty("Permission")] public IEnumerable<RolePermission>? Roles { get; set; }
 }
 
 public record PermissionView : IRecord
@@ -18,12 +18,13 @@ public record PermissionView : IRecord
     [Column("name")] public string? Name { get; set; }
     [Column("entity")] public string? Entity { get; set; }
     [Column("action")] public string? Action { get; set; }
-    [InverseProperty("Permission")] public ICollection<RolePermission>? Roles { get; set; }
+    [InverseProperty("Permission")] public QueryResult<RolePermissionQuery, RolePermissionView>? Roles { get; set; }
 }
 
 public record PermissionQuery : ClientQuery
 {
      public string? Name { get; set; } = "";
+     public string? Code { get; set; } = "";
      public string? Entity { get; set; } = "";
      public string? Action { get; set; } = "";
     public PermissionQuery() { }
@@ -35,7 +36,6 @@ public record PermissionCreate : IRecord
     [Column("name")][Required] public string Name { get; set; }
     [Column("entity")][Required] public string Entity { get; set; }
     [Column("action")][Required] public string Action { get; set; }
-    [InverseProperty("Permission")] public ICollection<RolePermission>? Roles { get; set; }
 }
 
 public record PermissionUpdate : IRecord
@@ -44,7 +44,6 @@ public record PermissionUpdate : IRecord
     [Column("name")][Required] public string Name { get; set; }
     [Column("entity")][Required] public string Entity { get; set; }
     [Column("action")][Required] public string Action { get; set; }
-    [InverseProperty("Permission")] public ICollection<RolePermission>? Roles { get; set; }
 }
 
 public record PermissionModify : IRecord
@@ -53,5 +52,4 @@ public record PermissionModify : IRecord
     [Column("name")] public string? Name { get; set; }
     [Column("entity")] public string? Entity { get; set; }
     [Column("action")] public string? Action { get; set; }
-    [InverseProperty("Permission")] public ICollection<RolePermission>? Roles { get; set; }
 }

@@ -10,10 +10,10 @@ public class Sale : Entity
     [Column("customer_id")][Required] public Guid CustomerId { get; set; }
     [Column("currency_id")][Required] public Guid CurrencyId { get; set; }
     [Column("place")] public string? Place { get; set; }
-    [Column("number")] public int? Number { get; set; }
+    [Column("number")][Range(int.MinValue, int.MaxValue)] public int? Number { get; set; }
     [Column("date")][Required] public DateTime Date { get; set; }
-    [Column("total")] public decimal? Total { get; set; } = 0;
-    [Column("totalItems")] public int? TotalItems { get; set; } = 0;
+    [Column("total")][Range(double.MinValue, double.MaxValue)] public decimal? Total { get; set; } = 0;
+    [Column("totalItems")][Range(int.MinValue, int.MaxValue)] public int? TotalItems { get; set; } = 0;
     [Column("reference")] public string? Reference { get; set; }
     [Column("confirmed")][Required] public bool Confirmed { get; set; }
     [Column("reference_date")] public DateTime? ReferenceDate { get; set; }
@@ -22,7 +22,7 @@ public class Sale : Entity
     [ForeignKey("CustomerId")] public Customer? Customer { get; set; }
     [ForeignKey("AccountId")] public Account? Account { get; set; }
     [ForeignKey("CompanyId")] public Company? Company { get; set; }
-    [InverseProperty("Sale")] public ICollection<SaleItem>? Items { get; set; }
+    [InverseProperty("Sale")] public IEnumerable<SaleItem>? Items { get; set; }
 }
 
 public record SaleView : IRecord
@@ -44,7 +44,7 @@ public record SaleView : IRecord
     [ForeignKey("CustomerId")] public CustomerView? Customer { get; set; }
     [ForeignKey("AccountId")] public AccountView? Account { get; set; }
     [ForeignKey("CompanyId")] public CompanyView? Company { get; set; }
-    [InverseProperty("Sale")] public ICollection<SaleItem>? Items { get; set; }
+    [InverseProperty("Sale")] public QueryResult<SaleItemQuery, SaleItemView>? Items { get; set; }
 }
 
 public record SaleQuery : ClientQuery
@@ -69,7 +69,6 @@ public record SaleCreate : IRecord
     [Column("confirmed")][Required] public bool Confirmed { get; set; }
     [Column("reference_date")] public DateTime? ReferenceDate { get; set; }
     [Column("due_date")] public DateTime? DueDate { get; set; }
-    [InverseProperty("Sale")] public ICollection<SaleItem>? Items { get; set; }
 }
 
 public record SaleUpdate : IRecord
@@ -83,7 +82,6 @@ public record SaleUpdate : IRecord
     [Column("confirmed")][Required] public bool Confirmed { get; set; }
     [Column("reference_date")] public DateTime? ReferenceDate { get; set; }
     [Column("due_date")] public DateTime? DueDate { get; set; }
-    [InverseProperty("Sale")] public ICollection<SaleItem>? Items { get; set; }
 }
 
 public record SaleModify : IRecord
@@ -97,5 +95,4 @@ public record SaleModify : IRecord
     [Column("confirmed")] public bool? Confirmed { get; set; }
     [Column("reference_date")] public DateTime? ReferenceDate { get; set; }
     [Column("due_date")] public DateTime? DueDate { get; set; }
-    [InverseProperty("Sale")] public ICollection<SaleItem>? Items { get; set; }
 }

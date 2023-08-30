@@ -22,7 +22,7 @@ public record CompanyView : IRecord
     [Column("trn")] public string? Trn { get; set; }
     [Column("contact")] public string? Contact { get; set; }
     [Column("mobile")] public string? Mobile { get; set; }
-    [Column("email")][EmailAddress] public string? Email { get; set; }
+    [Column("email")] public string? Email { get; set; }
 }
 
 public record CompanyQuery : ClientQuery

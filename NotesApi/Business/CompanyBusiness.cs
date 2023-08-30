@@ -39,7 +39,14 @@ public class CompanyBusiness : Business<Company, CompanyView, CompanyUpdate, Com
     {
         var query = Db.Set<Company>()
             .Select(x => new CompanyView { 
-                Id = x.Id, Name = x.Name, Address = x.Address, Crn = x.Crn, Trn = x.Trn, Contact = x.Contact, Mobile = x.Mobile, Email = x.Email  
+                Id = x.Id,
+                  Name = x.Name,
+                  Address = x.Address,
+                  Crn = x.Crn,
+                  Trn = x.Trn,
+                  Contact = x.Contact,
+                  Mobile = x.Mobile,
+                  Email = x.Email  
             })
             .AsQueryable();
 
@@ -62,7 +69,14 @@ public class CompanyBusiness : Business<Company, CompanyView, CompanyUpdate, Com
         dbSet.Add(dbEntity);
         Db.SaveChanges();
         var added = dbSet.Select(x => new CompanyView { 
-                Id = x.Id, Name = x.Name, Address = x.Address, Crn = x.Crn, Trn = x.Trn, Contact = x.Contact, Mobile = x.Mobile, Email = x.Email
+                Id = x.Id,
+                  Name = x.Name,
+                  Address = x.Address,
+                  Crn = x.Crn,
+                  Trn = x.Trn,
+                  Contact = x.Contact,
+                  Mobile = x.Mobile,
+                  Email = x.Email
             })
             .FirstOrDefault(x => x.Id == dbEntity.Id);
         
@@ -182,7 +196,14 @@ public class CompanyBusiness : Business<Company, CompanyView, CompanyUpdate, Com
         }
         
         var data = (sortedQ ?? q)
-            .Select(x => new CompanyView { Id = x.Id, Name = x.Name, Address = x.Address, Crn = x.Crn, Trn = x.Trn, Contact = x.Contact, Mobile = x.Mobile, Email = x.Email })
+            .Select(x => new CompanyView { Id = x.Id,
+                  Name = x.Name,
+                  Address = x.Address,
+                  Crn = x.Crn,
+                  Trn = x.Trn,
+                  Contact = x.Contact,
+                  Mobile = x.Mobile,
+                  Email = x.Email })
             .ToList();
 
         var result = new QueryResult<ClientQuery, CompanyView>(clientQuery)

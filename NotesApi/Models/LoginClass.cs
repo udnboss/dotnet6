@@ -11,7 +11,7 @@ public class Login : Entity
 
 public record LoginView : IRecord
 {
-    [Column("email")][EmailAddress] public string? Email { get; set; }
+    [Column("email")] public string? Email { get; set; }
     [Column("password")] public string? Password { get; set; }
 }
 

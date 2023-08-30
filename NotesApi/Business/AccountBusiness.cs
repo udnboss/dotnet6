@@ -43,7 +43,14 @@ public class AccountBusiness : Business<Account, AccountView, AccountUpdate, Acc
     {
         var query = Db.Set<Account>()
             .Select(x => new AccountView { 
-                Id = x.Id, Label = x.Label, BankName = x.BankName, BankAddress = x.BankAddress, BankSwift = x.BankSwift, AccountName = x.AccountName, AccountIban = x.AccountIban, AccountAddress = x.AccountAddress  
+                Id = x.Id,
+                  Label = x.Label,
+                  BankName = x.BankName,
+                  BankAddress = x.BankAddress,
+                  BankSwift = x.BankSwift,
+                  AccountName = x.AccountName,
+                  AccountIban = x.AccountIban,
+                  AccountAddress = x.AccountAddress  
             })
             .AsQueryable();
 
@@ -66,7 +73,14 @@ public class AccountBusiness : Business<Account, AccountView, AccountUpdate, Acc
         dbSet.Add(dbEntity);
         Db.SaveChanges();
         var added = dbSet.Select(x => new AccountView { 
-                Id = x.Id, Label = x.Label, BankName = x.BankName, BankAddress = x.BankAddress, BankSwift = x.BankSwift, AccountName = x.AccountName, AccountIban = x.AccountIban, AccountAddress = x.AccountAddress
+                Id = x.Id,
+                  Label = x.Label,
+                  BankName = x.BankName,
+                  BankAddress = x.BankAddress,
+                  BankSwift = x.BankSwift,
+                  AccountName = x.AccountName,
+                  AccountIban = x.AccountIban,
+                  AccountAddress = x.AccountAddress
             })
             .FirstOrDefault(x => x.Id == dbEntity.Id);
         
@@ -194,7 +208,14 @@ public class AccountBusiness : Business<Account, AccountView, AccountUpdate, Acc
         }
         
         var data = (sortedQ ?? q)
-            .Select(x => new AccountView { Id = x.Id, Label = x.Label, BankName = x.BankName, BankAddress = x.BankAddress, BankSwift = x.BankSwift, AccountName = x.AccountName, AccountIban = x.AccountIban, AccountAddress = x.AccountAddress })
+            .Select(x => new AccountView { Id = x.Id,
+                  Label = x.Label,
+                  BankName = x.BankName,
+                  BankAddress = x.BankAddress,
+                  BankSwift = x.BankSwift,
+                  AccountName = x.AccountName,
+                  AccountIban = x.AccountIban,
+                  AccountAddress = x.AccountAddress })
             .ToList();
 
         var result = new QueryResult<ClientQuery, AccountView>(clientQuery)
