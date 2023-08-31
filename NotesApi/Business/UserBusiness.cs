@@ -29,11 +29,8 @@ public class UserBusiness : Business<User, UserView, UserUpdate, UserModify, Use
 
         foreach(var c in query.Where)
         {
-            
             if(c.Column == "Name") clientQuery.Name = c.Value as string;
-            
             if(c.Column == "Email") clientQuery.Email = c.Value as string;
-            
         }        
 
         return clientQuery;
@@ -176,7 +173,7 @@ public class UserBusiness : Business<User, UserView, UserUpdate, UserModify, Use
                     {
                         var v = c.Value.ToString();
                         if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.Name != null && x.Name.Contains(v));
+                            q = q.Where(x => x.Name != null && x.Name.ToLower().Contains(v.ToLower()));
                     }
 
 
@@ -184,7 +181,7 @@ public class UserBusiness : Business<User, UserView, UserUpdate, UserModify, Use
                     {
                         var v = c.Value.ToString();
                         if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.Email != null && x.Email.Contains(v));
+                            q = q.Where(x => x.Email != null && x.Email.ToLower().Contains(v.ToLower()));
                     }                   
             }
         }

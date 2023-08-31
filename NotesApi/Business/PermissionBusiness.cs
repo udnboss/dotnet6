@@ -33,15 +33,10 @@ public class PermissionBusiness : Business<Permission, PermissionView, Permissio
 
         foreach(var c in query.Where)
         {
-            
             if(c.Column == "Name") clientQuery.Name = c.Value as string;
-            
             if(c.Column == "Code") clientQuery.Code = c.Value as string;
-            
             if(c.Column == "Entity") clientQuery.Entity = c.Value as string;
-            
             if(c.Column == "Action") clientQuery.Action = c.Value as string;
-            
         }        
 
         return clientQuery;
@@ -186,7 +181,7 @@ public class PermissionBusiness : Business<Permission, PermissionView, Permissio
                     {
                         var v = c.Value.ToString();
                         if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.Name != null && x.Name.Contains(v));
+                            q = q.Where(x => x.Name != null && x.Name.ToLower().Contains(v.ToLower()));
                     }
 
 
@@ -194,7 +189,7 @@ public class PermissionBusiness : Business<Permission, PermissionView, Permissio
                     {
                         var v = c.Value.ToString();
                         if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.Code != null && x.Code.Contains(v));
+                            q = q.Where(x => x.Code != null && x.Code.ToLower().Contains(v.ToLower()));
                     }
 
 
@@ -202,7 +197,7 @@ public class PermissionBusiness : Business<Permission, PermissionView, Permissio
                     {
                         var v = c.Value.ToString();
                         if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.Entity != null && x.Entity.Contains(v));
+                            q = q.Where(x => x.Entity != null && x.Entity.ToLower().Contains(v.ToLower()));
                     }
 
 
@@ -210,7 +205,7 @@ public class PermissionBusiness : Business<Permission, PermissionView, Permissio
                     {
                         var v = c.Value.ToString();
                         if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.Action != null && x.Action.Contains(v));
+                            q = q.Where(x => x.Action != null && x.Action.ToLower().Contains(v.ToLower()));
                     }                   
             }
         }

@@ -29,11 +29,8 @@ public class AccountBusiness : Business<Account, AccountView, AccountUpdate, Acc
 
         foreach(var c in query.Where)
         {
-            
             if(c.Column == "Label") clientQuery.Label = c.Value as string;
-            
             if(c.Column == "BankName") clientQuery.BankName = c.Value as string;
-            
         }        
 
         return clientQuery;
@@ -178,7 +175,7 @@ public class AccountBusiness : Business<Account, AccountView, AccountUpdate, Acc
                     {
                         var v = c.Value.ToString();
                         if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.Label != null && x.Label.Contains(v));
+                            q = q.Where(x => x.Label != null && x.Label.ToLower().Contains(v.ToLower()));
                     }
 
 
@@ -186,7 +183,7 @@ public class AccountBusiness : Business<Account, AccountView, AccountUpdate, Acc
                     {
                         var v = c.Value.ToString();
                         if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.BankName != null && x.BankName.Contains(v));
+                            q = q.Where(x => x.BankName != null && x.BankName.ToLower().Contains(v.ToLower()));
                     }                   
             }
         }

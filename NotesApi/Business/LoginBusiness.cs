@@ -27,9 +27,7 @@ public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify
 
         foreach(var c in query.Where)
         {
-            
             if(c.Column == "Email") clientQuery.Email = c.Value as string;
-            
         }        
 
         return clientQuery;
@@ -164,7 +162,7 @@ public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify
                     {
                         var v = c.Value.ToString();
                         if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.Email != null && x.Email.Contains(v));
+                            q = q.Where(x => x.Email != null && x.Email.ToLower().Contains(v.ToLower()));
                     }                   
             }
         }

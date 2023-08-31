@@ -27,9 +27,7 @@ public class CategoryBusiness : Business<Category, CategoryView, CategoryUpdate,
 
         foreach(var c in query.Where)
         {
-            
             if(c.Column == "Name") clientQuery.Name = c.Value as string;
-            
         }        
 
         return clientQuery;
@@ -168,7 +166,7 @@ public class CategoryBusiness : Business<Category, CategoryView, CategoryUpdate,
                     {
                         var v = c.Value.ToString();
                         if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.Name != null && x.Name.Contains(v));
+                            q = q.Where(x => x.Name != null && x.Name.ToLower().Contains(v.ToLower()));
                     }                   
             }
         }

@@ -29,11 +29,8 @@ public class ItemBusiness : Business<Item, ItemView, ItemUpdate, ItemModify, Ite
 
         foreach(var c in query.Where)
         {
-            
             if(c.Column == "Name") clientQuery.Name = c.Value as string;
-            
-            if(c.Column == "CategoryId") clientQuery.CategoryId = c.Value as Guid?;
-            
+            if(c.Column == "CategoryId" && c.Values is not null) clientQuery.CategoryId = c.Values.Cast<Guid?>();
         }        
 
         return clientQuery;
@@ -172,7 +169,14 @@ public class ItemBusiness : Business<Item, ItemView, ItemUpdate, ItemModify, Ite
                     {
                         var v = c.Value.ToString();
                         if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.Name != null && x.Name.Contains(v));
+                            q = q.Where(x => x.Name != null && x.Name.ToLower().Contains(v.ToLower()));
+                    }
+
+
+                    if (c.Column == "CategoryId" && c.Operator == Operators.IsIn && c.Values != null) 
+                    {
+                        var v = c.Values.Cast<Guid?>().ToList();
+                        q = q.Where(x => x.CategoryId != null && v.Contains(x.CategoryId));
                     }                   
             }
         }

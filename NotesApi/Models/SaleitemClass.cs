@@ -1,62 +1,64 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+
 #pragma warning disable CS8618
 
 [Table("saleItem")]
 public class SaleItem : Entity
 {
-    [Column("sale_id")][Required] public Guid SaleId { get; set; }
-    [Column("item_id")][Required] public Guid ItemId { get; set; }
-    [Column("description")] public string? Description { get; set; }
-    [Column("quantity")][Required][Range(1, int.MaxValue)] public int Quantity { get; set; }
-    [Column("price")][Required][Range(0, double.MaxValue)] public decimal Price { get; set; }
-    [Column("total")][Range(double.MinValue, double.MaxValue)] public decimal? Total { get; set; }
-    [ForeignKey("SaleId")] public Sale? Sale { get; set; }
-    [ForeignKey("ItemId")] public Item? Item { get; set; }
+    [JsonPropertyName("sale_id")][Column("sale_id")][Required] public Guid SaleId { get; set; }
+    [JsonPropertyName("item_id")][Column("item_id")][Required] public Guid ItemId { get; set; }
+    [JsonPropertyName("description")][Column("description")] public string? Description { get; set; }
+    [JsonPropertyName("quantity")][Column("quantity")][Required][Range(1, int.MaxValue)] public int Quantity { get; set; }
+    [JsonPropertyName("price")][Column("price")][Required][Range(0, double.MaxValue)] public decimal Price { get; set; }
+    [JsonPropertyName("total")][Column("total")][Range(double.MinValue, double.MaxValue)] public decimal? Total { get; set; }
+    [JsonPropertyName("sale")][ForeignKey("SaleId")] public Sale? Sale { get; set; }
+    [JsonPropertyName("item")][ForeignKey("ItemId")] public Item? Item { get; set; }
 }
 
 public record SaleItemView : IRecord
 {
-    [Column("sale_id")] public Guid? SaleId { get; set; }
-    [Column("item_id")] public Guid? ItemId { get; set; }
-    [Column("description")] public string? Description { get; set; }
-    [Column("quantity")] public int? Quantity { get; set; }
-    [Column("price")] public decimal? Price { get; set; }
-    [Column("total")] public decimal? Total { get; set; }
-    [ForeignKey("SaleId")] public SaleView? Sale { get; set; }
-    [ForeignKey("ItemId")] public ItemView? Item { get; set; }
+    [JsonPropertyName("sale_id")][Column("sale_id")] public Guid? SaleId { get; set; }
+    [JsonPropertyName("item_id")][Column("item_id")] public Guid? ItemId { get; set; }
+    [JsonPropertyName("description")][Column("description")] public string? Description { get; set; }
+    [JsonPropertyName("quantity")][Column("quantity")] public int? Quantity { get; set; }
+    [JsonPropertyName("price")][Column("price")] public decimal? Price { get; set; }
+    [JsonPropertyName("total")][Column("total")] public decimal? Total { get; set; }
+    [JsonPropertyName("sale")][ForeignKey("SaleId")] public SaleView? Sale { get; set; }
+    [JsonPropertyName("item")][ForeignKey("ItemId")] public ItemView? Item { get; set; }
 }
 
 public record SaleItemQuery : ClientQuery
 {
-     public Guid? SaleId { get; set; } = null;
-     public Guid? ItemId { get; set; } = null;
+     public IEnumerable<Guid?> SaleId { get; set; }
+     public IEnumerable<Guid?> ItemId { get; set; }
     public SaleItemQuery() { }
 }
 
 public record SaleItemCreate : IRecord
 {
-    [Column("sale_id")][Required] public Guid SaleId { get; set; }
-    [Column("item_id")][Required] public Guid ItemId { get; set; }
-    [Column("description")] public string? Description { get; set; }
-    [Column("quantity")][Required][Range(1, int.MaxValue)] public int Quantity { get; set; }
-    [Column("price")][Required][Range(0, double.MaxValue)] public decimal Price { get; set; }
+    [JsonPropertyName("sale_id")][Column("sale_id")][Required] public Guid SaleId { get; set; }
+    [JsonPropertyName("item_id")][Column("item_id")][Required] public Guid ItemId { get; set; }
+    [JsonPropertyName("description")][Column("description")] public string? Description { get; set; }
+    [JsonPropertyName("quantity")][Column("quantity")][Required][Range(1, int.MaxValue)] public int Quantity { get; set; }
+    [JsonPropertyName("price")][Column("price")][Required][Range(0, double.MaxValue)] public decimal Price { get; set; }
 }
 
 public record SaleItemUpdate : IRecord
 {
-    [Column("sale_id")][Required] public Guid SaleId { get; set; }
-    [Column("item_id")][Required] public Guid ItemId { get; set; }
-    [Column("description")] public string? Description { get; set; }
-    [Column("quantity")][Required][Range(1, int.MaxValue)] public int Quantity { get; set; }
-    [Column("price")][Required][Range(0, double.MaxValue)] public decimal Price { get; set; }
+    [JsonPropertyName("sale_id")][Column("sale_id")][Required] public Guid SaleId { get; set; }
+    [JsonPropertyName("item_id")][Column("item_id")][Required] public Guid ItemId { get; set; }
+    [JsonPropertyName("description")][Column("description")] public string? Description { get; set; }
+    [JsonPropertyName("quantity")][Column("quantity")][Required][Range(1, int.MaxValue)] public int Quantity { get; set; }
+    [JsonPropertyName("price")][Column("price")][Required][Range(0, double.MaxValue)] public decimal Price { get; set; }
 }
 
 public record SaleItemModify : IRecord
 {
-    [Column("sale_id")] public Guid? SaleId { get; set; }
-    [Column("item_id")] public Guid? ItemId { get; set; }
-    [Column("description")] public string? Description { get; set; }
-    [Column("quantity")][Range(1, int.MaxValue)] public int? Quantity { get; set; }
-    [Column("price")][Range(0, double.MaxValue)] public decimal? Price { get; set; }
+    [JsonPropertyName("sale_id")][Column("sale_id")] public Guid? SaleId { get; set; }
+    [JsonPropertyName("item_id")][Column("item_id")] public Guid? ItemId { get; set; }
+    [JsonPropertyName("description")][Column("description")] public string? Description { get; set; }
+    [JsonPropertyName("quantity")][Column("quantity")][Range(1, int.MaxValue)] public int? Quantity { get; set; }
+    [JsonPropertyName("price")][Column("price")][Range(0, double.MaxValue)] public decimal? Price { get; set; }
 }

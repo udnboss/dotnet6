@@ -1,28 +1,30 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+
 #pragma warning disable CS8618
 
 [Table("customer")]
 public class Customer : Entity
 {
-    [Column("name")][Required] public string Name { get; set; }
-    [Column("address")] public string? Address { get; set; }
-    [Column("contact")] public string? Contact { get; set; }
-    [Column("currency_id")] public Guid? CurrencyId { get; set; }
-    [ForeignKey("CurrencyId")] public Currency? Currency { get; set; }
-    [Column("payment_term")][Range(int.MinValue, int.MaxValue)] public int? PaymentTerm { get; set; }
-    [InverseProperty("Customer")] public IEnumerable<Sale>? Sales { get; set; }
+    [JsonPropertyName("name")][Column("name")][Required] public string Name { get; set; }
+    [JsonPropertyName("address")][Column("address")] public string? Address { get; set; }
+    [JsonPropertyName("contact")][Column("contact")] public string? Contact { get; set; }
+    [JsonPropertyName("currency_id")][Column("currency_id")] public Guid? CurrencyId { get; set; }
+    [JsonPropertyName("currency")][ForeignKey("CurrencyId")] public Currency? Currency { get; set; }
+    [JsonPropertyName("payment_term")][Column("payment_term")][Range(int.MinValue, int.MaxValue)] public int? PaymentTerm { get; set; }
+    [JsonPropertyName("sales")][InverseProperty("Customer")] public IEnumerable<Sale>? Sales { get; set; }
 }
 
 public record CustomerView : IRecord
 {
-    [Column("name")] public string? Name { get; set; }
-    [Column("address")] public string? Address { get; set; }
-    [Column("contact")] public string? Contact { get; set; }
-    [Column("currency_id")] public Guid? CurrencyId { get; set; }
-    [ForeignKey("CurrencyId")] public CurrencyView? Currency { get; set; }
-    [Column("payment_term")] public int? PaymentTerm { get; set; }
-    [InverseProperty("Customer")] public QueryResult<SaleQuery, SaleView>? Sales { get; set; }
+    [JsonPropertyName("name")][Column("name")] public string? Name { get; set; }
+    [JsonPropertyName("address")][Column("address")] public string? Address { get; set; }
+    [JsonPropertyName("contact")][Column("contact")] public string? Contact { get; set; }
+    [JsonPropertyName("currency_id")][Column("currency_id")] public Guid? CurrencyId { get; set; }
+    [JsonPropertyName("currency")][ForeignKey("CurrencyId")] public CurrencyView? Currency { get; set; }
+    [JsonPropertyName("payment_term")][Column("payment_term")] public int? PaymentTerm { get; set; }
+    [JsonPropertyName("sales")][InverseProperty("Customer")] public QueryResult<SaleQuery, SaleView>? Sales { get; set; }
 }
 
 public record CustomerQuery : ClientQuery
@@ -33,27 +35,27 @@ public record CustomerQuery : ClientQuery
 
 public record CustomerCreate : IRecord
 {
-    [Column("name")][Required] public string Name { get; set; }
-    [Column("address")] public string? Address { get; set; }
-    [Column("contact")] public string? Contact { get; set; }
-    [Column("currency_id")] public Guid? CurrencyId { get; set; }
-    [Column("payment_term")][Range(int.MinValue, int.MaxValue)] public int? PaymentTerm { get; set; }
+    [JsonPropertyName("name")][Column("name")][Required] public string Name { get; set; }
+    [JsonPropertyName("address")][Column("address")] public string? Address { get; set; }
+    [JsonPropertyName("contact")][Column("contact")] public string? Contact { get; set; }
+    [JsonPropertyName("currency_id")][Column("currency_id")] public Guid? CurrencyId { get; set; }
+    [JsonPropertyName("payment_term")][Column("payment_term")][Range(int.MinValue, int.MaxValue)] public int? PaymentTerm { get; set; }
 }
 
 public record CustomerUpdate : IRecord
 {
-    [Column("name")][Required] public string Name { get; set; }
-    [Column("address")] public string? Address { get; set; }
-    [Column("contact")] public string? Contact { get; set; }
-    [Column("currency_id")] public Guid? CurrencyId { get; set; }
-    [Column("payment_term")][Range(int.MinValue, int.MaxValue)] public int? PaymentTerm { get; set; }
+    [JsonPropertyName("name")][Column("name")][Required] public string Name { get; set; }
+    [JsonPropertyName("address")][Column("address")] public string? Address { get; set; }
+    [JsonPropertyName("contact")][Column("contact")] public string? Contact { get; set; }
+    [JsonPropertyName("currency_id")][Column("currency_id")] public Guid? CurrencyId { get; set; }
+    [JsonPropertyName("payment_term")][Column("payment_term")][Range(int.MinValue, int.MaxValue)] public int? PaymentTerm { get; set; }
 }
 
 public record CustomerModify : IRecord
 {
-    [Column("name")] public string? Name { get; set; }
-    [Column("address")] public string? Address { get; set; }
-    [Column("contact")] public string? Contact { get; set; }
-    [Column("currency_id")] public Guid? CurrencyId { get; set; }
-    [Column("payment_term")][Range(int.MinValue, int.MaxValue)] public int? PaymentTerm { get; set; }
+    [JsonPropertyName("name")][Column("name")] public string? Name { get; set; }
+    [JsonPropertyName("address")][Column("address")] public string? Address { get; set; }
+    [JsonPropertyName("contact")][Column("contact")] public string? Contact { get; set; }
+    [JsonPropertyName("currency_id")][Column("currency_id")] public Guid? CurrencyId { get; set; }
+    [JsonPropertyName("payment_term")][Column("payment_term")][Range(int.MinValue, int.MaxValue)] public int? PaymentTerm { get; set; }
 }

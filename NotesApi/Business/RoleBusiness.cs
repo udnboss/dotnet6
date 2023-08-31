@@ -29,11 +29,8 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
 
         foreach(var c in query.Where)
         {
-            
             if(c.Column == "Name") clientQuery.Name = c.Value as string;
-            
             if(c.Column == "Code") clientQuery.Code = c.Value as string;
-            
         }        
 
         return clientQuery;
@@ -174,7 +171,7 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
                     {
                         var v = c.Value.ToString();
                         if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.Name != null && x.Name.Contains(v));
+                            q = q.Where(x => x.Name != null && x.Name.ToLower().Contains(v.ToLower()));
                     }
 
 
@@ -182,7 +179,7 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
                     {
                         var v = c.Value.ToString();
                         if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.Code != null && x.Code.Contains(v));
+                            q = q.Where(x => x.Code != null && x.Code.ToLower().Contains(v.ToLower()));
                     }                   
             }
         }

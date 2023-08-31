@@ -29,11 +29,8 @@ public class SaleItemBusiness : Business<SaleItem, SaleItemView, SaleItemUpdate,
 
         foreach(var c in query.Where)
         {
-            
-            if(c.Column == "SaleId") clientQuery.SaleId = c.Value as Guid?;
-            
-            if(c.Column == "ItemId") clientQuery.ItemId = c.Value as Guid?;
-            
+            if(c.Column == "SaleId" && c.Values is not null) clientQuery.SaleId = c.Values.Cast<Guid?>();
+            if(c.Column == "ItemId" && c.Values is not null) clientQuery.ItemId = c.Values.Cast<Guid?>();
         }        
 
         return clientQuery;
@@ -205,7 +202,19 @@ public class SaleItemBusiness : Business<SaleItem, SaleItemView, SaleItemUpdate,
         {
             foreach (var c in query.Where)
             {   
-                                   
+                
+                    if (c.Column == "SaleId" && c.Operator == Operators.IsIn && c.Values != null) 
+                    {
+                        var v = c.Values.Cast<Guid?>().ToList();
+                        q = q.Where(x => x.SaleId != null && v.Contains(x.SaleId));
+                    }
+
+
+                    if (c.Column == "ItemId" && c.Operator == Operators.IsIn && c.Values != null) 
+                    {
+                        var v = c.Values.Cast<Guid?>().ToList();
+                        q = q.Where(x => x.ItemId != null && v.Contains(x.ItemId));
+                    }                   
             }
         }
 
