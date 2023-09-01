@@ -88,7 +88,7 @@ public class SaleBusiness : Business<Sale, SaleView, SaleUpdate, SaleModify, Sal
                       Contact = x.Company!.Contact,
                       Mobile = x.Company!.Mobile,
                       Email = x.Company!.Email },
-                  Items = new QueryResult<SaleItemQuery, SaleItemView>(new SaleItemQuery() { _Size = 10, _Page = 1, SaleId = x.Id }) { Result = x.Items!.Select(y1 => new SaleItemView { Id = y1.Id,
+                  Items = new QueryResult<SaleItemQuery, SaleItemView>(new SaleItemQuery() { _Size = 10, _Page = 1, SaleId = new List<Guid?>() { x.Id } }) { Result = x.Items!.Select(y1 => new SaleItemView { Id = y1.Id,
                       SaleId = y1.SaleId,
                       ItemId = y1.ItemId,
                       Description = y1.Description,
@@ -156,7 +156,7 @@ public class SaleBusiness : Business<Sale, SaleView, SaleUpdate, SaleModify, Sal
                       Contact = x.Company!.Contact,
                       Mobile = x.Company!.Mobile,
                       Email = x.Company!.Email },
-                  Items = new QueryResult<SaleItemQuery, SaleItemView>(new SaleItemQuery() { _Size = 10, _Page = 1, SaleId = x.Id }) { Result = x.Items!.Select(y1 => new SaleItemView { Id = y1.Id,
+                  Items = new QueryResult<SaleItemQuery, SaleItemView>(new SaleItemQuery() { _Size = 10, _Page = 1, SaleId = new List<Guid?>() { x.Id } }) { Result = x.Items!.Select(y1 => new SaleItemView { Id = y1.Id,
                       SaleId = y1.SaleId,
                       ItemId = y1.ItemId,
                       Description = y1.Description,
@@ -182,18 +182,15 @@ public class SaleBusiness : Business<Sale, SaleView, SaleUpdate, SaleModify, Sal
             throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
         }
 
-        var inputProps = typeof(SaleUpdate).GetProperties();
-        var outputProps = typeof(Sale).GetProperties();
-
-        foreach (var prop in inputProps)
-        {
-            if (prop.Name == "Id") continue;
-            var match = outputProps.FirstOrDefault(p => p.Name == prop.Name);
-            if (match is not null)
-            {
-                match.SetValue(existing, prop.GetValue(entity));
-            }
-        }
+        existing.CompanyId = entity.CompanyId;
+        existing.AccountId = entity.AccountId;
+        existing.CustomerId = entity.CustomerId;
+        existing.CurrencyId = entity.CurrencyId;
+        existing.Place = entity.Place;
+        existing.Reference = entity.Reference;
+        existing.Confirmed = entity.Confirmed;
+        existing.ReferenceDate = entity.ReferenceDate;
+        existing.DueDate = entity.DueDate;
 
         Db.SaveChanges();
         var updated = GetById(id);
@@ -208,18 +205,20 @@ public class SaleBusiness : Business<Sale, SaleView, SaleUpdate, SaleModify, Sal
         {
             throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
         }
-      
-        var validProps = typeof(SaleModify).GetProperties();
-        var outputProps = typeof(Sale).GetProperties();
 
         foreach (JsonProperty prop in entity.EnumerateObject())
         {
-            if (prop.Name.ToLower() == "id") continue;
-            var match = outputProps.FirstOrDefault(p => p.Name.ToLower() == prop.Name.ToLower());
-            if (match is not null)
-            {
-                match.SetValue(existing, prop.Value.GetString());//TODO: proper mapping of type
-            }
+            var propName = prop.Name.ToLower();
+            if (propName == "id") continue;
+            else if (propName == "company_id") existing.CompanyId = prop.Value.GetGuid()!;
+            else if (propName == "account_id") existing.AccountId = prop.Value.GetGuid()!;
+            else if (propName == "customer_id") existing.CustomerId = prop.Value.GetGuid()!;
+            else if (propName == "currency_id") existing.CurrencyId = prop.Value.GetGuid()!;
+            else if (propName == "place") existing.Place = prop.Value.GetString()!;
+            else if (propName == "reference") existing.Reference = prop.Value.GetString()!;
+            else if (propName == "confirmed") existing.Confirmed = prop.Value.GetBoolean()!;
+            else if (propName == "reference_date") existing.ReferenceDate = prop.Value.GetDateTime()!;
+            else if (propName == "due_date") existing.DueDate = prop.Value.GetDateTime()!;
         }
 
         Db.SaveChanges();
@@ -369,7 +368,7 @@ public class SaleBusiness : Business<Sale, SaleView, SaleUpdate, SaleModify, Sal
                       Contact = x.Company!.Contact,
                       Mobile = x.Company!.Mobile,
                       Email = x.Company!.Email },
-                  Items = new QueryResult<SaleItemQuery, SaleItemView>(new SaleItemQuery() { _Size = 10, _Page = 1, SaleId = x.Id }) { Result = x.Items!.Select(y1 => new SaleItemView { Id = y1.Id,
+                  Items = new QueryResult<SaleItemQuery, SaleItemView>(new SaleItemQuery() { _Size = 10, _Page = 1, SaleId = new List<Guid?>() { x.Id } }) { Result = x.Items!.Select(y1 => new SaleItemView { Id = y1.Id,
                       SaleId = y1.SaleId,
                       ItemId = y1.ItemId,
                       Description = y1.Description,

@@ -91,18 +91,8 @@ public class ItemBusiness : Business<Item, ItemView, ItemUpdate, ItemModify, Ite
             throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
         }
 
-        var inputProps = typeof(ItemUpdate).GetProperties();
-        var outputProps = typeof(Item).GetProperties();
-
-        foreach (var prop in inputProps)
-        {
-            if (prop.Name == "Id") continue;
-            var match = outputProps.FirstOrDefault(p => p.Name == prop.Name);
-            if (match is not null)
-            {
-                match.SetValue(existing, prop.GetValue(entity));
-            }
-        }
+        existing.Name = entity.Name;
+        existing.CategoryId = entity.CategoryId;
 
         Db.SaveChanges();
         var updated = GetById(id);
@@ -117,18 +107,13 @@ public class ItemBusiness : Business<Item, ItemView, ItemUpdate, ItemModify, Ite
         {
             throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
         }
-      
-        var validProps = typeof(ItemModify).GetProperties();
-        var outputProps = typeof(Item).GetProperties();
 
         foreach (JsonProperty prop in entity.EnumerateObject())
         {
-            if (prop.Name.ToLower() == "id") continue;
-            var match = outputProps.FirstOrDefault(p => p.Name.ToLower() == prop.Name.ToLower());
-            if (match is not null)
-            {
-                match.SetValue(existing, prop.Value.GetString());//TODO: proper mapping of type
-            }
+            var propName = prop.Name.ToLower();
+            if (propName == "id") continue;
+            else if (propName == "name") existing.Name = prop.Value.GetString()!;
+            else if (propName == "category_id") existing.CategoryId = prop.Value.GetGuid()!;
         }
 
         Db.SaveChanges();

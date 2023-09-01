@@ -129,18 +129,11 @@ public class SaleItemBusiness : Business<SaleItem, SaleItemView, SaleItemUpdate,
             throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
         }
 
-        var inputProps = typeof(SaleItemUpdate).GetProperties();
-        var outputProps = typeof(SaleItem).GetProperties();
-
-        foreach (var prop in inputProps)
-        {
-            if (prop.Name == "Id") continue;
-            var match = outputProps.FirstOrDefault(p => p.Name == prop.Name);
-            if (match is not null)
-            {
-                match.SetValue(existing, prop.GetValue(entity));
-            }
-        }
+        existing.SaleId = entity.SaleId;
+        existing.ItemId = entity.ItemId;
+        existing.Description = entity.Description;
+        existing.Quantity = entity.Quantity;
+        existing.Price = entity.Price;
 
         Db.SaveChanges();
         var updated = GetById(id);
@@ -155,18 +148,16 @@ public class SaleItemBusiness : Business<SaleItem, SaleItemView, SaleItemUpdate,
         {
             throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
         }
-      
-        var validProps = typeof(SaleItemModify).GetProperties();
-        var outputProps = typeof(SaleItem).GetProperties();
 
         foreach (JsonProperty prop in entity.EnumerateObject())
         {
-            if (prop.Name.ToLower() == "id") continue;
-            var match = outputProps.FirstOrDefault(p => p.Name.ToLower() == prop.Name.ToLower());
-            if (match is not null)
-            {
-                match.SetValue(existing, prop.Value.GetString());//TODO: proper mapping of type
-            }
+            var propName = prop.Name.ToLower();
+            if (propName == "id") continue;
+            else if (propName == "sale_id") existing.SaleId = prop.Value.GetGuid()!;
+            else if (propName == "item_id") existing.ItemId = prop.Value.GetGuid()!;
+            else if (propName == "description") existing.Description = prop.Value.GetString()!;
+            else if (propName == "quantity") existing.Quantity = prop.Value.GetInt32()!;
+            else if (propName == "price") existing.Price = prop.Value.GetDecimal()!;
         }
 
         Db.SaveChanges();

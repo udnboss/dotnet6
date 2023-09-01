@@ -82,18 +82,8 @@ public class CurrencyBusiness : Business<Currency, CurrencyView, CurrencyUpdate,
             throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
         }
 
-        var inputProps = typeof(CurrencyUpdate).GetProperties();
-        var outputProps = typeof(Currency).GetProperties();
-
-        foreach (var prop in inputProps)
-        {
-            if (prop.Name == "Id") continue;
-            var match = outputProps.FirstOrDefault(p => p.Name == prop.Name);
-            if (match is not null)
-            {
-                match.SetValue(existing, prop.GetValue(entity));
-            }
-        }
+        existing.Name = entity.Name;
+        existing.Symbol = entity.Symbol;
 
         Db.SaveChanges();
         var updated = GetById(id);
@@ -108,18 +98,13 @@ public class CurrencyBusiness : Business<Currency, CurrencyView, CurrencyUpdate,
         {
             throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
         }
-      
-        var validProps = typeof(CurrencyModify).GetProperties();
-        var outputProps = typeof(Currency).GetProperties();
 
         foreach (JsonProperty prop in entity.EnumerateObject())
         {
-            if (prop.Name.ToLower() == "id") continue;
-            var match = outputProps.FirstOrDefault(p => p.Name.ToLower() == prop.Name.ToLower());
-            if (match is not null)
-            {
-                match.SetValue(existing, prop.Value.GetString());//TODO: proper mapping of type
-            }
+            var propName = prop.Name.ToLower();
+            if (propName == "id") continue;
+            else if (propName == "name") existing.Name = prop.Value.GetString()!;
+            else if (propName == "symbol") existing.Symbol = prop.Value.GetString()!;
         }
 
         Db.SaveChanges();

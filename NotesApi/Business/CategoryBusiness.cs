@@ -39,7 +39,7 @@ public class CategoryBusiness : Business<Category, CategoryView, CategoryUpdate,
             .Select(x => new CategoryView { 
                 Id = x.Id,
                   Name = x.Name,
-                  Items = new QueryResult<ItemQuery, ItemView>(new ItemQuery() { _Size = 10, _Page = 1, CategoryId = x.Id }) { Result = x.Items!.Select(y1 => new ItemView { Id = y1.Id,
+                  Items = new QueryResult<ItemQuery, ItemView>(new ItemQuery() { _Size = 10, _Page = 1, CategoryId = new List<Guid?>() { x.Id } }) { Result = x.Items!.Select(y1 => new ItemView { Id = y1.Id,
                       Name = y1.Name,
                       CategoryId = y1.CategoryId }).Take(10) }  
             })
@@ -66,7 +66,7 @@ public class CategoryBusiness : Business<Category, CategoryView, CategoryUpdate,
         var added = dbSet.Select(x => new CategoryView { 
                 Id = x.Id,
                   Name = x.Name,
-                  Items = new QueryResult<ItemQuery, ItemView>(new ItemQuery() { _Size = 10, _Page = 1, CategoryId = x.Id }) { Result = x.Items!.Select(y1 => new ItemView { Id = y1.Id,
+                  Items = new QueryResult<ItemQuery, ItemView>(new ItemQuery() { _Size = 10, _Page = 1, CategoryId = new List<Guid?>() { x.Id } }) { Result = x.Items!.Select(y1 => new ItemView { Id = y1.Id,
                       Name = y1.Name,
                       CategoryId = y1.CategoryId }).Take(10) }
             })
@@ -88,18 +88,7 @@ public class CategoryBusiness : Business<Category, CategoryView, CategoryUpdate,
             throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
         }
 
-        var inputProps = typeof(CategoryUpdate).GetProperties();
-        var outputProps = typeof(Category).GetProperties();
-
-        foreach (var prop in inputProps)
-        {
-            if (prop.Name == "Id") continue;
-            var match = outputProps.FirstOrDefault(p => p.Name == prop.Name);
-            if (match is not null)
-            {
-                match.SetValue(existing, prop.GetValue(entity));
-            }
-        }
+        existing.Name = entity.Name;
 
         Db.SaveChanges();
         var updated = GetById(id);
@@ -114,18 +103,12 @@ public class CategoryBusiness : Business<Category, CategoryView, CategoryUpdate,
         {
             throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
         }
-      
-        var validProps = typeof(CategoryModify).GetProperties();
-        var outputProps = typeof(Category).GetProperties();
 
         foreach (JsonProperty prop in entity.EnumerateObject())
         {
-            if (prop.Name.ToLower() == "id") continue;
-            var match = outputProps.FirstOrDefault(p => p.Name.ToLower() == prop.Name.ToLower());
-            if (match is not null)
-            {
-                match.SetValue(existing, prop.Value.GetString());//TODO: proper mapping of type
-            }
+            var propName = prop.Name.ToLower();
+            if (propName == "id") continue;
+            else if (propName == "name") existing.Name = prop.Value.GetString()!;
         }
 
         Db.SaveChanges();
@@ -190,7 +173,7 @@ public class CategoryBusiness : Business<Category, CategoryView, CategoryUpdate,
         var data = (sortedQ ?? q)
             .Select(x => new CategoryView { Id = x.Id,
                   Name = x.Name,
-                  Items = new QueryResult<ItemQuery, ItemView>(new ItemQuery() { _Size = 10, _Page = 1, CategoryId = x.Id }) { Result = x.Items!.Select(y1 => new ItemView { Id = y1.Id,
+                  Items = new QueryResult<ItemQuery, ItemView>(new ItemQuery() { _Size = 10, _Page = 1, CategoryId = new List<Guid?>() { x.Id } }) { Result = x.Items!.Select(y1 => new ItemView { Id = y1.Id,
                       Name = y1.Name,
                       CategoryId = y1.CategoryId }).Take(10) } })
             .ToList();

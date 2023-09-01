@@ -43,7 +43,7 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
                 Id = x.Id,
                   Code = x.Code,
                   Name = x.Name,
-                  RolePermissions = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, RoleId = x.Id }) { Result = x.RolePermissions!.Select(y1 => new RolePermissionView { Id = y1.Id,
+                  RolePermissions = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, RoleId = new List<Guid?>() { x.Id } }) { Result = x.RolePermissions!.Select(y1 => new RolePermissionView { Id = y1.Id,
                       RoleId = y1.RoleId,
                       PermissionId = y1.PermissionId }).Take(10) }  
             })
@@ -71,7 +71,7 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
                 Id = x.Id,
                   Code = x.Code,
                   Name = x.Name,
-                  RolePermissions = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, RoleId = x.Id }) { Result = x.RolePermissions!.Select(y1 => new RolePermissionView { Id = y1.Id,
+                  RolePermissions = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, RoleId = new List<Guid?>() { x.Id } }) { Result = x.RolePermissions!.Select(y1 => new RolePermissionView { Id = y1.Id,
                       RoleId = y1.RoleId,
                       PermissionId = y1.PermissionId }).Take(10) }
             })
@@ -93,18 +93,8 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
             throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
         }
 
-        var inputProps = typeof(RoleUpdate).GetProperties();
-        var outputProps = typeof(Role).GetProperties();
-
-        foreach (var prop in inputProps)
-        {
-            if (prop.Name == "Id") continue;
-            var match = outputProps.FirstOrDefault(p => p.Name == prop.Name);
-            if (match is not null)
-            {
-                match.SetValue(existing, prop.GetValue(entity));
-            }
-        }
+        existing.Code = entity.Code;
+        existing.Name = entity.Name;
 
         Db.SaveChanges();
         var updated = GetById(id);
@@ -119,18 +109,13 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
         {
             throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
         }
-      
-        var validProps = typeof(RoleModify).GetProperties();
-        var outputProps = typeof(Role).GetProperties();
 
         foreach (JsonProperty prop in entity.EnumerateObject())
         {
-            if (prop.Name.ToLower() == "id") continue;
-            var match = outputProps.FirstOrDefault(p => p.Name.ToLower() == prop.Name.ToLower());
-            if (match is not null)
-            {
-                match.SetValue(existing, prop.Value.GetString());//TODO: proper mapping of type
-            }
+            var propName = prop.Name.ToLower();
+            if (propName == "id") continue;
+            else if (propName == "code") existing.Code = prop.Value.GetString()!;
+            else if (propName == "name") existing.Name = prop.Value.GetString()!;
         }
 
         Db.SaveChanges();
@@ -204,7 +189,7 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
             .Select(x => new RoleView { Id = x.Id,
                   Code = x.Code,
                   Name = x.Name,
-                  RolePermissions = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, RoleId = x.Id }) { Result = x.RolePermissions!.Select(y1 => new RolePermissionView { Id = y1.Id,
+                  RolePermissions = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, RoleId = new List<Guid?>() { x.Id } }) { Result = x.RolePermissions!.Select(y1 => new RolePermissionView { Id = y1.Id,
                       RoleId = y1.RoleId,
                       PermissionId = y1.PermissionId }).Take(10) } })
             .ToList();

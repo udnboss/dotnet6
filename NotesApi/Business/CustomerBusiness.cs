@@ -46,7 +46,7 @@ public class CustomerBusiness : Business<Customer, CustomerView, CustomerUpdate,
                       Name = x.Currency!.Name,
                       Symbol = x.Currency!.Symbol },
                   PaymentTerm = x.PaymentTerm,
-                  Sales = new QueryResult<SaleQuery, SaleView>(new SaleQuery() { _Size = 10, _Page = 1, CustomerId = x.Id }) { Result = x.Sales!.Select(y1 => new SaleView { Id = y1.Id,
+                  Sales = new QueryResult<SaleQuery, SaleView>(new SaleQuery() { _Size = 10, _Page = 1, CustomerId = new List<Guid?>() { x.Id } }) { Result = x.Sales!.Select(y1 => new SaleView { Id = y1.Id,
                       CompanyId = y1.CompanyId,
                       AccountId = y1.AccountId,
                       CustomerId = y1.CustomerId,
@@ -91,7 +91,7 @@ public class CustomerBusiness : Business<Customer, CustomerView, CustomerUpdate,
                       Name = x.Currency!.Name,
                       Symbol = x.Currency!.Symbol },
                   PaymentTerm = x.PaymentTerm,
-                  Sales = new QueryResult<SaleQuery, SaleView>(new SaleQuery() { _Size = 10, _Page = 1, CustomerId = x.Id }) { Result = x.Sales!.Select(y1 => new SaleView { Id = y1.Id,
+                  Sales = new QueryResult<SaleQuery, SaleView>(new SaleQuery() { _Size = 10, _Page = 1, CustomerId = new List<Guid?>() { x.Id } }) { Result = x.Sales!.Select(y1 => new SaleView { Id = y1.Id,
                       CompanyId = y1.CompanyId,
                       AccountId = y1.AccountId,
                       CustomerId = y1.CustomerId,
@@ -124,18 +124,11 @@ public class CustomerBusiness : Business<Customer, CustomerView, CustomerUpdate,
             throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
         }
 
-        var inputProps = typeof(CustomerUpdate).GetProperties();
-        var outputProps = typeof(Customer).GetProperties();
-
-        foreach (var prop in inputProps)
-        {
-            if (prop.Name == "Id") continue;
-            var match = outputProps.FirstOrDefault(p => p.Name == prop.Name);
-            if (match is not null)
-            {
-                match.SetValue(existing, prop.GetValue(entity));
-            }
-        }
+        existing.Name = entity.Name;
+        existing.Address = entity.Address;
+        existing.Contact = entity.Contact;
+        existing.CurrencyId = entity.CurrencyId;
+        existing.PaymentTerm = entity.PaymentTerm;
 
         Db.SaveChanges();
         var updated = GetById(id);
@@ -150,18 +143,16 @@ public class CustomerBusiness : Business<Customer, CustomerView, CustomerUpdate,
         {
             throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
         }
-      
-        var validProps = typeof(CustomerModify).GetProperties();
-        var outputProps = typeof(Customer).GetProperties();
 
         foreach (JsonProperty prop in entity.EnumerateObject())
         {
-            if (prop.Name.ToLower() == "id") continue;
-            var match = outputProps.FirstOrDefault(p => p.Name.ToLower() == prop.Name.ToLower());
-            if (match is not null)
-            {
-                match.SetValue(existing, prop.Value.GetString());//TODO: proper mapping of type
-            }
+            var propName = prop.Name.ToLower();
+            if (propName == "id") continue;
+            else if (propName == "name") existing.Name = prop.Value.GetString()!;
+            else if (propName == "address") existing.Address = prop.Value.GetString()!;
+            else if (propName == "contact") existing.Contact = prop.Value.GetString()!;
+            else if (propName == "currency_id") existing.CurrencyId = prop.Value.GetGuid()!;
+            else if (propName == "payment_term") existing.PaymentTerm = prop.Value.GetInt32()!;
         }
 
         Db.SaveChanges();
@@ -233,7 +224,7 @@ public class CustomerBusiness : Business<Customer, CustomerView, CustomerUpdate,
                       Name = x.Currency!.Name,
                       Symbol = x.Currency!.Symbol },
                   PaymentTerm = x.PaymentTerm,
-                  Sales = new QueryResult<SaleQuery, SaleView>(new SaleQuery() { _Size = 10, _Page = 1, CustomerId = x.Id }) { Result = x.Sales!.Select(y1 => new SaleView { Id = y1.Id,
+                  Sales = new QueryResult<SaleQuery, SaleView>(new SaleQuery() { _Size = 10, _Page = 1, CustomerId = new List<Guid?>() { x.Id } }) { Result = x.Sales!.Select(y1 => new SaleView { Id = y1.Id,
                       CompanyId = y1.CompanyId,
                       AccountId = y1.AccountId,
                       CustomerId = y1.CustomerId,
