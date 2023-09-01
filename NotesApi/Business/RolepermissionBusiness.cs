@@ -1,8 +1,5 @@
-using System.Linq.Expressions;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.EntityFrameworkCore.Storage;
 
 public class RolePermissionBusiness : Business<RolePermission, RolePermissionView, RolePermissionUpdate, RolePermissionModify, RolePermissionCreate, RolePermissionQuery>
 {
@@ -161,19 +158,16 @@ public class RolePermissionBusiness : Business<RolePermission, RolePermissionVie
         {
             foreach (var c in query.Where)
             {   
-                
-                    if (c.Column == "RoleId" && c.Operator == Operators.IsIn && c.Values != null) 
-                    {
-                        var v = c.Values.Cast<Guid?>().ToList();
-                        q = q.Where(x => x.RoleId != null && v.Contains(x.RoleId));
-                    }
-
-
-                    if (c.Column == "PermissionId" && c.Operator == Operators.IsIn && c.Values != null) 
-                    {
-                        var v = c.Values.Cast<Guid?>().ToList();
-                        q = q.Where(x => x.PermissionId != null && v.Contains(x.PermissionId));
-                    }                   
+                if (c.Column == "RoleId" && c.Operator == Operators.IsIn && c.Values != null) 
+                {
+                    var v = c.Values.Cast<Guid?>().ToList();
+                    q = q.Where(x => v.Contains(x.RoleId));
+                }
+                else if (c.Column == "PermissionId" && c.Operator == Operators.IsIn && c.Values != null) 
+                {
+                    var v = c.Values.Cast<Guid?>().ToList();
+                    q = q.Where(x => v.Contains(x.PermissionId));
+                }                   
             }
         }
 

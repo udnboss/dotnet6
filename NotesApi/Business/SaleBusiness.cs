@@ -1,8 +1,5 @@
-using System.Linq.Expressions;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.EntityFrameworkCore.Storage;
 
 public class SaleBusiness : Business<Sale, SaleView, SaleUpdate, SaleModify, SaleCreate, SaleQuery>
 {
@@ -254,43 +251,49 @@ public class SaleBusiness : Business<Sale, SaleView, SaleUpdate, SaleModify, Sal
         {
             foreach (var c in query.Where)
             {   
-                
-                    if (c.Column == "CustomerId" && c.Operator == Operators.IsIn && c.Values != null) 
+                if (c.Column == "CustomerId" && c.Operator == Operators.IsIn && c.Values != null) 
+                {
+                    var v = c.Values.Cast<Guid?>().ToList();
+                    q = q.Where(x => v.Contains(x.CustomerId));
+                }
+                else if (c.Column == "AccountId" && c.Operator == Operators.IsIn && c.Values != null) 
+                {
+                    var v = c.Values.Cast<Guid?>().ToList();
+                    q = q.Where(x => v.Contains(x.AccountId));
+                }
+                else if (c.Column == "Number" && c.Operator == Operators.Contains && c.Value != null) 
+                {
+                    var v = (int)c.Value;
+                    q = q.Where(x => x.Number >= v);
+                    
+                    if (c.Value2 is not null)
                     {
-                        var v = c.Values.Cast<Guid?>().ToList();
-                        q = q.Where(x => x.CustomerId != null && v.Contains(x.CustomerId));
-                    }
-
-
-                    if (c.Column == "AccountId" && c.Operator == Operators.IsIn && c.Values != null) 
-                    {
-                        var v = c.Values.Cast<Guid?>().ToList();
-                        q = q.Where(x => x.AccountId != null && v.Contains(x.AccountId));
-                    }
-
-
-                    if (c.Column == "Number" && c.Operator == Operators.Contains && c.Value != null) 
-                    {
-                        var v = (int)c.Value;
                         var v2 = (int)c.Value2;
-                        q = q.Where(x => x.Number >= v && x.Number <= v2);
-                    }
-
-
-                    if (c.Column == "Date" && c.Operator == Operators.Between && c.Value != null) 
+                        q = q.Where(x => x.Number <= v2);
+                    }                                            
+                }
+                else if (c.Column == "Date" && c.Operator == Operators.Between && c.Value != null) 
+                {
+                    var v = (DateTime)c.Value;
+                    q = q.Where(x => x.Date >= v);
+                                            
+                    if (c.Value2 is not null)
                     {
-                        var v = (DateTime)c.Value;
                         var v2 = (DateTime)c.Value2;
-                        q = q.Where(x => x.Date >= v && x.Date <= v2);
-                    }
-
-
-                    if (c.Column == "ReferenceDate" && c.Operator == Operators.Between && c.Value != null) 
+                        q = q.Where(x => x.Date <= v2);
+                    }                    
+                }
+                else if (c.Column == "ReferenceDate" && c.Operator == Operators.Between && c.Value != null) 
+                {
+                    var v = (DateTime)c.Value;
+                    q = q.Where(x => x.ReferenceDate >= v);
+                                            
+                    if (c.Value2 is not null)
                     {
-                        var v = (DateTime)c.Value;
                         var v2 = (DateTime)c.Value2;
-                        q = q.Where(x => x.ReferenceDate >= v && x.ReferenceDate <= v2);
-                    }                   
+                        q = q.Where(x => x.ReferenceDate <= v2);
+                    }                    
+                }                   
             }
         }
 

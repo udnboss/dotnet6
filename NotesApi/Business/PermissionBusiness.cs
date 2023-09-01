@@ -1,8 +1,5 @@
-using System.Linq.Expressions;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.EntityFrameworkCore.Storage;
 
 public class PermissionBusiness : Business<Permission, PermissionView, PermissionUpdate, PermissionModify, PermissionCreate, PermissionQuery>
 {
@@ -165,37 +162,30 @@ public class PermissionBusiness : Business<Permission, PermissionView, Permissio
         {
             foreach (var c in query.Where)
             {   
-                
-                    if (c.Column == "Name" && c.Operator == Operators.Contains && c.Value != null) 
-                    {
-                        var v = c.Value.ToString();
-                        if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.Name != null && x.Name.ToLower().Contains(v.ToLower()));
-                    }
-
-
-                    if (c.Column == "Code" && c.Operator == Operators.Contains && c.Value != null) 
-                    {
-                        var v = c.Value.ToString();
-                        if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.Code != null && x.Code.ToLower().Contains(v.ToLower()));
-                    }
-
-
-                    if (c.Column == "Entity" && c.Operator == Operators.IsIn && c.Value != null) 
-                    {
-                        var v = c.Value.ToString();
-                        if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.Entity != null && x.Entity.ToLower().Contains(v.ToLower()));
-                    }
-
-
-                    if (c.Column == "Action" && c.Operator == Operators.IsIn && c.Value != null) 
-                    {
-                        var v = c.Value.ToString();
-                        if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.Action != null && x.Action.ToLower().Contains(v.ToLower()));
-                    }                   
+                if (c.Column == "Name" && c.Operator == Operators.Contains && c.Value != null) 
+                {
+                    var v = c.Value.ToString();
+                    if(!string.IsNullOrWhiteSpace(v))
+                        q = q.Where(x => x.Name != null && x.Name.ToLower().Contains(v.ToLower()));
+                }
+                else if (c.Column == "Code" && c.Operator == Operators.Contains && c.Value != null) 
+                {
+                    var v = c.Value.ToString();
+                    if(!string.IsNullOrWhiteSpace(v))
+                        q = q.Where(x => x.Code != null && x.Code.ToLower().Contains(v.ToLower()));
+                }
+                else if (c.Column == "Entity" && c.Operator == Operators.IsIn && c.Value != null) 
+                {
+                    var v = c.Value.ToString();
+                    if(!string.IsNullOrWhiteSpace(v))
+                        q = q.Where(x => x.Entity != null && x.Entity.ToLower().Contains(v.ToLower()));
+                }
+                else if (c.Column == "Action" && c.Operator == Operators.IsIn && c.Value != null) 
+                {
+                    var v = c.Value.ToString();
+                    if(!string.IsNullOrWhiteSpace(v))
+                        q = q.Where(x => x.Action != null && x.Action.ToLower().Contains(v.ToLower()));
+                }                   
             }
         }
 

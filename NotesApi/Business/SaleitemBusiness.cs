@@ -1,8 +1,5 @@
-using System.Linq.Expressions;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.EntityFrameworkCore.Storage;
 
 public class SaleItemBusiness : Business<SaleItem, SaleItemView, SaleItemUpdate, SaleItemModify, SaleItemCreate, SaleItemQuery>
 {
@@ -193,19 +190,16 @@ public class SaleItemBusiness : Business<SaleItem, SaleItemView, SaleItemUpdate,
         {
             foreach (var c in query.Where)
             {   
-                
-                    if (c.Column == "SaleId" && c.Operator == Operators.IsIn && c.Values != null) 
-                    {
-                        var v = c.Values.Cast<Guid?>().ToList();
-                        q = q.Where(x => x.SaleId != null && v.Contains(x.SaleId));
-                    }
-
-
-                    if (c.Column == "ItemId" && c.Operator == Operators.IsIn && c.Values != null) 
-                    {
-                        var v = c.Values.Cast<Guid?>().ToList();
-                        q = q.Where(x => x.ItemId != null && v.Contains(x.ItemId));
-                    }                   
+                if (c.Column == "SaleId" && c.Operator == Operators.IsIn && c.Values != null) 
+                {
+                    var v = c.Values.Cast<Guid?>().ToList();
+                    q = q.Where(x => v.Contains(x.SaleId));
+                }
+                else if (c.Column == "ItemId" && c.Operator == Operators.IsIn && c.Values != null) 
+                {
+                    var v = c.Values.Cast<Guid?>().ToList();
+                    q = q.Where(x => v.Contains(x.ItemId));
+                }                   
             }
         }
 

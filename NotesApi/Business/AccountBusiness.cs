@@ -1,8 +1,5 @@
-using System.Linq.Expressions;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.EntityFrameworkCore.Storage;
 
 public class AccountBusiness : Business<Account, AccountView, AccountUpdate, AccountModify, AccountCreate, AccountQuery>
 {
@@ -165,21 +162,18 @@ public class AccountBusiness : Business<Account, AccountView, AccountUpdate, Acc
         {
             foreach (var c in query.Where)
             {   
-                
-                    if (c.Column == "Label" && c.Operator == Operators.Contains && c.Value != null) 
-                    {
-                        var v = c.Value.ToString();
-                        if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.Label != null && x.Label.ToLower().Contains(v.ToLower()));
-                    }
-
-
-                    if (c.Column == "BankName" && c.Operator == Operators.Contains && c.Value != null) 
-                    {
-                        var v = c.Value.ToString();
-                        if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.BankName != null && x.BankName.ToLower().Contains(v.ToLower()));
-                    }                   
+                if (c.Column == "Label" && c.Operator == Operators.Contains && c.Value != null) 
+                {
+                    var v = c.Value.ToString();
+                    if(!string.IsNullOrWhiteSpace(v))
+                        q = q.Where(x => x.Label != null && x.Label.ToLower().Contains(v.ToLower()));
+                }
+                else if (c.Column == "BankName" && c.Operator == Operators.Contains && c.Value != null) 
+                {
+                    var v = c.Value.ToString();
+                    if(!string.IsNullOrWhiteSpace(v))
+                        q = q.Where(x => x.BankName != null && x.BankName.ToLower().Contains(v.ToLower()));
+                }                   
             }
         }
 

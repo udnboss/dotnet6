@@ -1,8 +1,5 @@
-using System.Linq.Expressions;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.EntityFrameworkCore.Storage;
 
 public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify, LoginCreate, LoginQuery>
 {
@@ -142,13 +139,12 @@ public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify
         {
             foreach (var c in query.Where)
             {   
-                
-                    if (c.Column == "Email" && c.Operator == Operators.Contains && c.Value != null) 
-                    {
-                        var v = c.Value.ToString();
-                        if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.Email != null && x.Email.ToLower().Contains(v.ToLower()));
-                    }                   
+                if (c.Column == "Email" && c.Operator == Operators.Contains && c.Value != null) 
+                {
+                    var v = c.Value.ToString();
+                    if(!string.IsNullOrWhiteSpace(v))
+                        q = q.Where(x => x.Email != null && x.Email.ToLower().Contains(v.ToLower()));
+                }                   
             }
         }
 

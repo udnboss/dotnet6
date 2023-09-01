@@ -1,8 +1,5 @@
-using System.Linq.Expressions;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.EntityFrameworkCore.Storage;
 
 public class UserBusiness : Business<User, UserView, UserUpdate, UserModify, UserCreate, UserQuery>
 {
@@ -155,21 +152,18 @@ public class UserBusiness : Business<User, UserView, UserUpdate, UserModify, Use
         {
             foreach (var c in query.Where)
             {   
-                
-                    if (c.Column == "Name" && c.Operator == Operators.Contains && c.Value != null) 
-                    {
-                        var v = c.Value.ToString();
-                        if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.Name != null && x.Name.ToLower().Contains(v.ToLower()));
-                    }
-
-
-                    if (c.Column == "Email" && c.Operator == Operators.Contains && c.Value != null) 
-                    {
-                        var v = c.Value.ToString();
-                        if(!string.IsNullOrWhiteSpace(v))
-                            q = q.Where(x => x.Email != null && x.Email.ToLower().Contains(v.ToLower()));
-                    }                   
+                if (c.Column == "Name" && c.Operator == Operators.Contains && c.Value != null) 
+                {
+                    var v = c.Value.ToString();
+                    if(!string.IsNullOrWhiteSpace(v))
+                        q = q.Where(x => x.Name != null && x.Name.ToLower().Contains(v.ToLower()));
+                }
+                else if (c.Column == "Email" && c.Operator == Operators.Contains && c.Value != null) 
+                {
+                    var v = c.Value.ToString();
+                    if(!string.IsNullOrWhiteSpace(v))
+                        q = q.Where(x => x.Email != null && x.Email.ToLower().Contains(v.ToLower()));
+                }                   
             }
         }
 
