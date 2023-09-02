@@ -4,6 +4,7 @@ using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq.Expressions;
+using System.Net;
 using System.Text.Json;
 // using System.Linq.Dynamic;
 using Microsoft.EntityFrameworkCore;
@@ -39,31 +40,109 @@ public enum ErrorCodes
     UniqueConstraintViolation
 }
 
-public static class ErrorCodesExtensions
+public class CustomException : Exception 
 {
-    private static readonly Dictionary<ErrorCodes, int> _errorCodeValues = new Dictionary<ErrorCodes, int>
-    {
-        { ErrorCodes.EntityNotFound, 404 },
-        { ErrorCodes.EntityTypeMismatch, 400 },
-        { ErrorCodes.PropertyTypeMismatch, 400 },
-        { ErrorCodes.QueryValidationError, 405 },
-        { ErrorCodes.DataValidationError, 405 },
-        { ErrorCodes.DatabaseNotFound, 500 },
-        { ErrorCodes.DatabaseLocked, 500 },
-        { ErrorCodes.UnhandledException, 500 },
-        { ErrorCodes.Unauthenticated, 401 },
-        { ErrorCodes.Unauthorized, 403 },
-        { ErrorCodes.RelationalConstraintViolation, 405 },
-        { ErrorCodes.UniqueConstraintViolation, 405 }
-    };
-
-    public static int ToErrorCodeValue(this ErrorCodes errorCode)
-    {
-        if (_errorCodeValues.TryGetValue(errorCode, out int value))
-            return value;
-        else
-            throw new ArgumentException("Invalid error code");
+    public CustomException(string? message, string? entityName, string? operation) : base(message)
+    {        
+        HttpResponseCode = HttpStatusCode.InternalServerError;
     }
+    public virtual HttpStatusCode HttpResponseCode {get;set;}
+    public string? EntityName { get; set; }
+    public string? Operation { get; set; }
+}
+public class EntityNotFoundException : CustomException
+{
+    public EntityNotFoundException(string? message, string? entityName, string? operation) : base(message, entityName, operation)
+    {
+        HttpResponseCode = HttpStatusCode.NotFound;
+    }
+}
+public class EntityTypeMismatchException : CustomException
+{
+    public EntityTypeMismatchException(string? message, string? entityName, string? operation) : base(message, entityName, operation)
+    {
+        HttpResponseCode = HttpStatusCode.BadRequest;
+    }
+}
+public class EntityPropertyTypeMismatchException : CustomException
+{
+    public EntityPropertyTypeMismatchException(string? message, string? entityName, string? operation) : base(message, entityName, operation)
+    {
+        HttpResponseCode = HttpStatusCode.BadRequest;
+    }
+}
+public class EntityQueryValidationError : CustomException
+{
+    public EntityQueryValidationError(string? message, string? entityName, string? operation) : base(message, entityName, operation)
+    {
+        HttpResponseCode = HttpStatusCode.BadRequest;
+    }
+}
+public class EntityDataValidationError : CustomException
+{
+    public EntityDataValidationError(string? message, string? entityName, string? operation) : base(message, entityName, operation)
+    {
+        HttpResponseCode = HttpStatusCode.FailedDependency;
+    }
+}
+public class DatabaseNotFound : CustomException
+{
+    public DatabaseNotFound(string? message, string? entityName, string? operation) : base(message, entityName, operation)
+    {
+    }
+}
+public class DatabaseLocked : CustomException
+{
+    public DatabaseLocked(string? message, string? entityName, string? operation) : base(message, entityName, operation)
+    {
+        HttpResponseCode = HttpStatusCode.ServiceUnavailable;
+    }
+}
+public class UnhandledException : CustomException
+{
+    public UnhandledException(string? message, string? entityName, string? operation) : base(message, entityName, operation)
+    {
+    }
+}
+public class Unauthenticated : CustomException
+{
+    public Unauthenticated(string? message, string? entityName, string? operation) : base(message, entityName, operation)
+    {
+        HttpResponseCode = HttpStatusCode.Unauthorized;
+    }
+}
+public class Unauthorized : CustomException
+{
+    public Unauthorized(string? message, string? entityName, string? operation) : base(message, entityName, operation)
+    {
+        HttpResponseCode = HttpStatusCode.Forbidden;
+    }
+}
+public class EntityRelationalConstraintViolation : CustomException
+{
+    public EntityRelationalConstraintViolation(string? message, string? entityName, string? operation) : base(message, entityName, operation)
+    {
+        HttpResponseCode = HttpStatusCode.Conflict;
+    }
+}
+public class EntityUniqueConstraintViolation : CustomException
+{
+    public EntityUniqueConstraintViolation(string? message, string? entityName, string? operation) : base(message, entityName, operation)
+    {
+        HttpResponseCode = HttpStatusCode.Conflict;
+    }
+}
+
+public class Constants
+{
+    private readonly IConfiguration _configuration;
+
+    public Constants(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
+    public int EntityNotFoundException => _configuration.GetValue<int>("ErrorCodes:EntityNotFoundException");
 }
 
 public enum Operators
