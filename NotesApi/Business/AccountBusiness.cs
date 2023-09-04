@@ -149,6 +149,11 @@ public class AccountBusiness : Business<Account, AccountView, AccountUpdate, Acc
         return beforeDelete;
     }
 
+    public override QueryResult<ClientQuery, AccountView> GetAll(int maxDepth = 2)
+    {
+        return GetAll(new AccountQuery(), new DataQuery(), maxDepth);
+    }
+
     public override QueryResult<ClientQuery, AccountView> GetAll(AccountQuery clientQuery, DataQuery query, int maxDepth = 2)
     {
         var q = Db.Set<Account>().Skip(query.Offset);

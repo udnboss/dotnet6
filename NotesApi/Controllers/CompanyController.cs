@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +7,7 @@ namespace CompanysApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CompanyController : ControllerBase
     {
         private readonly MyContext _context;
@@ -19,6 +21,7 @@ namespace CompanysApi.Controllers
 
         // GET: api/Company
         [HttpGet]
+        [RequiredPermissions(AppPermission.CompanyRead)]
         public ActionResult<QueryResult<ClientQuery, CompanyView>> GetCompanys([FromQuery] CompanyQuery query)
         {
             var dataQuery = _business.ConvertToDataQuery(query);
@@ -29,6 +32,7 @@ namespace CompanysApi.Controllers
 
         // GET: api/Company/5
         [HttpGet("{id}")]
+        [RequiredPermissions(AppPermission.CompanyRead)]
         public ActionResult<CompanyView> GetCompany(Guid id)
         {
             var company = _business.GetById(id);
@@ -44,6 +48,7 @@ namespace CompanysApi.Controllers
         // PUT: api/Company/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequiredPermissions(AppPermission.CompanyUpdate)]
         public ActionResult<CompanyView> PutCompany(Guid id, CompanyUpdate company)
         {
             try 
@@ -77,6 +82,7 @@ namespace CompanysApi.Controllers
         // PATCH: api/Company/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
+        [RequiredPermissions(AppPermission.CompanyUpdate)]
         public ActionResult<CompanyView> PatchCompany(Guid id, JsonElement company)
         {
             try 
@@ -111,6 +117,7 @@ namespace CompanysApi.Controllers
         // POST: api/Company
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequiredPermissions(AppPermission.CompanyCreate)]
         public ActionResult<CompanyView> PostCompany(CompanyCreate company)
         {
             var created = _business.Create(company);
@@ -120,6 +127,7 @@ namespace CompanysApi.Controllers
 
         // DELETE: api/Company/5
         [HttpDelete("{id}")]
+        [RequiredPermissions(AppPermission.CompanyDelete)]
         public ActionResult<CompanyView> DeleteCompany(Guid id)
         {
             try 

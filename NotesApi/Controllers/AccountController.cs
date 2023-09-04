@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +7,7 @@ namespace AccountsApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AccountController : ControllerBase
     {
         private readonly MyContext _context;
@@ -19,6 +21,7 @@ namespace AccountsApi.Controllers
 
         // GET: api/Account
         [HttpGet]
+        [RequiredPermissions(AppPermission.AccountRead)]
         public ActionResult<QueryResult<ClientQuery, AccountView>> GetAccounts([FromQuery] AccountQuery query)
         {
             var dataQuery = _business.ConvertToDataQuery(query);
@@ -29,6 +32,7 @@ namespace AccountsApi.Controllers
 
         // GET: api/Account/5
         [HttpGet("{id}")]
+        [RequiredPermissions(AppPermission.AccountRead)]
         public ActionResult<AccountView> GetAccount(Guid id)
         {
             var account = _business.GetById(id);
@@ -44,6 +48,7 @@ namespace AccountsApi.Controllers
         // PUT: api/Account/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequiredPermissions(AppPermission.AccountUpdate)]
         public ActionResult<AccountView> PutAccount(Guid id, AccountUpdate account)
         {
             try 
@@ -77,6 +82,7 @@ namespace AccountsApi.Controllers
         // PATCH: api/Account/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
+        [RequiredPermissions(AppPermission.AccountUpdate)]
         public ActionResult<AccountView> PatchAccount(Guid id, JsonElement account)
         {
             try 
@@ -111,6 +117,7 @@ namespace AccountsApi.Controllers
         // POST: api/Account
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequiredPermissions(AppPermission.AccountCreate)]
         public ActionResult<AccountView> PostAccount(AccountCreate account)
         {
             var created = _business.Create(account);
@@ -120,6 +127,7 @@ namespace AccountsApi.Controllers
 
         // DELETE: api/Account/5
         [HttpDelete("{id}")]
+        [RequiredPermissions(AppPermission.AccountDelete)]
         public ActionResult<AccountView> DeleteAccount(Guid id)
         {
             try 

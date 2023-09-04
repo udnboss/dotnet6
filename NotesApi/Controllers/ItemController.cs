@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +7,7 @@ namespace ItemsApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ItemController : ControllerBase
     {
         private readonly MyContext _context;
@@ -19,6 +21,7 @@ namespace ItemsApi.Controllers
 
         // GET: api/Item
         [HttpGet]
+        [RequiredPermissions(AppPermission.ItemRead)]
         public ActionResult<QueryResult<ClientQuery, ItemView>> GetItems([FromQuery] ItemQuery query)
         {
             var dataQuery = _business.ConvertToDataQuery(query);
@@ -29,6 +32,7 @@ namespace ItemsApi.Controllers
 
         // GET: api/Item/5
         [HttpGet("{id}")]
+        [RequiredPermissions(AppPermission.ItemRead)]
         public ActionResult<ItemView> GetItem(Guid id)
         {
             var item = _business.GetById(id);
@@ -44,6 +48,7 @@ namespace ItemsApi.Controllers
         // PUT: api/Item/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequiredPermissions(AppPermission.ItemUpdate)]
         public ActionResult<ItemView> PutItem(Guid id, ItemUpdate item)
         {
             try 
@@ -77,6 +82,7 @@ namespace ItemsApi.Controllers
         // PATCH: api/Item/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
+        [RequiredPermissions(AppPermission.ItemUpdate)]
         public ActionResult<ItemView> PatchItem(Guid id, JsonElement item)
         {
             try 
@@ -111,6 +117,7 @@ namespace ItemsApi.Controllers
         // POST: api/Item
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequiredPermissions(AppPermission.ItemCreate)]
         public ActionResult<ItemView> PostItem(ItemCreate item)
         {
             var created = _business.Create(item);
@@ -120,6 +127,7 @@ namespace ItemsApi.Controllers
 
         // DELETE: api/Item/5
         [HttpDelete("{id}")]
+        [RequiredPermissions(AppPermission.ItemDelete)]
         public ActionResult<ItemView> DeleteItem(Guid id)
         {
             try 

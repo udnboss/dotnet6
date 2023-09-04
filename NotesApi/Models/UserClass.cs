@@ -1,16 +1,19 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Identity;
 
 #pragma warning disable CS8618
 
 [Table("user")]
-public class User : Entity
+public class User :  IEntity
 {
-    [JsonPropertyName("name")][Column("name")][Required][MinLength(3)] public string Name { get; set; }
-    [JsonPropertyName("email")][Column("email")][Required][EmailAddress] public string Email { get; set; }
+    [Key][Column("id")][JsonPropertyName("id")][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public Guid Id { get; set; }
+    [JsonPropertyName("name")][Column("name")][Required][MinLength(3)][MaxLength(100)] public string Name { get; set; }
+    [JsonPropertyName("email")][Column("email")][Required][EmailAddress][MinLength(3)][MaxLength(100)] public string Email { get; set; }
     [JsonPropertyName("login_id")][Column("login_id")][Required] public Guid LoginId { get; set; }
     [JsonPropertyName("login")][ForeignKey("LoginId")] public Login? Login { get; set; }
+    [JsonPropertyName("userRoles")][InverseProperty("User")] public IEnumerable<UserRole>? UserRoles { get; set; }
 }
 
 public record UserView : IRecord
@@ -19,32 +22,33 @@ public record UserView : IRecord
     [JsonPropertyName("email")][Column("email")] public string? Email { get; set; }
     [JsonPropertyName("login_id")][Column("login_id")] public Guid? LoginId { get; set; }
     [JsonPropertyName("login")][ForeignKey("LoginId")] public LoginView? Login { get; set; }
+    [JsonPropertyName("userRoles")][InverseProperty("User")] public QueryResult<UserRoleQuery, UserRoleView>? UserRoles { get; set; }
 }
 
 public record UserQuery : ClientQuery
 {
-    [MinLengthIfNotNull(3)] public string? Name { get; set; } = "";
-     public string? Email { get; set; } = "";
+    [MinLengthIfNotNull(3)][MaxLength(100)] public string? Name { get; set; } = "";
+    [MinLengthIfNotNull(3)][MaxLength(100)] public string? Email { get; set; } = "";
     public UserQuery() { }
 }
 
 public record UserCreate : IRecord
 {
-    [JsonPropertyName("name")][Column("name")][Required][MinLength(3)] public string Name { get; set; }
-    [JsonPropertyName("email")][Column("email")][Required][EmailAddress] public string Email { get; set; }
+    [JsonPropertyName("name")][Column("name")][Required][MinLength(3)][MaxLength(100)] public string Name { get; set; }
+    [JsonPropertyName("email")][Column("email")][Required][EmailAddress][MinLength(3)][MaxLength(100)] public string Email { get; set; }
     [JsonPropertyName("login_id")][Column("login_id")][Required] public Guid LoginId { get; set; }
 }
 
 public record UserUpdate : IRecord
 {
-    [JsonPropertyName("name")][Column("name")][Required][MinLength(3)] public string Name { get; set; }
-    [JsonPropertyName("email")][Column("email")][Required][EmailAddress] public string Email { get; set; }
+    [JsonPropertyName("name")][Column("name")][Required][MinLength(3)][MaxLength(100)] public string Name { get; set; }
+    [JsonPropertyName("email")][Column("email")][Required][EmailAddress][MinLength(3)][MaxLength(100)] public string Email { get; set; }
     [JsonPropertyName("login_id")][Column("login_id")][Required] public Guid LoginId { get; set; }
 }
 
 public record UserModify : IRecord
 {
-    [JsonPropertyName("name")][Column("name")][MinLength(3)] public string? Name { get; set; }
-    [JsonPropertyName("email")][Column("email")][EmailAddress] public string? Email { get; set; }
+    [JsonPropertyName("name")][Column("name")][MinLength(3)][MaxLength(100)] public string? Name { get; set; }
+    [JsonPropertyName("email")][Column("email")][EmailAddress][MinLength(3)][MaxLength(100)] public string? Email { get; set; }
     [JsonPropertyName("login_id")][Column("login_id")] public Guid? LoginId { get; set; }
 }

@@ -128,6 +128,11 @@ public class CategoryBusiness : Business<Category, CategoryView, CategoryUpdate,
         return beforeDelete;
     }
 
+    public override QueryResult<ClientQuery, CategoryView> GetAll(int maxDepth = 2)
+    {
+        return GetAll(new CategoryQuery(), new DataQuery(), maxDepth);
+    }
+
     public override QueryResult<ClientQuery, CategoryView> GetAll(CategoryQuery clientQuery, DataQuery query, int maxDepth = 2)
     {
         var q = Db.Set<Category>().Skip(query.Offset);

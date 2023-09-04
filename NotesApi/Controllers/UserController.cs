@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +7,7 @@ namespace UsersApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly MyContext _context;
@@ -19,6 +21,7 @@ namespace UsersApi.Controllers
 
         // GET: api/User
         [HttpGet]
+        [RequiredPermissions(AppPermission.UserRead)]
         public ActionResult<QueryResult<ClientQuery, UserView>> GetUsers([FromQuery] UserQuery query)
         {
             var dataQuery = _business.ConvertToDataQuery(query);
@@ -29,6 +32,7 @@ namespace UsersApi.Controllers
 
         // GET: api/User/5
         [HttpGet("{id}")]
+        [RequiredPermissions(AppPermission.UserRead)]
         public ActionResult<UserView> GetUser(Guid id)
         {
             var user = _business.GetById(id);
@@ -44,6 +48,7 @@ namespace UsersApi.Controllers
         // PUT: api/User/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequiredPermissions(AppPermission.UserUpdate)]
         public ActionResult<UserView> PutUser(Guid id, UserUpdate user)
         {
             try 
@@ -77,6 +82,7 @@ namespace UsersApi.Controllers
         // PATCH: api/User/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
+        [RequiredPermissions(AppPermission.UserUpdate)]
         public ActionResult<UserView> PatchUser(Guid id, JsonElement user)
         {
             try 
@@ -111,6 +117,7 @@ namespace UsersApi.Controllers
         // POST: api/User
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequiredPermissions(AppPermission.UserCreate)]
         public ActionResult<UserView> PostUser(UserCreate user)
         {
             var created = _business.Create(user);
@@ -120,6 +127,7 @@ namespace UsersApi.Controllers
 
         // DELETE: api/User/5
         [HttpDelete("{id}")]
+        [RequiredPermissions(AppPermission.UserDelete)]
         public ActionResult<UserView> DeleteUser(Guid id)
         {
             try 

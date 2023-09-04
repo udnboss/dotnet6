@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +7,7 @@ namespace LoginsApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class LoginController : ControllerBase
     {
         private readonly MyContext _context;
@@ -19,6 +21,7 @@ namespace LoginsApi.Controllers
 
         // GET: api/Login
         [HttpGet]
+        [RequiredPermissions(AppPermission.LoginRead)]
         public ActionResult<QueryResult<ClientQuery, LoginView>> GetLogins([FromQuery] LoginQuery query)
         {
             var dataQuery = _business.ConvertToDataQuery(query);
@@ -29,6 +32,7 @@ namespace LoginsApi.Controllers
 
         // GET: api/Login/5
         [HttpGet("{id}")]
+        [RequiredPermissions(AppPermission.LoginRead)]
         public ActionResult<LoginView> GetLogin(Guid id)
         {
             var login = _business.GetById(id);
@@ -44,6 +48,7 @@ namespace LoginsApi.Controllers
         // PUT: api/Login/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequiredPermissions(AppPermission.LoginUpdate)]
         public ActionResult<LoginView> PutLogin(Guid id, LoginUpdate login)
         {
             try 
@@ -77,6 +82,7 @@ namespace LoginsApi.Controllers
         // PATCH: api/Login/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
+        [RequiredPermissions(AppPermission.LoginUpdate)]
         public ActionResult<LoginView> PatchLogin(Guid id, JsonElement login)
         {
             try 
@@ -111,6 +117,7 @@ namespace LoginsApi.Controllers
         // POST: api/Login
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequiredPermissions(AppPermission.LoginCreate)]
         public ActionResult<LoginView> PostLogin(LoginCreate login)
         {
             var created = _business.Create(login);
@@ -120,6 +127,7 @@ namespace LoginsApi.Controllers
 
         // DELETE: api/Login/5
         [HttpDelete("{id}")]
+        [RequiredPermissions(AppPermission.LoginDelete)]
         public ActionResult<LoginView> DeleteLogin(Guid id)
         {
             try 

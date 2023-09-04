@@ -1,10 +1,22 @@
 drop table if exists [login];
 create table [login] (
   id text
-  , email text not null
-  , password text not null
+  , userName text not null
+  , normalizedUserName text not null
+  , passwordHash text not null
+  , securityStamp text
+  , accessFailedCount int
+  , concurrencyStamp text
+  , email text
+  , emailConfirmed int
+  , lockoutEnabled int
+  , lockoutEnd text
+  , normalizedEmail text
+  , phoneNumber text
+  , phoneNumberConfirmed int
+  , twoFactorEnabled int
   , primary key (id)
-  , unique (email)
+  , unique (userName)
 );
 
 drop table if exists [user];
@@ -14,8 +26,8 @@ create table [user] (
   , email text not null
   , login_id text not null
   , primary key (id)
+  , unique (login_id)
   , foreign key (login_id) references login(id) on delete cascade on delete cascade
-  , check ([name] >= 3)
 );
 
 drop table if exists [role];
@@ -25,6 +37,17 @@ create table [role] (
   , name text not null
   , primary key (id)
   , unique (name)
+);
+
+drop table if exists [userRole];
+create table [userRole] (
+  id text not null
+  , user_id text not null
+  , role_id text not null
+  , primary key (id)
+  , unique (user_id, role_id)
+  , foreign key (user_id) references user(id) on delete cascade on delete cascade
+  , foreign key (role_id) references role(id) on delete cascade on delete cascade
 );
 
 drop table if exists [permission];
@@ -162,13 +185,16 @@ create table [saleItem] (
 );
 
 /* INDEXES */
-create index ix_login_email on login (email);
+create index ix_login_userName on login (userName);
 
 create index ix_user_name on user (name);
 create index ix_user_email on user (email);
 create index ix_user_login_id on user (login_id);
 
 create index ix_role_name on role (name);
+
+create index ix_userRole_user_id on userRole (user_id);
+create index ix_userRole_role_id on userRole (role_id);
 
 create index ix_permission_name on permission (name);
 

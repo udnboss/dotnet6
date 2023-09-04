@@ -177,6 +177,11 @@ public class SaleItemBusiness : Business<SaleItem, SaleItemView, SaleItemUpdate,
         return beforeDelete;
     }
 
+    public override QueryResult<ClientQuery, SaleItemView> GetAll(int maxDepth = 2)
+    {
+        return GetAll(new SaleItemQuery(), new DataQuery(), maxDepth);
+    }
+
     public override QueryResult<ClientQuery, SaleItemView> GetAll(SaleItemQuery clientQuery, DataQuery query, int maxDepth = 2)
     {
         var q = Db.Set<SaleItem>().Skip(query.Offset);

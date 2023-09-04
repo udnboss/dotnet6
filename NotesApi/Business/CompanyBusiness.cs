@@ -146,6 +146,11 @@ public class CompanyBusiness : Business<Company, CompanyView, CompanyUpdate, Com
         return beforeDelete;
     }
 
+    public override QueryResult<ClientQuery, CompanyView> GetAll(int maxDepth = 2)
+    {
+        return GetAll(new CompanyQuery(), new DataQuery(), maxDepth);
+    }
+
     public override QueryResult<ClientQuery, CompanyView> GetAll(CompanyQuery clientQuery, DataQuery query, int maxDepth = 2)
     {
         var q = Db.Set<Company>().Skip(query.Offset);

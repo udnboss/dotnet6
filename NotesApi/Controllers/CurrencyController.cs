@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +7,7 @@ namespace CurrencysApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CurrencyController : ControllerBase
     {
         private readonly MyContext _context;
@@ -19,6 +21,7 @@ namespace CurrencysApi.Controllers
 
         // GET: api/Currency
         [HttpGet]
+        [RequiredPermissions(AppPermission.CurrencyRead)]
         public ActionResult<QueryResult<ClientQuery, CurrencyView>> GetCurrencys([FromQuery] CurrencyQuery query)
         {
             var dataQuery = _business.ConvertToDataQuery(query);
@@ -29,6 +32,7 @@ namespace CurrencysApi.Controllers
 
         // GET: api/Currency/5
         [HttpGet("{id}")]
+        [RequiredPermissions(AppPermission.CurrencyRead)]
         public ActionResult<CurrencyView> GetCurrency(Guid id)
         {
             var currency = _business.GetById(id);
@@ -44,6 +48,7 @@ namespace CurrencysApi.Controllers
         // PUT: api/Currency/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequiredPermissions(AppPermission.CurrencyUpdate)]
         public ActionResult<CurrencyView> PutCurrency(Guid id, CurrencyUpdate currency)
         {
             try 
@@ -77,6 +82,7 @@ namespace CurrencysApi.Controllers
         // PATCH: api/Currency/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
+        [RequiredPermissions(AppPermission.CurrencyUpdate)]
         public ActionResult<CurrencyView> PatchCurrency(Guid id, JsonElement currency)
         {
             try 
@@ -111,6 +117,7 @@ namespace CurrencysApi.Controllers
         // POST: api/Currency
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequiredPermissions(AppPermission.CurrencyCreate)]
         public ActionResult<CurrencyView> PostCurrency(CurrencyCreate currency)
         {
             var created = _business.Create(currency);
@@ -120,6 +127,7 @@ namespace CurrencysApi.Controllers
 
         // DELETE: api/Currency/5
         [HttpDelete("{id}")]
+        [RequiredPermissions(AppPermission.CurrencyDelete)]
         public ActionResult<CurrencyView> DeleteCurrency(Guid id)
         {
             try 

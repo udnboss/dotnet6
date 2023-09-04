@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +7,7 @@ namespace CustomersApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CustomerController : ControllerBase
     {
         private readonly MyContext _context;
@@ -19,6 +21,7 @@ namespace CustomersApi.Controllers
 
         // GET: api/Customer
         [HttpGet]
+        [RequiredPermissions(AppPermission.CustomerRead)]
         public ActionResult<QueryResult<ClientQuery, CustomerView>> GetCustomers([FromQuery] CustomerQuery query)
         {
             var dataQuery = _business.ConvertToDataQuery(query);
@@ -29,6 +32,7 @@ namespace CustomersApi.Controllers
 
         // GET: api/Customer/5
         [HttpGet("{id}")]
+        [RequiredPermissions(AppPermission.CustomerRead)]
         public ActionResult<CustomerView> GetCustomer(Guid id)
         {
             var customer = _business.GetById(id);
@@ -44,6 +48,7 @@ namespace CustomersApi.Controllers
         // PUT: api/Customer/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequiredPermissions(AppPermission.CustomerUpdate)]
         public ActionResult<CustomerView> PutCustomer(Guid id, CustomerUpdate customer)
         {
             try 
@@ -77,6 +82,7 @@ namespace CustomersApi.Controllers
         // PATCH: api/Customer/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
+        [RequiredPermissions(AppPermission.CustomerUpdate)]
         public ActionResult<CustomerView> PatchCustomer(Guid id, JsonElement customer)
         {
             try 
@@ -111,6 +117,7 @@ namespace CustomersApi.Controllers
         // POST: api/Customer
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequiredPermissions(AppPermission.CustomerCreate)]
         public ActionResult<CustomerView> PostCustomer(CustomerCreate customer)
         {
             var created = _business.Create(customer);
@@ -120,6 +127,7 @@ namespace CustomersApi.Controllers
 
         // DELETE: api/Customer/5
         [HttpDelete("{id}")]
+        [RequiredPermissions(AppPermission.CustomerDelete)]
         public ActionResult<CustomerView> DeleteCustomer(Guid id)
         {
             try 

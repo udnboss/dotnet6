@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +7,7 @@ namespace CategorysApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CategoryController : ControllerBase
     {
         private readonly MyContext _context;
@@ -19,6 +21,7 @@ namespace CategorysApi.Controllers
 
         // GET: api/Category
         [HttpGet]
+        [RequiredPermissions(AppPermission.CategoryRead)]
         public ActionResult<QueryResult<ClientQuery, CategoryView>> GetCategorys([FromQuery] CategoryQuery query)
         {
             var dataQuery = _business.ConvertToDataQuery(query);
@@ -29,6 +32,7 @@ namespace CategorysApi.Controllers
 
         // GET: api/Category/5
         [HttpGet("{id}")]
+        [RequiredPermissions(AppPermission.CategoryRead)]
         public ActionResult<CategoryView> GetCategory(Guid id)
         {
             var category = _business.GetById(id);
@@ -44,6 +48,7 @@ namespace CategorysApi.Controllers
         // PUT: api/Category/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequiredPermissions(AppPermission.CategoryUpdate)]
         public ActionResult<CategoryView> PutCategory(Guid id, CategoryUpdate category)
         {
             try 
@@ -77,6 +82,7 @@ namespace CategorysApi.Controllers
         // PATCH: api/Category/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
+        [RequiredPermissions(AppPermission.CategoryUpdate)]
         public ActionResult<CategoryView> PatchCategory(Guid id, JsonElement category)
         {
             try 
@@ -111,6 +117,7 @@ namespace CategorysApi.Controllers
         // POST: api/Category
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequiredPermissions(AppPermission.CategoryCreate)]
         public ActionResult<CategoryView> PostCategory(CategoryCreate category)
         {
             var created = _business.Create(category);
@@ -120,6 +127,7 @@ namespace CategorysApi.Controllers
 
         // DELETE: api/Category/5
         [HttpDelete("{id}")]
+        [RequiredPermissions(AppPermission.CategoryDelete)]
         public ActionResult<CategoryView> DeleteCategory(Guid id)
         {
             try 

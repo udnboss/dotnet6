@@ -133,6 +133,11 @@ public class ItemBusiness : Business<Item, ItemView, ItemUpdate, ItemModify, Ite
         return beforeDelete;
     }
 
+    public override QueryResult<ClientQuery, ItemView> GetAll(int maxDepth = 2)
+    {
+        return GetAll(new ItemQuery(), new DataQuery(), maxDepth);
+    }
+
     public override QueryResult<ClientQuery, ItemView> GetAll(ItemQuery clientQuery, DataQuery query, int maxDepth = 2)
     {
         var q = Db.Set<Item>().Skip(query.Offset);

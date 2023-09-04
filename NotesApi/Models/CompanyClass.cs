@@ -1,12 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Identity;
 
 #pragma warning disable CS8618
 
 [Table("company")]
-public class Company : Entity
+public class Company :  IEntity
 {
+    [Key][Column("id")][JsonPropertyName("id")][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public Guid Id { get; set; }
     [JsonPropertyName("name")][Column("name")][Required] public string Name { get; set; }
     [JsonPropertyName("address")][Column("address")][Required] public string Address { get; set; }
     [JsonPropertyName("crn")][Column("crn")][Required] public string Crn { get; set; }

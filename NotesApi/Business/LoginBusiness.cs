@@ -12,7 +12,7 @@ public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify
         var dataQuery = base.ConvertToDataQuery(query);
 
         
-            dataQuery.Where.Add(new Condition(column: "Email", _operator: Operators.Contains, value: query.Email));
+            dataQuery.Where.Add(new Condition(column: "UserName", _operator: Operators.Contains, value: query.UserName));
             
 
         return dataQuery;
@@ -24,7 +24,7 @@ public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify
 
         foreach(var c in query.Where)
         {
-            if(c.Column == "Email") clientQuery.Email = c.Value as string;
+            if(c.Column == "UserName") clientQuery.UserName = c.Value as string;
         }        
 
         return clientQuery;
@@ -35,8 +35,20 @@ public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify
         var query = Db.Set<Login>()
             .Select(x => new LoginView { 
                 Id = x.Id,
+                  UserName = x.UserName,
+                  NormalizedUserName = x.NormalizedUserName,
+                  PasswordHash = x.PasswordHash,
+                  SecurityStamp = x.SecurityStamp,
+                  AccessFailedCount = x.AccessFailedCount,
+                  ConcurrencyStamp = x.ConcurrencyStamp,
                   Email = x.Email,
-                  Password = x.Password  
+                  EmailConfirmed = x.EmailConfirmed,
+                  LockoutEnabled = x.LockoutEnabled,
+                  LockoutEnd = x.LockoutEnd,
+                  NormalizedEmail = x.NormalizedEmail,
+                  PhoneNumber = x.PhoneNumber,
+                  PhoneNumberConfirmed = x.PhoneNumberConfirmed,
+                  TwoFactorEnabled = x.TwoFactorEnabled  
             })
             .AsQueryable();
 
@@ -54,14 +66,26 @@ public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify
         var dbSet = Db.Set<Login>();
         var dbEntity = new Login {
             Id = new Guid(),
-            Email = entity.Email, Password = entity.Password
+            UserName = entity.UserName, NormalizedUserName = entity.NormalizedUserName, PasswordHash = entity.PasswordHash, SecurityStamp = entity.SecurityStamp, AccessFailedCount = entity.AccessFailedCount, ConcurrencyStamp = entity.ConcurrencyStamp, Email = entity.Email, EmailConfirmed = entity.EmailConfirmed, LockoutEnabled = entity.LockoutEnabled, LockoutEnd = entity.LockoutEnd, NormalizedEmail = entity.NormalizedEmail, PhoneNumber = entity.PhoneNumber, PhoneNumberConfirmed = entity.PhoneNumberConfirmed, TwoFactorEnabled = entity.TwoFactorEnabled
         };
         dbSet.Add(dbEntity);
         Db.SaveChanges();
         var added = dbSet.Select(x => new LoginView { 
                 Id = x.Id,
+                  UserName = x.UserName,
+                  NormalizedUserName = x.NormalizedUserName,
+                  PasswordHash = x.PasswordHash,
+                  SecurityStamp = x.SecurityStamp,
+                  AccessFailedCount = x.AccessFailedCount,
+                  ConcurrencyStamp = x.ConcurrencyStamp,
                   Email = x.Email,
-                  Password = x.Password
+                  EmailConfirmed = x.EmailConfirmed,
+                  LockoutEnabled = x.LockoutEnabled,
+                  LockoutEnd = x.LockoutEnd,
+                  NormalizedEmail = x.NormalizedEmail,
+                  PhoneNumber = x.PhoneNumber,
+                  PhoneNumberConfirmed = x.PhoneNumberConfirmed,
+                  TwoFactorEnabled = x.TwoFactorEnabled
             })
             .FirstOrDefault(x => x.Id == dbEntity.Id);
         
@@ -81,8 +105,20 @@ public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify
             throw new KeyNotFoundException($"Could not find an existing {entityName} entity with the given id.");
         }
 
+        existing.UserName = entity.UserName;
+        existing.NormalizedUserName = entity.NormalizedUserName;
+        existing.PasswordHash = entity.PasswordHash;
+        existing.SecurityStamp = entity.SecurityStamp;
+        existing.AccessFailedCount = entity.AccessFailedCount;
+        existing.ConcurrencyStamp = entity.ConcurrencyStamp;
         existing.Email = entity.Email;
-        existing.Password = entity.Password;
+        existing.EmailConfirmed = entity.EmailConfirmed;
+        existing.LockoutEnabled = entity.LockoutEnabled;
+        existing.LockoutEnd = entity.LockoutEnd;
+        existing.NormalizedEmail = entity.NormalizedEmail;
+        existing.PhoneNumber = entity.PhoneNumber;
+        existing.PhoneNumberConfirmed = entity.PhoneNumberConfirmed;
+        existing.TwoFactorEnabled = entity.TwoFactorEnabled;
 
         Db.SaveChanges();
         var updated = GetById(id);
@@ -102,8 +138,20 @@ public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify
         {
             var propName = prop.Name.ToLower();
             if (propName == "id") continue;
+            else if (propName == "userName") existing.UserName = prop.Value.GetString()!;
+            else if (propName == "normalizedUserName") existing.NormalizedUserName = prop.Value.GetString()!;
+            else if (propName == "passwordHash") existing.PasswordHash = prop.Value.GetString()!;
+            else if (propName == "securityStamp") existing.SecurityStamp = prop.Value.GetString()!;
+            else if (propName == "accessFailedCount") existing.AccessFailedCount = prop.Value.GetInt32()!;
+            else if (propName == "concurrencyStamp") existing.ConcurrencyStamp = prop.Value.GetString()!;
             else if (propName == "email") existing.Email = prop.Value.GetString()!;
-            else if (propName == "password") existing.Password = prop.Value.GetString()!;
+            else if (propName == "emailConfirmed") existing.EmailConfirmed = prop.Value.GetBoolean()!;
+            else if (propName == "lockoutEnabled") existing.LockoutEnabled = prop.Value.GetBoolean()!;
+            else if (propName == "lockoutEnd") existing.LockoutEnd = prop.Value.GetDateTimeOffset()!;
+            else if (propName == "normalizedEmail") existing.NormalizedEmail = prop.Value.GetString()!;
+            else if (propName == "phoneNumber") existing.PhoneNumber = prop.Value.GetString()!;
+            else if (propName == "phoneNumberConfirmed") existing.PhoneNumberConfirmed = prop.Value.GetBoolean()!;
+            else if (propName == "twoFactorEnabled") existing.TwoFactorEnabled = prop.Value.GetBoolean()!;
         }
 
         Db.SaveChanges();
@@ -126,6 +174,11 @@ public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify
         return beforeDelete;
     }
 
+    public override QueryResult<ClientQuery, LoginView> GetAll(int maxDepth = 2)
+    {
+        return GetAll(new LoginQuery(), new DataQuery(), maxDepth);
+    }
+
     public override QueryResult<ClientQuery, LoginView> GetAll(LoginQuery clientQuery, DataQuery query, int maxDepth = 2)
     {
         var q = Db.Set<Login>().Skip(query.Offset);
@@ -139,11 +192,11 @@ public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify
         {
             foreach (var c in query.Where)
             {   
-                if (c.Column == "Email" && c.Operator == Operators.Contains && c.Value != null) 
+                if (c.Column == "UserName" && c.Operator == Operators.Contains && c.Value != null) 
                 {
                     var v = c.Value.ToString();
                     if(!string.IsNullOrWhiteSpace(v))
-                        q = q.Where(x => x.Email != null && x.Email.ToLower().Contains(v.ToLower()));
+                        q = q.Where(x => x.UserName != null && x.UserName.ToLower().Contains(v.ToLower()));
                 }                   
             }
         }
@@ -154,11 +207,11 @@ public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify
             foreach (var s in query.Sort)
             {
                 
-                if (s.Column == "Email")
+                if (s.Column == "UserName")
                 {
                     sortedQ = s.Direction == SortDirection.Asc ? 
-                        sortedQ is null ? q.OrderBy(x => x.Email) : sortedQ.ThenBy(x => x.Email) 
-                        : sortedQ is null ? q.OrderByDescending( x => x.Email) : sortedQ.ThenByDescending(x => x.Email);
+                        sortedQ is null ? q.OrderBy(x => x.UserName) : sortedQ.ThenBy(x => x.UserName) 
+                        : sortedQ is null ? q.OrderByDescending( x => x.UserName) : sortedQ.ThenByDescending(x => x.UserName);
                 }
                 
             }
@@ -166,8 +219,20 @@ public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify
         
         var data = (sortedQ ?? q)
             .Select(x => new LoginView { Id = x.Id,
+                  UserName = x.UserName,
+                  NormalizedUserName = x.NormalizedUserName,
+                  PasswordHash = x.PasswordHash,
+                  SecurityStamp = x.SecurityStamp,
+                  AccessFailedCount = x.AccessFailedCount,
+                  ConcurrencyStamp = x.ConcurrencyStamp,
                   Email = x.Email,
-                  Password = x.Password })
+                  EmailConfirmed = x.EmailConfirmed,
+                  LockoutEnabled = x.LockoutEnabled,
+                  LockoutEnd = x.LockoutEnd,
+                  NormalizedEmail = x.NormalizedEmail,
+                  PhoneNumber = x.PhoneNumber,
+                  PhoneNumberConfirmed = x.PhoneNumberConfirmed,
+                  TwoFactorEnabled = x.TwoFactorEnabled })
             .ToList();
 
         var result = new QueryResult<ClientQuery, LoginView>(clientQuery)

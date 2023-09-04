@@ -145,6 +145,11 @@ public class RolePermissionBusiness : Business<RolePermission, RolePermissionVie
         return beforeDelete;
     }
 
+    public override QueryResult<ClientQuery, RolePermissionView> GetAll(int maxDepth = 2)
+    {
+        return GetAll(new RolePermissionQuery(), new DataQuery(), maxDepth);
+    }
+
     public override QueryResult<ClientQuery, RolePermissionView> GetAll(RolePermissionQuery clientQuery, DataQuery query, int maxDepth = 2)
     {
         var q = Db.Set<RolePermission>().Skip(query.Offset);

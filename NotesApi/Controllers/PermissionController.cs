@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +7,7 @@ namespace PermissionsApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PermissionController : ControllerBase
     {
         private readonly MyContext _context;
@@ -19,6 +21,7 @@ namespace PermissionsApi.Controllers
 
         // GET: api/Permission
         [HttpGet]
+        [RequiredPermissions(AppPermission.PermissionRead)]
         public ActionResult<QueryResult<ClientQuery, PermissionView>> GetPermissions([FromQuery] PermissionQuery query)
         {
             var dataQuery = _business.ConvertToDataQuery(query);
@@ -29,6 +32,7 @@ namespace PermissionsApi.Controllers
 
         // GET: api/Permission/5
         [HttpGet("{id}")]
+        [RequiredPermissions(AppPermission.PermissionRead)]
         public ActionResult<PermissionView> GetPermission(Guid id)
         {
             var permission = _business.GetById(id);
@@ -44,6 +48,7 @@ namespace PermissionsApi.Controllers
         // PUT: api/Permission/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequiredPermissions(AppPermission.PermissionUpdate)]
         public ActionResult<PermissionView> PutPermission(Guid id, PermissionUpdate permission)
         {
             try 
@@ -77,6 +82,7 @@ namespace PermissionsApi.Controllers
         // PATCH: api/Permission/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
+        [RequiredPermissions(AppPermission.PermissionUpdate)]
         public ActionResult<PermissionView> PatchPermission(Guid id, JsonElement permission)
         {
             try 
@@ -111,6 +117,7 @@ namespace PermissionsApi.Controllers
         // POST: api/Permission
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequiredPermissions(AppPermission.PermissionCreate)]
         public ActionResult<PermissionView> PostPermission(PermissionCreate permission)
         {
             var created = _business.Create(permission);
@@ -120,6 +127,7 @@ namespace PermissionsApi.Controllers
 
         // DELETE: api/Permission/5
         [HttpDelete("{id}")]
+        [RequiredPermissions(AppPermission.PermissionDelete)]
         public ActionResult<PermissionView> DeletePermission(Guid id)
         {
             try 

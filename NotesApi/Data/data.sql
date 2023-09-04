@@ -1,7 +1,7 @@
-insert into [login] ([id], [email], [password]) values ('550e8400-e29b-41d4-a716-446655440000', 'john@example.com', 'f515c100dc23c786bcc6ff791fb1c813b38ddcacd0f9546f1e1db0705f4f56e1');
-insert into [login] ([id], [email], [password]) values ('550e8400-e29b-41d4-a716-446655440001', 'jane@example.com', 'f515c100dc23c786bcc6ff791fb1c813b38ddcacd0f9546f1e1db0705f4f56e1');
-insert into [login] ([id], [email], [password]) values ('550e8400-e29b-41d4-a716-446655440002', 'mike@example.com', 'f515c100dc23c786bcc6ff791fb1c813b38ddcacd0f9546f1e1db0705f4f56e1');
-insert into [login] ([id], [email], [password]) values ('550e8400-e29b-41d4-a716-446655440003', 'amy@example.com', 'f515c100dc23c786bcc6ff791fb1c813b38ddcacd0f9546f1e1db0705f4f56e1');
+insert into [login] ([id], [userName], [normalizedUserName], [passwordHash]) values ('550e8400-e29b-41d4-a716-446655440000', 'john@example.com', 'john@example.com', 'f515c100dc23c786bcc6ff791fb1c813b38ddcacd0f9546f1e1db0705f4f56e1');
+insert into [login] ([id], [userName], [normalizedUserName], [passwordHash]) values ('550e8400-e29b-41d4-a716-446655440001', 'jane@example.com', 'jane@example.com', 'f515c100dc23c786bcc6ff791fb1c813b38ddcacd0f9546f1e1db0705f4f56e1');
+insert into [login] ([id], [userName], [normalizedUserName], [passwordHash]) values ('550e8400-e29b-41d4-a716-446655440002', 'mike@example.com', 'mike@example.com', 'f515c100dc23c786bcc6ff791fb1c813b38ddcacd0f9546f1e1db0705f4f56e1');
+insert into [login] ([id], [userName], [normalizedUserName], [passwordHash]) values ('550e8400-e29b-41d4-a716-446655440003', 'amy@example.com', 'amy@example.com', 'f515c100dc23c786bcc6ff791fb1c813b38ddcacd0f9546f1e1db0705f4f56e1');
 
 insert into [user] ([id], [name], [email], [login_id]) values ('550e8400-e29b-41d4-a716-446655440000', 'John', 'john@example.com', '550e8400-e29b-41d4-a716-446655440000');
 insert into [user] ([id], [name], [email], [login_id]) values ('550e8400-e29b-41d4-a716-446655440001', 'Jane', 'jane@example.com', '550e8400-e29b-41d4-a716-446655440001');
@@ -11,6 +11,10 @@ insert into [user] ([id], [name], [email], [login_id]) values ('550e8400-e29b-41
 insert into [role] ([id], [code], [name]) values ('550e8400-e29b-41d4-a716-446655440000', 'VIEW', 'Viewer');
 insert into [role] ([id], [code], [name]) values ('550e8400-e29b-41d4-a716-446655440001', 'CONTRIBUTE', 'Contributor');
 insert into [role] ([id], [code], [name]) values ('550e8400-e29b-41d4-a716-446655440002', 'ADMIN', 'Administrator');
+
+insert into [userRole] ([id], [user_id], [role_id]) values ('550e8400-e29b-41d4-a716-446655440000', '550e8400-e29b-41d4-a716-446655440000', '550e8400-e29b-41d4-a716-446655440000');
+insert into [userRole] ([id], [user_id], [role_id]) values ('550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440001');
+insert into [userRole] ([id], [user_id], [role_id]) values ('550e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440002');
 
 insert into [account] ([id], [label], [bank_name], [bank_address], [bank_swift], [account_name], [account_iban], [account_address]) values ('550e8400-e29b-41d4-a716-446655440000', 'fransi', 'Bank of America', 'Riyad Bank, King Abdulaziz Road, Al Adama, Eastern Province 31952', 'RIBLSARI', 'Ahmed Ali', 'SA44 2000 0001 2345 6789 1234', 'P.O. Box 22622 Riyadh 11416 Saudi Arabia');
 insert into [account] ([id], [label], [bank_name], [bank_address], [bank_swift], [account_name], [account_iban], [account_address]) values ('550e8400-e29b-41d4-a716-446655440001', 'ncb', 'Chase', 'Banque Saudi Fransi, Prince Faisal Bin Fahd Road, Al Khobar, Eastern Province 34429', 'BSFRSARI', 'Fatima Hassan', 'SA03 5500 0000 5678 9012 3456', 'P.O. Box 56006 Riyadh 11554 Saudi Arabia');
@@ -53,6 +57,11 @@ insert into [saleItem] ([id], [sale_id], [item_id], [quantity], [price]) values 
 insert into [saleItem] ([id], [sale_id], [item_id], [quantity], [price]) values ('550e8400-e29b-41d4-a716-446655440003', '550e8400-e29b-41d4-a716-446655440003', '550e8400-e29b-41d4-a716-446655440003', 2, 67.8);
 
 
+insert into [permission] select uuid4(), 'ENTITY:USERROLE:READ', 'Entity userRole READ', 'userRole', 'READ';
+insert into [permission] select uuid4(), 'ENTITY:USERROLE:CREATE', 'Entity userRole CREATE', 'userRole', 'CREATE';
+insert into [permission] select uuid4(), 'ENTITY:USERROLE:UPDATE', 'Entity userRole UPDATE', 'userRole', 'UPDATE';
+insert into [permission] select uuid4(), 'ENTITY:USERROLE:DELETE', 'Entity userRole DELETE', 'userRole', 'DELETE';
+insert into [permission] select uuid4(), 'ENTITY:USERROLE:EXECUTE', 'Entity userRole EXECUTE', 'userRole', 'EXECUTE';
 insert into [permission] select uuid4(), 'ENTITY:ACCOUNT:READ', 'Entity account READ', 'account', 'READ';
 insert into [permission] select uuid4(), 'ENTITY:ACCOUNT:CREATE', 'Entity account CREATE', 'account', 'CREATE';
 insert into [permission] select uuid4(), 'ENTITY:ACCOUNT:UPDATE', 'Entity account UPDATE', 'account', 'UPDATE';

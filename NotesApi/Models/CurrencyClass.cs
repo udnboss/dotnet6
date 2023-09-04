@@ -1,12 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Identity;
 
 #pragma warning disable CS8618
 
 [Table("currency")]
-public class Currency : Entity
+public class Currency :  IEntity
 {
+    [Key][Column("id")][JsonPropertyName("id")][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public Guid Id { get; set; }
     [JsonPropertyName("name")][Column("name")][Required] public string Name { get; set; }
     [JsonPropertyName("symbol")][Column("symbol")][Required] public string Symbol { get; set; }
 }

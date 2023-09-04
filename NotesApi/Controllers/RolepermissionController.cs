@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +7,7 @@ namespace RolePermissionsApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RolePermissionController : ControllerBase
     {
         private readonly MyContext _context;
@@ -19,6 +21,7 @@ namespace RolePermissionsApi.Controllers
 
         // GET: api/RolePermission
         [HttpGet]
+        [RequiredPermissions(AppPermission.RolePermissionRead)]
         public ActionResult<QueryResult<ClientQuery, RolePermissionView>> GetRolePermissions([FromQuery] RolePermissionQuery query)
         {
             var dataQuery = _business.ConvertToDataQuery(query);
@@ -29,6 +32,7 @@ namespace RolePermissionsApi.Controllers
 
         // GET: api/RolePermission/5
         [HttpGet("{id}")]
+        [RequiredPermissions(AppPermission.RolePermissionRead)]
         public ActionResult<RolePermissionView> GetRolePermission(Guid id)
         {
             var rolePermission = _business.GetById(id);
@@ -44,6 +48,7 @@ namespace RolePermissionsApi.Controllers
         // PUT: api/RolePermission/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequiredPermissions(AppPermission.RolePermissionUpdate)]
         public ActionResult<RolePermissionView> PutRolePermission(Guid id, RolePermissionUpdate rolePermission)
         {
             try 
@@ -77,6 +82,7 @@ namespace RolePermissionsApi.Controllers
         // PATCH: api/RolePermission/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
+        [RequiredPermissions(AppPermission.RolePermissionUpdate)]
         public ActionResult<RolePermissionView> PatchRolePermission(Guid id, JsonElement rolePermission)
         {
             try 
@@ -111,6 +117,7 @@ namespace RolePermissionsApi.Controllers
         // POST: api/RolePermission
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequiredPermissions(AppPermission.RolePermissionCreate)]
         public ActionResult<RolePermissionView> PostRolePermission(RolePermissionCreate rolePermission)
         {
             var created = _business.Create(rolePermission);
@@ -120,6 +127,7 @@ namespace RolePermissionsApi.Controllers
 
         // DELETE: api/RolePermission/5
         [HttpDelete("{id}")]
+        [RequiredPermissions(AppPermission.RolePermissionDelete)]
         public ActionResult<RolePermissionView> DeleteRolePermission(Guid id)
         {
             try 

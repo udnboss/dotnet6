@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +7,7 @@ namespace SaleItemsApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SaleItemController : ControllerBase
     {
         private readonly MyContext _context;
@@ -19,6 +21,7 @@ namespace SaleItemsApi.Controllers
 
         // GET: api/SaleItem
         [HttpGet]
+        [RequiredPermissions(AppPermission.SaleItemRead)]
         public ActionResult<QueryResult<ClientQuery, SaleItemView>> GetSaleItems([FromQuery] SaleItemQuery query)
         {
             var dataQuery = _business.ConvertToDataQuery(query);
@@ -29,6 +32,7 @@ namespace SaleItemsApi.Controllers
 
         // GET: api/SaleItem/5
         [HttpGet("{id}")]
+        [RequiredPermissions(AppPermission.SaleItemRead)]
         public ActionResult<SaleItemView> GetSaleItem(Guid id)
         {
             var saleItem = _business.GetById(id);
@@ -44,6 +48,7 @@ namespace SaleItemsApi.Controllers
         // PUT: api/SaleItem/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequiredPermissions(AppPermission.SaleItemUpdate)]
         public ActionResult<SaleItemView> PutSaleItem(Guid id, SaleItemUpdate saleItem)
         {
             try 
@@ -77,6 +82,7 @@ namespace SaleItemsApi.Controllers
         // PATCH: api/SaleItem/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
+        [RequiredPermissions(AppPermission.SaleItemUpdate)]
         public ActionResult<SaleItemView> PatchSaleItem(Guid id, JsonElement saleItem)
         {
             try 
@@ -111,6 +117,7 @@ namespace SaleItemsApi.Controllers
         // POST: api/SaleItem
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequiredPermissions(AppPermission.SaleItemCreate)]
         public ActionResult<SaleItemView> PostSaleItem(SaleItemCreate saleItem)
         {
             var created = _business.Create(saleItem);
@@ -120,6 +127,7 @@ namespace SaleItemsApi.Controllers
 
         // DELETE: api/SaleItem/5
         [HttpDelete("{id}")]
+        [RequiredPermissions(AppPermission.SaleItemDelete)]
         public ActionResult<SaleItemView> DeleteSaleItem(Guid id)
         {
             try 

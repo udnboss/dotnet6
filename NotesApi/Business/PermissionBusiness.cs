@@ -149,6 +149,11 @@ public class PermissionBusiness : Business<Permission, PermissionView, Permissio
         return beforeDelete;
     }
 
+    public override QueryResult<ClientQuery, PermissionView> GetAll(int maxDepth = 2)
+    {
+        return GetAll(new PermissionQuery(), new DataQuery(), maxDepth);
+    }
+
     public override QueryResult<ClientQuery, PermissionView> GetAll(PermissionQuery clientQuery, DataQuery query, int maxDepth = 2)
     {
         var q = Db.Set<Permission>().Skip(query.Offset);

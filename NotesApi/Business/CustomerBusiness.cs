@@ -172,6 +172,11 @@ public class CustomerBusiness : Business<Customer, CustomerView, CustomerUpdate,
         return beforeDelete;
     }
 
+    public override QueryResult<ClientQuery, CustomerView> GetAll(int maxDepth = 2)
+    {
+        return GetAll(new CustomerQuery(), new DataQuery(), maxDepth);
+    }
+
     public override QueryResult<ClientQuery, CustomerView> GetAll(CustomerQuery clientQuery, DataQuery query, int maxDepth = 2)
     {
         var q = Db.Set<Customer>().Skip(query.Offset);

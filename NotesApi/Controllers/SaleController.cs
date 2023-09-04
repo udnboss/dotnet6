@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +7,7 @@ namespace SalesApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SaleController : ControllerBase
     {
         private readonly MyContext _context;
@@ -19,6 +21,7 @@ namespace SalesApi.Controllers
 
         // GET: api/Sale
         [HttpGet]
+        [RequiredPermissions(AppPermission.SaleRead)]
         public ActionResult<QueryResult<ClientQuery, SaleView>> GetSales([FromQuery] SaleQuery query)
         {
             var dataQuery = _business.ConvertToDataQuery(query);
@@ -29,6 +32,7 @@ namespace SalesApi.Controllers
 
         // GET: api/Sale/5
         [HttpGet("{id}")]
+        [RequiredPermissions(AppPermission.SaleRead)]
         public ActionResult<SaleView> GetSale(Guid id)
         {
             var sale = _business.GetById(id);
@@ -44,6 +48,7 @@ namespace SalesApi.Controllers
         // PUT: api/Sale/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequiredPermissions(AppPermission.SaleUpdate)]
         public ActionResult<SaleView> PutSale(Guid id, SaleUpdate sale)
         {
             try 
@@ -77,6 +82,7 @@ namespace SalesApi.Controllers
         // PATCH: api/Sale/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
+        [RequiredPermissions(AppPermission.SaleUpdate)]
         public ActionResult<SaleView> PatchSale(Guid id, JsonElement sale)
         {
             try 
@@ -111,6 +117,7 @@ namespace SalesApi.Controllers
         // POST: api/Sale
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequiredPermissions(AppPermission.SaleCreate)]
         public ActionResult<SaleView> PostSale(SaleCreate sale)
         {
             var created = _business.Create(sale);
@@ -120,6 +127,7 @@ namespace SalesApi.Controllers
 
         // DELETE: api/Sale/5
         [HttpDelete("{id}")]
+        [RequiredPermissions(AppPermission.SaleDelete)]
         public ActionResult<SaleView> DeleteSale(Guid id)
         {
             try 

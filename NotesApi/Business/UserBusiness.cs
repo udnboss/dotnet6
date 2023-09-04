@@ -42,8 +42,23 @@ public class UserBusiness : Business<User, UserView, UserUpdate, UserModify, Use
                   Email = x.Email,
                   LoginId = x.LoginId,
                   Login = new LoginView { Id = x.Login!.Id,
+                      UserName = x.Login!.UserName,
+                      NormalizedUserName = x.Login!.NormalizedUserName,
+                      PasswordHash = x.Login!.PasswordHash,
+                      SecurityStamp = x.Login!.SecurityStamp,
+                      AccessFailedCount = x.Login!.AccessFailedCount,
+                      ConcurrencyStamp = x.Login!.ConcurrencyStamp,
                       Email = x.Login!.Email,
-                      Password = x.Login!.Password }  
+                      EmailConfirmed = x.Login!.EmailConfirmed,
+                      LockoutEnabled = x.Login!.LockoutEnabled,
+                      LockoutEnd = x.Login!.LockoutEnd,
+                      NormalizedEmail = x.Login!.NormalizedEmail,
+                      PhoneNumber = x.Login!.PhoneNumber,
+                      PhoneNumberConfirmed = x.Login!.PhoneNumberConfirmed,
+                      TwoFactorEnabled = x.Login!.TwoFactorEnabled },
+                  UserRoles = new QueryResult<UserRoleQuery, UserRoleView>(new UserRoleQuery() { _Size = 10, _Page = 1, UserId = new List<Guid?>() { x.Id } }) { Result = x.UserRoles!.Select(y1 => new UserRoleView { Id = y1.Id,
+                      UserId = y1.UserId,
+                      RoleId = y1.RoleId }).Take(10) }  
             })
             .AsQueryable();
 
@@ -71,8 +86,23 @@ public class UserBusiness : Business<User, UserView, UserUpdate, UserModify, Use
                   Email = x.Email,
                   LoginId = x.LoginId,
                   Login = new LoginView { Id = x.Login!.Id,
+                      UserName = x.Login!.UserName,
+                      NormalizedUserName = x.Login!.NormalizedUserName,
+                      PasswordHash = x.Login!.PasswordHash,
+                      SecurityStamp = x.Login!.SecurityStamp,
+                      AccessFailedCount = x.Login!.AccessFailedCount,
+                      ConcurrencyStamp = x.Login!.ConcurrencyStamp,
                       Email = x.Login!.Email,
-                      Password = x.Login!.Password }
+                      EmailConfirmed = x.Login!.EmailConfirmed,
+                      LockoutEnabled = x.Login!.LockoutEnabled,
+                      LockoutEnd = x.Login!.LockoutEnd,
+                      NormalizedEmail = x.Login!.NormalizedEmail,
+                      PhoneNumber = x.Login!.PhoneNumber,
+                      PhoneNumberConfirmed = x.Login!.PhoneNumberConfirmed,
+                      TwoFactorEnabled = x.Login!.TwoFactorEnabled },
+                  UserRoles = new QueryResult<UserRoleQuery, UserRoleView>(new UserRoleQuery() { _Size = 10, _Page = 1, UserId = new List<Guid?>() { x.Id } }) { Result = x.UserRoles!.Select(y1 => new UserRoleView { Id = y1.Id,
+                      UserId = y1.UserId,
+                      RoleId = y1.RoleId }).Take(10) }
             })
             .FirstOrDefault(x => x.Id == dbEntity.Id);
         
@@ -139,6 +169,11 @@ public class UserBusiness : Business<User, UserView, UserUpdate, UserModify, Use
         return beforeDelete;
     }
 
+    public override QueryResult<ClientQuery, UserView> GetAll(int maxDepth = 2)
+    {
+        return GetAll(new UserQuery(), new DataQuery(), maxDepth);
+    }
+
     public override QueryResult<ClientQuery, UserView> GetAll(UserQuery clientQuery, DataQuery query, int maxDepth = 2)
     {
         var q = Db.Set<User>().Skip(query.Offset);
@@ -198,8 +233,23 @@ public class UserBusiness : Business<User, UserView, UserUpdate, UserModify, Use
                   Email = x.Email,
                   LoginId = x.LoginId,
                   Login = new LoginView { Id = x.Login!.Id,
+                      UserName = x.Login!.UserName,
+                      NormalizedUserName = x.Login!.NormalizedUserName,
+                      PasswordHash = x.Login!.PasswordHash,
+                      SecurityStamp = x.Login!.SecurityStamp,
+                      AccessFailedCount = x.Login!.AccessFailedCount,
+                      ConcurrencyStamp = x.Login!.ConcurrencyStamp,
                       Email = x.Login!.Email,
-                      Password = x.Login!.Password } })
+                      EmailConfirmed = x.Login!.EmailConfirmed,
+                      LockoutEnabled = x.Login!.LockoutEnabled,
+                      LockoutEnd = x.Login!.LockoutEnd,
+                      NormalizedEmail = x.Login!.NormalizedEmail,
+                      PhoneNumber = x.Login!.PhoneNumber,
+                      PhoneNumberConfirmed = x.Login!.PhoneNumberConfirmed,
+                      TwoFactorEnabled = x.Login!.TwoFactorEnabled },
+                  UserRoles = new QueryResult<UserRoleQuery, UserRoleView>(new UserRoleQuery() { _Size = 10, _Page = 1, UserId = new List<Guid?>() { x.Id } }) { Result = x.UserRoles!.Select(y1 => new UserRoleView { Id = y1.Id,
+                      UserId = y1.UserId,
+                      RoleId = y1.RoleId }).Take(10) } })
             .ToList();
 
         var result = new QueryResult<ClientQuery, UserView>(clientQuery)

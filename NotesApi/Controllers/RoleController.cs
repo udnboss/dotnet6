@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +7,7 @@ namespace RolesApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RoleController : ControllerBase
     {
         private readonly MyContext _context;
@@ -19,6 +21,7 @@ namespace RolesApi.Controllers
 
         // GET: api/Role
         [HttpGet]
+        [RequiredPermissions(AppPermission.RoleRead)]
         public ActionResult<QueryResult<ClientQuery, RoleView>> GetRoles([FromQuery] RoleQuery query)
         {
             var dataQuery = _business.ConvertToDataQuery(query);
@@ -29,6 +32,7 @@ namespace RolesApi.Controllers
 
         // GET: api/Role/5
         [HttpGet("{id}")]
+        [RequiredPermissions(AppPermission.RoleRead)]
         public ActionResult<RoleView> GetRole(Guid id)
         {
             var role = _business.GetById(id);
@@ -44,6 +48,7 @@ namespace RolesApi.Controllers
         // PUT: api/Role/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequiredPermissions(AppPermission.RoleUpdate)]
         public ActionResult<RoleView> PutRole(Guid id, RoleUpdate role)
         {
             try 
@@ -77,6 +82,7 @@ namespace RolesApi.Controllers
         // PATCH: api/Role/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
+        [RequiredPermissions(AppPermission.RoleUpdate)]
         public ActionResult<RoleView> PatchRole(Guid id, JsonElement role)
         {
             try 
@@ -111,6 +117,7 @@ namespace RolesApi.Controllers
         // POST: api/Role
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequiredPermissions(AppPermission.RoleCreate)]
         public ActionResult<RoleView> PostRole(RoleCreate role)
         {
             var created = _business.Create(role);
@@ -120,6 +127,7 @@ namespace RolesApi.Controllers
 
         // DELETE: api/Role/5
         [HttpDelete("{id}")]
+        [RequiredPermissions(AppPermission.RoleDelete)]
         public ActionResult<RoleView> DeleteRole(Guid id)
         {
             try 

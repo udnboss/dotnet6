@@ -124,6 +124,11 @@ public class CurrencyBusiness : Business<Currency, CurrencyView, CurrencyUpdate,
         return beforeDelete;
     }
 
+    public override QueryResult<ClientQuery, CurrencyView> GetAll(int maxDepth = 2)
+    {
+        return GetAll(new CurrencyQuery(), new DataQuery(), maxDepth);
+    }
+
     public override QueryResult<ClientQuery, CurrencyView> GetAll(CurrencyQuery clientQuery, DataQuery query, int maxDepth = 2)
     {
         var q = Db.Set<Currency>().Skip(query.Offset);

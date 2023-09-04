@@ -1,12 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Identity;
 
 #pragma warning disable CS8618
 
 [Table("rolePermission")]
-public class RolePermission : Entity
+public class RolePermission :  IEntity
 {
+    [Key][Column("id")][JsonPropertyName("id")][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public Guid Id { get; set; }
     [JsonPropertyName("role_id")][Column("role_id")][Required] public Guid RoleId { get; set; }
     [JsonPropertyName("permission_id")][Column("permission_id")][Required] public Guid PermissionId { get; set; }
     [JsonPropertyName("role")][ForeignKey("RoleId")] public Role? Role { get; set; }

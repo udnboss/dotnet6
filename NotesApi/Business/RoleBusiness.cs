@@ -42,7 +42,10 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
                   Name = x.Name,
                   RolePermissions = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, RoleId = new List<Guid?>() { x.Id } }) { Result = x.RolePermissions!.Select(y1 => new RolePermissionView { Id = y1.Id,
                       RoleId = y1.RoleId,
-                      PermissionId = y1.PermissionId }).Take(10) }  
+                      PermissionId = y1.PermissionId }).Take(10) },
+                  RoleUsers = new QueryResult<UserRoleQuery, UserRoleView>(new UserRoleQuery() { _Size = 10, _Page = 1, RoleId = new List<Guid?>() { x.Id } }) { Result = x.RoleUsers!.Select(y1 => new UserRoleView { Id = y1.Id,
+                      UserId = y1.UserId,
+                      RoleId = y1.RoleId }).Take(10) }  
             })
             .AsQueryable();
 
@@ -70,7 +73,10 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
                   Name = x.Name,
                   RolePermissions = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, RoleId = new List<Guid?>() { x.Id } }) { Result = x.RolePermissions!.Select(y1 => new RolePermissionView { Id = y1.Id,
                       RoleId = y1.RoleId,
-                      PermissionId = y1.PermissionId }).Take(10) }
+                      PermissionId = y1.PermissionId }).Take(10) },
+                  RoleUsers = new QueryResult<UserRoleQuery, UserRoleView>(new UserRoleQuery() { _Size = 10, _Page = 1, RoleId = new List<Guid?>() { x.Id } }) { Result = x.RoleUsers!.Select(y1 => new UserRoleView { Id = y1.Id,
+                      UserId = y1.UserId,
+                      RoleId = y1.RoleId }).Take(10) }
             })
             .FirstOrDefault(x => x.Id == dbEntity.Id);
         
@@ -135,6 +141,11 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
         return beforeDelete;
     }
 
+    public override QueryResult<ClientQuery, RoleView> GetAll(int maxDepth = 2)
+    {
+        return GetAll(new RoleQuery(), new DataQuery(), maxDepth);
+    }
+
     public override QueryResult<ClientQuery, RoleView> GetAll(RoleQuery clientQuery, DataQuery query, int maxDepth = 2)
     {
         var q = Db.Set<Role>().Skip(query.Offset);
@@ -185,7 +196,10 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
                   Name = x.Name,
                   RolePermissions = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, RoleId = new List<Guid?>() { x.Id } }) { Result = x.RolePermissions!.Select(y1 => new RolePermissionView { Id = y1.Id,
                       RoleId = y1.RoleId,
-                      PermissionId = y1.PermissionId }).Take(10) } })
+                      PermissionId = y1.PermissionId }).Take(10) },
+                  RoleUsers = new QueryResult<UserRoleQuery, UserRoleView>(new UserRoleQuery() { _Size = 10, _Page = 1, RoleId = new List<Guid?>() { x.Id } }) { Result = x.RoleUsers!.Select(y1 => new UserRoleView { Id = y1.Id,
+                      UserId = y1.UserId,
+                      RoleId = y1.RoleId }).Take(10) } })
             .ToList();
 
         var result = new QueryResult<ClientQuery, RoleView>(clientQuery)
