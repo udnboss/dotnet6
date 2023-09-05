@@ -30,7 +30,7 @@ public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify
         return clientQuery;
     }
     
-    public override LoginView GetById(Guid id, int maxDepth = 2)
+    public override LoginView GetById(string id, int maxDepth = 2)
     {
         var query = Db.Set<Login>()
             .Select(x => new LoginView { 
@@ -65,7 +65,7 @@ public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify
     {
         var dbSet = Db.Set<Login>();
         var dbEntity = new Login {
-            Id = new Guid(),
+            Id = new Guid().ToString(),
             UserName = entity.UserName, NormalizedUserName = entity.NormalizedUserName, PasswordHash = entity.PasswordHash, SecurityStamp = entity.SecurityStamp, AccessFailedCount = entity.AccessFailedCount, ConcurrencyStamp = entity.ConcurrencyStamp, Email = entity.Email, EmailConfirmed = entity.EmailConfirmed, LockoutEnabled = entity.LockoutEnabled, LockoutEnd = entity.LockoutEnd, NormalizedEmail = entity.NormalizedEmail, PhoneNumber = entity.PhoneNumber, PhoneNumberConfirmed = entity.PhoneNumberConfirmed, TwoFactorEnabled = entity.TwoFactorEnabled
         };
         dbSet.Add(dbEntity);
@@ -96,7 +96,7 @@ public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify
         return added;
     }
 
-    public override LoginView Update(Guid id, LoginUpdate entity)
+    public override LoginView Update(string id, LoginUpdate entity)
     {
         var dbSet = Db.Set<Login>();
         var existing = dbSet.Find(id);
@@ -125,7 +125,7 @@ public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify
         return updated;
     }
 
-    public override LoginView Modify(Guid id, JsonElement entity)
+    public override LoginView Modify(string id, JsonElement entity)
     {
         var dbSet = Db.Set<Login>();
         var existing = dbSet.Find(id);
@@ -159,7 +159,7 @@ public class LoginBusiness : Business<Login, LoginView, LoginUpdate, LoginModify
         return updated;
     }
 
-    public override LoginView Delete(Guid id)
+    public override LoginView Delete(string id)
     {
         var dbSet = Db.Set<Login>();
         var existing = dbSet.Find(id);

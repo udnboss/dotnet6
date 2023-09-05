@@ -33,7 +33,7 @@ namespace CustomersApi.Controllers
         // GET: api/Customer/5
         [HttpGet("{id}")]
         [RequiredPermissions(AppPermission.CustomerRead)]
-        public ActionResult<CustomerView> GetCustomer(Guid id)
+        public ActionResult<CustomerView> GetCustomer(string id)
         {
             var customer = _business.GetById(id);
 
@@ -49,7 +49,7 @@ namespace CustomersApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [RequiredPermissions(AppPermission.CustomerUpdate)]
-        public ActionResult<CustomerView> PutCustomer(Guid id, CustomerUpdate customer)
+        public ActionResult<CustomerView> PutCustomer(string id, CustomerUpdate customer)
         {
             try 
             {
@@ -83,7 +83,7 @@ namespace CustomersApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
         [RequiredPermissions(AppPermission.CustomerUpdate)]
-        public ActionResult<CustomerView> PatchCustomer(Guid id, JsonElement customer)
+        public ActionResult<CustomerView> PatchCustomer(string id, JsonElement customer)
         {
             try 
             {
@@ -128,7 +128,7 @@ namespace CustomersApi.Controllers
         // DELETE: api/Customer/5
         [HttpDelete("{id}")]
         [RequiredPermissions(AppPermission.CustomerDelete)]
-        public ActionResult<CustomerView> DeleteCustomer(Guid id)
+        public ActionResult<CustomerView> DeleteCustomer(string id)
         {
             try 
             {
@@ -144,7 +144,7 @@ namespace CustomersApi.Controllers
             return deleted;
         }
 
-        private bool CustomerExists(Guid id)
+        private bool CustomerExists(string id)
         {
             return _context.Set<Customer>().Any(e => e.Id == id);
         }

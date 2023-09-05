@@ -33,7 +33,7 @@ namespace RolePermissionsApi.Controllers
         // GET: api/RolePermission/5
         [HttpGet("{id}")]
         [RequiredPermissions(AppPermission.RolePermissionRead)]
-        public ActionResult<RolePermissionView> GetRolePermission(Guid id)
+        public ActionResult<RolePermissionView> GetRolePermission(string id)
         {
             var rolePermission = _business.GetById(id);
 
@@ -49,7 +49,7 @@ namespace RolePermissionsApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [RequiredPermissions(AppPermission.RolePermissionUpdate)]
-        public ActionResult<RolePermissionView> PutRolePermission(Guid id, RolePermissionUpdate rolePermission)
+        public ActionResult<RolePermissionView> PutRolePermission(string id, RolePermissionUpdate rolePermission)
         {
             try 
             {
@@ -83,7 +83,7 @@ namespace RolePermissionsApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
         [RequiredPermissions(AppPermission.RolePermissionUpdate)]
-        public ActionResult<RolePermissionView> PatchRolePermission(Guid id, JsonElement rolePermission)
+        public ActionResult<RolePermissionView> PatchRolePermission(string id, JsonElement rolePermission)
         {
             try 
             {
@@ -128,7 +128,7 @@ namespace RolePermissionsApi.Controllers
         // DELETE: api/RolePermission/5
         [HttpDelete("{id}")]
         [RequiredPermissions(AppPermission.RolePermissionDelete)]
-        public ActionResult<RolePermissionView> DeleteRolePermission(Guid id)
+        public ActionResult<RolePermissionView> DeleteRolePermission(string id)
         {
             try 
             {
@@ -144,7 +144,7 @@ namespace RolePermissionsApi.Controllers
             return deleted;
         }
 
-        private bool RolePermissionExists(Guid id)
+        private bool RolePermissionExists(string id)
         {
             return _context.Set<RolePermission>().Any(e => e.Id == id);
         }

@@ -27,13 +27,13 @@ public class ItemBusiness : Business<Item, ItemView, ItemUpdate, ItemModify, Ite
         foreach(var c in query.Where)
         {
             if(c.Column == "Name") clientQuery.Name = c.Value as string;
-            if(c.Column == "CategoryId" && c.Values is not null) clientQuery.CategoryId = c.Values.Cast<Guid?>();
+            if(c.Column == "CategoryId" && c.Values is not null) clientQuery.CategoryId = c.Values.Cast<string>();
         }        
 
         return clientQuery;
     }
     
-    public override ItemView GetById(Guid id, int maxDepth = 2)
+    public override ItemView GetById(string id, int maxDepth = 2)
     {
         var query = Db.Set<Item>()
             .Select(x => new ItemView { 
@@ -58,7 +58,7 @@ public class ItemBusiness : Business<Item, ItemView, ItemUpdate, ItemModify, Ite
     {
         var dbSet = Db.Set<Item>();
         var dbEntity = new Item {
-            Id = new Guid(),
+            Id = new Guid().ToString(),
             Name = entity.Name, CategoryId = entity.CategoryId
         };
         dbSet.Add(dbEntity);
@@ -79,7 +79,7 @@ public class ItemBusiness : Business<Item, ItemView, ItemUpdate, ItemModify, Ite
         return added;
     }
 
-    public override ItemView Update(Guid id, ItemUpdate entity)
+    public override ItemView Update(string id, ItemUpdate entity)
     {
         var dbSet = Db.Set<Item>();
         var existing = dbSet.Find(id);
@@ -96,7 +96,7 @@ public class ItemBusiness : Business<Item, ItemView, ItemUpdate, ItemModify, Ite
         return updated;
     }
 
-    public override ItemView Modify(Guid id, JsonElement entity)
+    public override ItemView Modify(string id, JsonElement entity)
     {
         var dbSet = Db.Set<Item>();
         var existing = dbSet.Find(id);
@@ -110,7 +110,7 @@ public class ItemBusiness : Business<Item, ItemView, ItemUpdate, ItemModify, Ite
             var propName = prop.Name.ToLower();
             if (propName == "id") continue;
             else if (propName == "name") existing.Name = prop.Value.GetString()!;
-            else if (propName == "category_id") existing.CategoryId = prop.Value.GetGuid()!;
+            else if (propName == "category_id") existing.CategoryId = prop.Value.GetString()!;
         }
 
         Db.SaveChanges();
@@ -118,7 +118,7 @@ public class ItemBusiness : Business<Item, ItemView, ItemUpdate, ItemModify, Ite
         return updated;
     }
 
-    public override ItemView Delete(Guid id)
+    public override ItemView Delete(string id)
     {
         var dbSet = Db.Set<Item>();
         var existing = dbSet.Find(id);
@@ -157,10 +157,11 @@ public class ItemBusiness : Business<Item, ItemView, ItemUpdate, ItemModify, Ite
                     if(!string.IsNullOrWhiteSpace(v))
                         q = q.Where(x => x.Name != null && x.Name.ToLower().Contains(v.ToLower()));
                 }
-                else if (c.Column == "CategoryId" && c.Operator == Operators.IsIn && c.Values != null) 
+                else if (c.Column == "CategoryId" && c.Operator == Operators.IsIn && c.Value != null) 
                 {
-                    var v = c.Values.Cast<Guid?>().ToList();
-                    q = q.Where(x => v.Contains(x.CategoryId));
+                    var v = c.Value.ToString();
+                    if(!string.IsNullOrWhiteSpace(v))
+                        q = q.Where(x => x.CategoryId != null && x.CategoryId.ToLower().Contains(v.ToLower()));
                 }                   
             }
         }

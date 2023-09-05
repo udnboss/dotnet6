@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 [Table("account")]
 public class Account :  IEntity
 {
-    [Key][Column("id")][JsonPropertyName("id")][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public Guid Id { get; set; }
+    [Key][Column("id")][JsonPropertyName("id")][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public string Id { get; set; }
     [JsonPropertyName("label")][Column("label")][Required][MinLength(3)][MaxLength(100)] public string Label { get; set; }
     [JsonPropertyName("bank_name")][Column("bank_name")][Required][MinLength(3)][MaxLength(100)] public string BankName { get; set; }
     [JsonPropertyName("bank_address")][Column("bank_address")][Required][MinLength(3)][MaxLength(100)] public string BankAddress { get; set; }

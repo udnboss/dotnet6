@@ -33,7 +33,7 @@ namespace PermissionsApi.Controllers
         // GET: api/Permission/5
         [HttpGet("{id}")]
         [RequiredPermissions(AppPermission.PermissionRead)]
-        public ActionResult<PermissionView> GetPermission(Guid id)
+        public ActionResult<PermissionView> GetPermission(string id)
         {
             var permission = _business.GetById(id);
 
@@ -49,7 +49,7 @@ namespace PermissionsApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [RequiredPermissions(AppPermission.PermissionUpdate)]
-        public ActionResult<PermissionView> PutPermission(Guid id, PermissionUpdate permission)
+        public ActionResult<PermissionView> PutPermission(string id, PermissionUpdate permission)
         {
             try 
             {
@@ -83,7 +83,7 @@ namespace PermissionsApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
         [RequiredPermissions(AppPermission.PermissionUpdate)]
-        public ActionResult<PermissionView> PatchPermission(Guid id, JsonElement permission)
+        public ActionResult<PermissionView> PatchPermission(string id, JsonElement permission)
         {
             try 
             {
@@ -128,7 +128,7 @@ namespace PermissionsApi.Controllers
         // DELETE: api/Permission/5
         [HttpDelete("{id}")]
         [RequiredPermissions(AppPermission.PermissionDelete)]
-        public ActionResult<PermissionView> DeletePermission(Guid id)
+        public ActionResult<PermissionView> DeletePermission(string id)
         {
             try 
             {
@@ -144,7 +144,7 @@ namespace PermissionsApi.Controllers
             return deleted;
         }
 
-        private bool PermissionExists(Guid id)
+        private bool PermissionExists(string id)
         {
             return _context.Set<Permission>().Any(e => e.Id == id);
         }

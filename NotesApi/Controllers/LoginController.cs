@@ -33,7 +33,7 @@ namespace LoginsApi.Controllers
         // GET: api/Login/5
         [HttpGet("{id}")]
         [RequiredPermissions(AppPermission.LoginRead)]
-        public ActionResult<LoginView> GetLogin(Guid id)
+        public ActionResult<LoginView> GetLogin(string id)
         {
             var login = _business.GetById(id);
 
@@ -49,7 +49,7 @@ namespace LoginsApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [RequiredPermissions(AppPermission.LoginUpdate)]
-        public ActionResult<LoginView> PutLogin(Guid id, LoginUpdate login)
+        public ActionResult<LoginView> PutLogin(string id, LoginUpdate login)
         {
             try 
             {
@@ -83,7 +83,7 @@ namespace LoginsApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
         [RequiredPermissions(AppPermission.LoginUpdate)]
-        public ActionResult<LoginView> PatchLogin(Guid id, JsonElement login)
+        public ActionResult<LoginView> PatchLogin(string id, JsonElement login)
         {
             try 
             {
@@ -128,7 +128,7 @@ namespace LoginsApi.Controllers
         // DELETE: api/Login/5
         [HttpDelete("{id}")]
         [RequiredPermissions(AppPermission.LoginDelete)]
-        public ActionResult<LoginView> DeleteLogin(Guid id)
+        public ActionResult<LoginView> DeleteLogin(string id)
         {
             try 
             {
@@ -144,7 +144,7 @@ namespace LoginsApi.Controllers
             return deleted;
         }
 
-        private bool LoginExists(Guid id)
+        private bool LoginExists(string id)
         {
             return _context.Set<Login>().Any(e => e.Id == id);
         }

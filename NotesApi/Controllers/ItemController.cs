@@ -33,7 +33,7 @@ namespace ItemsApi.Controllers
         // GET: api/Item/5
         [HttpGet("{id}")]
         [RequiredPermissions(AppPermission.ItemRead)]
-        public ActionResult<ItemView> GetItem(Guid id)
+        public ActionResult<ItemView> GetItem(string id)
         {
             var item = _business.GetById(id);
 
@@ -49,7 +49,7 @@ namespace ItemsApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [RequiredPermissions(AppPermission.ItemUpdate)]
-        public ActionResult<ItemView> PutItem(Guid id, ItemUpdate item)
+        public ActionResult<ItemView> PutItem(string id, ItemUpdate item)
         {
             try 
             {
@@ -83,7 +83,7 @@ namespace ItemsApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
         [RequiredPermissions(AppPermission.ItemUpdate)]
-        public ActionResult<ItemView> PatchItem(Guid id, JsonElement item)
+        public ActionResult<ItemView> PatchItem(string id, JsonElement item)
         {
             try 
             {
@@ -128,7 +128,7 @@ namespace ItemsApi.Controllers
         // DELETE: api/Item/5
         [HttpDelete("{id}")]
         [RequiredPermissions(AppPermission.ItemDelete)]
-        public ActionResult<ItemView> DeleteItem(Guid id)
+        public ActionResult<ItemView> DeleteItem(string id)
         {
             try 
             {
@@ -144,7 +144,7 @@ namespace ItemsApi.Controllers
             return deleted;
         }
 
-        private bool ItemExists(Guid id)
+        private bool ItemExists(string id)
         {
             return _context.Set<Item>().Any(e => e.Id == id);
         }

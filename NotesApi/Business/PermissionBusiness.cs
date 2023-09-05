@@ -39,7 +39,7 @@ public class PermissionBusiness : Business<Permission, PermissionView, Permissio
         return clientQuery;
     }
     
-    public override PermissionView GetById(Guid id, int maxDepth = 2)
+    public override PermissionView GetById(string id, int maxDepth = 2)
     {
         var query = Db.Set<Permission>()
             .Select(x => new PermissionView { 
@@ -48,7 +48,7 @@ public class PermissionBusiness : Business<Permission, PermissionView, Permissio
                   Name = x.Name,
                   Entity = x.Entity,
                   Action = x.Action,
-                  Roles = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, PermissionId = new List<Guid?>() { x.Id } }) { Result = x.Roles!.Select(y1 => new RolePermissionView { Id = y1.Id,
+                  Roles = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, PermissionId = new List<string?>() { x.Id } }) { Result = x.Roles!.Select(y1 => new RolePermissionView { Id = y1.Id,
                       RoleId = y1.RoleId,
                       PermissionId = y1.PermissionId }).Take(10) }  
             })
@@ -67,7 +67,7 @@ public class PermissionBusiness : Business<Permission, PermissionView, Permissio
     {
         var dbSet = Db.Set<Permission>();
         var dbEntity = new Permission {
-            Id = new Guid(),
+            Id = new Guid().ToString(),
             Code = entity.Code, Name = entity.Name, Entity = entity.Entity, Action = entity.Action
         };
         dbSet.Add(dbEntity);
@@ -78,7 +78,7 @@ public class PermissionBusiness : Business<Permission, PermissionView, Permissio
                   Name = x.Name,
                   Entity = x.Entity,
                   Action = x.Action,
-                  Roles = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, PermissionId = new List<Guid?>() { x.Id } }) { Result = x.Roles!.Select(y1 => new RolePermissionView { Id = y1.Id,
+                  Roles = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, PermissionId = new List<string?>() { x.Id } }) { Result = x.Roles!.Select(y1 => new RolePermissionView { Id = y1.Id,
                       RoleId = y1.RoleId,
                       PermissionId = y1.PermissionId }).Take(10) }
             })
@@ -91,7 +91,7 @@ public class PermissionBusiness : Business<Permission, PermissionView, Permissio
         return added;
     }
 
-    public override PermissionView Update(Guid id, PermissionUpdate entity)
+    public override PermissionView Update(string id, PermissionUpdate entity)
     {
         var dbSet = Db.Set<Permission>();
         var existing = dbSet.Find(id);
@@ -110,7 +110,7 @@ public class PermissionBusiness : Business<Permission, PermissionView, Permissio
         return updated;
     }
 
-    public override PermissionView Modify(Guid id, JsonElement entity)
+    public override PermissionView Modify(string id, JsonElement entity)
     {
         var dbSet = Db.Set<Permission>();
         var existing = dbSet.Find(id);
@@ -134,7 +134,7 @@ public class PermissionBusiness : Business<Permission, PermissionView, Permissio
         return updated;
     }
 
-    public override PermissionView Delete(Guid id)
+    public override PermissionView Delete(string id)
     {
         var dbSet = Db.Set<Permission>();
         var existing = dbSet.Find(id);
@@ -216,7 +216,7 @@ public class PermissionBusiness : Business<Permission, PermissionView, Permissio
                   Name = x.Name,
                   Entity = x.Entity,
                   Action = x.Action,
-                  Roles = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, PermissionId = new List<Guid?>() { x.Id } }) { Result = x.Roles!.Select(y1 => new RolePermissionView { Id = y1.Id,
+                  Roles = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, PermissionId = new List<string?>() { x.Id } }) { Result = x.Roles!.Select(y1 => new RolePermissionView { Id = y1.Id,
                       RoleId = y1.RoleId,
                       PermissionId = y1.PermissionId }).Take(10) } })
             .ToList();

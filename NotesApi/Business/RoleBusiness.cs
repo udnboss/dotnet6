@@ -33,17 +33,17 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
         return clientQuery;
     }
     
-    public override RoleView GetById(Guid id, int maxDepth = 2)
+    public override RoleView GetById(string id, int maxDepth = 2)
     {
         var query = Db.Set<Role>()
             .Select(x => new RoleView { 
                 Id = x.Id,
                   Code = x.Code,
                   Name = x.Name,
-                  RolePermissions = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, RoleId = new List<Guid?>() { x.Id } }) { Result = x.RolePermissions!.Select(y1 => new RolePermissionView { Id = y1.Id,
+                  RolePermissions = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, RoleId = new List<string?>() { x.Id } }) { Result = x.RolePermissions!.Select(y1 => new RolePermissionView { Id = y1.Id,
                       RoleId = y1.RoleId,
                       PermissionId = y1.PermissionId }).Take(10) },
-                  RoleUsers = new QueryResult<UserRoleQuery, UserRoleView>(new UserRoleQuery() { _Size = 10, _Page = 1, RoleId = new List<Guid?>() { x.Id } }) { Result = x.RoleUsers!.Select(y1 => new UserRoleView { Id = y1.Id,
+                  RoleUsers = new QueryResult<UserRoleQuery, UserRoleView>(new UserRoleQuery() { _Size = 10, _Page = 1, RoleId = new List<string?>() { x.Id } }) { Result = x.RoleUsers!.Select(y1 => new UserRoleView { Id = y1.Id,
                       UserId = y1.UserId,
                       RoleId = y1.RoleId }).Take(10) }  
             })
@@ -62,7 +62,7 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
     {
         var dbSet = Db.Set<Role>();
         var dbEntity = new Role {
-            Id = new Guid(),
+            Id = new Guid().ToString(),
             Code = entity.Code, Name = entity.Name
         };
         dbSet.Add(dbEntity);
@@ -71,10 +71,10 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
                 Id = x.Id,
                   Code = x.Code,
                   Name = x.Name,
-                  RolePermissions = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, RoleId = new List<Guid?>() { x.Id } }) { Result = x.RolePermissions!.Select(y1 => new RolePermissionView { Id = y1.Id,
+                  RolePermissions = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, RoleId = new List<string?>() { x.Id } }) { Result = x.RolePermissions!.Select(y1 => new RolePermissionView { Id = y1.Id,
                       RoleId = y1.RoleId,
                       PermissionId = y1.PermissionId }).Take(10) },
-                  RoleUsers = new QueryResult<UserRoleQuery, UserRoleView>(new UserRoleQuery() { _Size = 10, _Page = 1, RoleId = new List<Guid?>() { x.Id } }) { Result = x.RoleUsers!.Select(y1 => new UserRoleView { Id = y1.Id,
+                  RoleUsers = new QueryResult<UserRoleQuery, UserRoleView>(new UserRoleQuery() { _Size = 10, _Page = 1, RoleId = new List<string?>() { x.Id } }) { Result = x.RoleUsers!.Select(y1 => new UserRoleView { Id = y1.Id,
                       UserId = y1.UserId,
                       RoleId = y1.RoleId }).Take(10) }
             })
@@ -87,7 +87,7 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
         return added;
     }
 
-    public override RoleView Update(Guid id, RoleUpdate entity)
+    public override RoleView Update(string id, RoleUpdate entity)
     {
         var dbSet = Db.Set<Role>();
         var existing = dbSet.Find(id);
@@ -104,7 +104,7 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
         return updated;
     }
 
-    public override RoleView Modify(Guid id, JsonElement entity)
+    public override RoleView Modify(string id, JsonElement entity)
     {
         var dbSet = Db.Set<Role>();
         var existing = dbSet.Find(id);
@@ -126,7 +126,7 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
         return updated;
     }
 
-    public override RoleView Delete(Guid id)
+    public override RoleView Delete(string id)
     {
         var dbSet = Db.Set<Role>();
         var existing = dbSet.Find(id);
@@ -194,10 +194,10 @@ public class RoleBusiness : Business<Role, RoleView, RoleUpdate, RoleModify, Rol
             .Select(x => new RoleView { Id = x.Id,
                   Code = x.Code,
                   Name = x.Name,
-                  RolePermissions = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, RoleId = new List<Guid?>() { x.Id } }) { Result = x.RolePermissions!.Select(y1 => new RolePermissionView { Id = y1.Id,
+                  RolePermissions = new QueryResult<RolePermissionQuery, RolePermissionView>(new RolePermissionQuery() { _Size = 10, _Page = 1, RoleId = new List<string?>() { x.Id } }) { Result = x.RolePermissions!.Select(y1 => new RolePermissionView { Id = y1.Id,
                       RoleId = y1.RoleId,
                       PermissionId = y1.PermissionId }).Take(10) },
-                  RoleUsers = new QueryResult<UserRoleQuery, UserRoleView>(new UserRoleQuery() { _Size = 10, _Page = 1, RoleId = new List<Guid?>() { x.Id } }) { Result = x.RoleUsers!.Select(y1 => new UserRoleView { Id = y1.Id,
+                  RoleUsers = new QueryResult<UserRoleQuery, UserRoleView>(new UserRoleQuery() { _Size = 10, _Page = 1, RoleId = new List<string?>() { x.Id } }) { Result = x.RoleUsers!.Select(y1 => new UserRoleView { Id = y1.Id,
                       UserId = y1.UserId,
                       RoleId = y1.RoleId }).Take(10) } })
             .ToList();

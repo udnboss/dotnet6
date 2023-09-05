@@ -26,14 +26,14 @@ public class UserRoleBusiness : Business<UserRole, UserRoleView, UserRoleUpdate,
 
         foreach(var c in query.Where)
         {
-            if(c.Column == "UserId" && c.Values is not null) clientQuery.UserId = c.Values.Cast<Guid?>();
-            if(c.Column == "RoleId" && c.Values is not null) clientQuery.RoleId = c.Values.Cast<Guid?>();
+            if(c.Column == "UserId" && c.Values is not null) clientQuery.UserId = c.Values.Cast<string>();
+            if(c.Column == "RoleId" && c.Values is not null) clientQuery.RoleId = c.Values.Cast<string>();
         }        
 
         return clientQuery;
     }
     
-    public override UserRoleView GetById(Guid id, int maxDepth = 2)
+    public override UserRoleView GetById(string id, int maxDepth = 2)
     {
         var query = Db.Set<UserRole>()
             .Select(x => new UserRoleView { 
@@ -63,7 +63,7 @@ public class UserRoleBusiness : Business<UserRole, UserRoleView, UserRoleUpdate,
     {
         var dbSet = Db.Set<UserRole>();
         var dbEntity = new UserRole {
-            Id = new Guid(),
+            Id = new Guid().ToString(),
             UserId = entity.UserId, RoleId = entity.RoleId
         };
         dbSet.Add(dbEntity);
@@ -89,7 +89,7 @@ public class UserRoleBusiness : Business<UserRole, UserRoleView, UserRoleUpdate,
         return added;
     }
 
-    public override UserRoleView Update(Guid id, UserRoleUpdate entity)
+    public override UserRoleView Update(string id, UserRoleUpdate entity)
     {
         var dbSet = Db.Set<UserRole>();
         var existing = dbSet.Find(id);
@@ -106,7 +106,7 @@ public class UserRoleBusiness : Business<UserRole, UserRoleView, UserRoleUpdate,
         return updated;
     }
 
-    public override UserRoleView Modify(Guid id, JsonElement entity)
+    public override UserRoleView Modify(string id, JsonElement entity)
     {
         var dbSet = Db.Set<UserRole>();
         var existing = dbSet.Find(id);
@@ -119,8 +119,8 @@ public class UserRoleBusiness : Business<UserRole, UserRoleView, UserRoleUpdate,
         {
             var propName = prop.Name.ToLower();
             if (propName == "id") continue;
-            else if (propName == "user_id") existing.UserId = prop.Value.GetGuid()!;
-            else if (propName == "role_id") existing.RoleId = prop.Value.GetGuid()!;
+            else if (propName == "user_id") existing.UserId = prop.Value.GetString()!;
+            else if (propName == "role_id") existing.RoleId = prop.Value.GetString()!;
         }
 
         Db.SaveChanges();
@@ -128,7 +128,7 @@ public class UserRoleBusiness : Business<UserRole, UserRoleView, UserRoleUpdate,
         return updated;
     }
 
-    public override UserRoleView Delete(Guid id)
+    public override UserRoleView Delete(string id)
     {
         var dbSet = Db.Set<UserRole>();
         var existing = dbSet.Find(id);
@@ -161,15 +161,17 @@ public class UserRoleBusiness : Business<UserRole, UserRoleView, UserRoleUpdate,
         {
             foreach (var c in query.Where)
             {   
-                if (c.Column == "UserId" && c.Operator == Operators.IsIn && c.Values != null) 
+                if (c.Column == "UserId" && c.Operator == Operators.IsIn && c.Value != null) 
                 {
-                    var v = c.Values.Cast<Guid?>().ToList();
-                    q = q.Where(x => v.Contains(x.UserId));
+                    var v = c.Value.ToString();
+                    if(!string.IsNullOrWhiteSpace(v))
+                        q = q.Where(x => x.UserId != null && x.UserId.ToLower().Contains(v.ToLower()));
                 }
-                else if (c.Column == "RoleId" && c.Operator == Operators.IsIn && c.Values != null) 
+                else if (c.Column == "RoleId" && c.Operator == Operators.IsIn && c.Value != null) 
                 {
-                    var v = c.Values.Cast<Guid?>().ToList();
-                    q = q.Where(x => v.Contains(x.RoleId));
+                    var v = c.Value.ToString();
+                    if(!string.IsNullOrWhiteSpace(v))
+                        q = q.Where(x => x.RoleId != null && x.RoleId.ToLower().Contains(v.ToLower()));
                 }                   
             }
         }

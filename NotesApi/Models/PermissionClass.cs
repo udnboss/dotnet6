@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 [Table("permission")]
 public class Permission :  IEntity
 {
-    [Key][Column("id")][JsonPropertyName("id")][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public Guid Id { get; set; }
+    [Key][Column("id")][JsonPropertyName("id")][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public string Id { get; set; }
     [JsonPropertyName("code")][Column("code")][Required] public string Code { get; set; }
     [JsonPropertyName("name")][Column("name")][Required] public string Name { get; set; }
     [JsonPropertyName("entity")][Column("entity")][Required] public string Entity { get; set; }

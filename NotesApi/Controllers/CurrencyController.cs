@@ -33,7 +33,7 @@ namespace CurrencysApi.Controllers
         // GET: api/Currency/5
         [HttpGet("{id}")]
         [RequiredPermissions(AppPermission.CurrencyRead)]
-        public ActionResult<CurrencyView> GetCurrency(Guid id)
+        public ActionResult<CurrencyView> GetCurrency(string id)
         {
             var currency = _business.GetById(id);
 
@@ -49,7 +49,7 @@ namespace CurrencysApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [RequiredPermissions(AppPermission.CurrencyUpdate)]
-        public ActionResult<CurrencyView> PutCurrency(Guid id, CurrencyUpdate currency)
+        public ActionResult<CurrencyView> PutCurrency(string id, CurrencyUpdate currency)
         {
             try 
             {
@@ -83,7 +83,7 @@ namespace CurrencysApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
         [RequiredPermissions(AppPermission.CurrencyUpdate)]
-        public ActionResult<CurrencyView> PatchCurrency(Guid id, JsonElement currency)
+        public ActionResult<CurrencyView> PatchCurrency(string id, JsonElement currency)
         {
             try 
             {
@@ -128,7 +128,7 @@ namespace CurrencysApi.Controllers
         // DELETE: api/Currency/5
         [HttpDelete("{id}")]
         [RequiredPermissions(AppPermission.CurrencyDelete)]
-        public ActionResult<CurrencyView> DeleteCurrency(Guid id)
+        public ActionResult<CurrencyView> DeleteCurrency(string id)
         {
             try 
             {
@@ -144,7 +144,7 @@ namespace CurrencysApi.Controllers
             return deleted;
         }
 
-        private bool CurrencyExists(Guid id)
+        private bool CurrencyExists(string id)
         {
             return _context.Set<Currency>().Any(e => e.Id == id);
         }

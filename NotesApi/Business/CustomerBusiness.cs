@@ -30,7 +30,7 @@ public class CustomerBusiness : Business<Customer, CustomerView, CustomerUpdate,
         return clientQuery;
     }
     
-    public override CustomerView GetById(Guid id, int maxDepth = 2)
+    public override CustomerView GetById(string id, int maxDepth = 2)
     {
         var query = Db.Set<Customer>()
             .Select(x => new CustomerView { 
@@ -43,7 +43,7 @@ public class CustomerBusiness : Business<Customer, CustomerView, CustomerUpdate,
                       Name = x.Currency!.Name,
                       Symbol = x.Currency!.Symbol },
                   PaymentTerm = x.PaymentTerm,
-                  Sales = new QueryResult<SaleQuery, SaleView>(new SaleQuery() { _Size = 10, _Page = 1, CustomerId = new List<Guid?>() { x.Id } }) { Result = x.Sales!.Select(y1 => new SaleView { Id = y1.Id,
+                  Sales = new QueryResult<SaleQuery, SaleView>(new SaleQuery() { _Size = 10, _Page = 1, CustomerId = new List<string?>() { x.Id } }) { Result = x.Sales!.Select(y1 => new SaleView { Id = y1.Id,
                       CompanyId = y1.CompanyId,
                       AccountId = y1.AccountId,
                       CustomerId = y1.CustomerId,
@@ -73,7 +73,7 @@ public class CustomerBusiness : Business<Customer, CustomerView, CustomerUpdate,
     {
         var dbSet = Db.Set<Customer>();
         var dbEntity = new Customer {
-            Id = new Guid(),
+            Id = new Guid().ToString(),
             Name = entity.Name, Address = entity.Address, Contact = entity.Contact, CurrencyId = entity.CurrencyId, PaymentTerm = entity.PaymentTerm
         };
         dbSet.Add(dbEntity);
@@ -88,7 +88,7 @@ public class CustomerBusiness : Business<Customer, CustomerView, CustomerUpdate,
                       Name = x.Currency!.Name,
                       Symbol = x.Currency!.Symbol },
                   PaymentTerm = x.PaymentTerm,
-                  Sales = new QueryResult<SaleQuery, SaleView>(new SaleQuery() { _Size = 10, _Page = 1, CustomerId = new List<Guid?>() { x.Id } }) { Result = x.Sales!.Select(y1 => new SaleView { Id = y1.Id,
+                  Sales = new QueryResult<SaleQuery, SaleView>(new SaleQuery() { _Size = 10, _Page = 1, CustomerId = new List<string?>() { x.Id } }) { Result = x.Sales!.Select(y1 => new SaleView { Id = y1.Id,
                       CompanyId = y1.CompanyId,
                       AccountId = y1.AccountId,
                       CustomerId = y1.CustomerId,
@@ -112,7 +112,7 @@ public class CustomerBusiness : Business<Customer, CustomerView, CustomerUpdate,
         return added;
     }
 
-    public override CustomerView Update(Guid id, CustomerUpdate entity)
+    public override CustomerView Update(string id, CustomerUpdate entity)
     {
         var dbSet = Db.Set<Customer>();
         var existing = dbSet.Find(id);
@@ -132,7 +132,7 @@ public class CustomerBusiness : Business<Customer, CustomerView, CustomerUpdate,
         return updated;
     }
 
-    public override CustomerView Modify(Guid id, JsonElement entity)
+    public override CustomerView Modify(string id, JsonElement entity)
     {
         var dbSet = Db.Set<Customer>();
         var existing = dbSet.Find(id);
@@ -148,7 +148,7 @@ public class CustomerBusiness : Business<Customer, CustomerView, CustomerUpdate,
             else if (propName == "name") existing.Name = prop.Value.GetString()!;
             else if (propName == "address") existing.Address = prop.Value.GetString()!;
             else if (propName == "contact") existing.Contact = prop.Value.GetString()!;
-            else if (propName == "currency_id") existing.CurrencyId = prop.Value.GetGuid()!;
+            else if (propName == "currency_id") existing.CurrencyId = prop.Value.GetString()!;
             else if (propName == "payment_term") existing.PaymentTerm = prop.Value.GetInt32()!;
         }
 
@@ -157,7 +157,7 @@ public class CustomerBusiness : Business<Customer, CustomerView, CustomerUpdate,
         return updated;
     }
 
-    public override CustomerView Delete(Guid id)
+    public override CustomerView Delete(string id)
     {
         var dbSet = Db.Set<Customer>();
         var existing = dbSet.Find(id);
@@ -225,7 +225,7 @@ public class CustomerBusiness : Business<Customer, CustomerView, CustomerUpdate,
                       Name = x.Currency!.Name,
                       Symbol = x.Currency!.Symbol },
                   PaymentTerm = x.PaymentTerm,
-                  Sales = new QueryResult<SaleQuery, SaleView>(new SaleQuery() { _Size = 10, _Page = 1, CustomerId = new List<Guid?>() { x.Id } }) { Result = x.Sales!.Select(y1 => new SaleView { Id = y1.Id,
+                  Sales = new QueryResult<SaleQuery, SaleView>(new SaleQuery() { _Size = 10, _Page = 1, CustomerId = new List<string?>() { x.Id } }) { Result = x.Sales!.Select(y1 => new SaleView { Id = y1.Id,
                       CompanyId = y1.CompanyId,
                       AccountId = y1.AccountId,
                       CustomerId = y1.CustomerId,

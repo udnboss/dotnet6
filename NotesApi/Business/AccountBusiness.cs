@@ -33,7 +33,7 @@ public class AccountBusiness : Business<Account, AccountView, AccountUpdate, Acc
         return clientQuery;
     }
     
-    public override AccountView GetById(Guid id, int maxDepth = 2)
+    public override AccountView GetById(string id, int maxDepth = 2)
     {
         var query = Db.Set<Account>()
             .Select(x => new AccountView { 
@@ -61,7 +61,7 @@ public class AccountBusiness : Business<Account, AccountView, AccountUpdate, Acc
     {
         var dbSet = Db.Set<Account>();
         var dbEntity = new Account {
-            Id = new Guid(),
+            Id = new Guid().ToString(),
             Label = entity.Label, BankName = entity.BankName, BankAddress = entity.BankAddress, BankSwift = entity.BankSwift, AccountName = entity.AccountName, AccountIban = entity.AccountIban, AccountAddress = entity.AccountAddress
         };
         dbSet.Add(dbEntity);
@@ -85,7 +85,7 @@ public class AccountBusiness : Business<Account, AccountView, AccountUpdate, Acc
         return added;
     }
 
-    public override AccountView Update(Guid id, AccountUpdate entity)
+    public override AccountView Update(string id, AccountUpdate entity)
     {
         var dbSet = Db.Set<Account>();
         var existing = dbSet.Find(id);
@@ -107,7 +107,7 @@ public class AccountBusiness : Business<Account, AccountView, AccountUpdate, Acc
         return updated;
     }
 
-    public override AccountView Modify(Guid id, JsonElement entity)
+    public override AccountView Modify(string id, JsonElement entity)
     {
         var dbSet = Db.Set<Account>();
         var existing = dbSet.Find(id);
@@ -134,7 +134,7 @@ public class AccountBusiness : Business<Account, AccountView, AccountUpdate, Acc
         return updated;
     }
 
-    public override AccountView Delete(Guid id)
+    public override AccountView Delete(string id)
     {
         var dbSet = Db.Set<Account>();
         var existing = dbSet.Find(id);

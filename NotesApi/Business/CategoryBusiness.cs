@@ -30,13 +30,13 @@ public class CategoryBusiness : Business<Category, CategoryView, CategoryUpdate,
         return clientQuery;
     }
     
-    public override CategoryView GetById(Guid id, int maxDepth = 2)
+    public override CategoryView GetById(string id, int maxDepth = 2)
     {
         var query = Db.Set<Category>()
             .Select(x => new CategoryView { 
                 Id = x.Id,
                   Name = x.Name,
-                  Items = new QueryResult<ItemQuery, ItemView>(new ItemQuery() { _Size = 10, _Page = 1, CategoryId = new List<Guid?>() { x.Id } }) { Result = x.Items!.Select(y1 => new ItemView { Id = y1.Id,
+                  Items = new QueryResult<ItemQuery, ItemView>(new ItemQuery() { _Size = 10, _Page = 1, CategoryId = new List<string?>() { x.Id } }) { Result = x.Items!.Select(y1 => new ItemView { Id = y1.Id,
                       Name = y1.Name,
                       CategoryId = y1.CategoryId }).Take(10) }  
             })
@@ -55,7 +55,7 @@ public class CategoryBusiness : Business<Category, CategoryView, CategoryUpdate,
     {
         var dbSet = Db.Set<Category>();
         var dbEntity = new Category {
-            Id = new Guid(),
+            Id = new Guid().ToString(),
             Name = entity.Name
         };
         dbSet.Add(dbEntity);
@@ -63,7 +63,7 @@ public class CategoryBusiness : Business<Category, CategoryView, CategoryUpdate,
         var added = dbSet.Select(x => new CategoryView { 
                 Id = x.Id,
                   Name = x.Name,
-                  Items = new QueryResult<ItemQuery, ItemView>(new ItemQuery() { _Size = 10, _Page = 1, CategoryId = new List<Guid?>() { x.Id } }) { Result = x.Items!.Select(y1 => new ItemView { Id = y1.Id,
+                  Items = new QueryResult<ItemQuery, ItemView>(new ItemQuery() { _Size = 10, _Page = 1, CategoryId = new List<string?>() { x.Id } }) { Result = x.Items!.Select(y1 => new ItemView { Id = y1.Id,
                       Name = y1.Name,
                       CategoryId = y1.CategoryId }).Take(10) }
             })
@@ -76,7 +76,7 @@ public class CategoryBusiness : Business<Category, CategoryView, CategoryUpdate,
         return added;
     }
 
-    public override CategoryView Update(Guid id, CategoryUpdate entity)
+    public override CategoryView Update(string id, CategoryUpdate entity)
     {
         var dbSet = Db.Set<Category>();
         var existing = dbSet.Find(id);
@@ -92,7 +92,7 @@ public class CategoryBusiness : Business<Category, CategoryView, CategoryUpdate,
         return updated;
     }
 
-    public override CategoryView Modify(Guid id, JsonElement entity)
+    public override CategoryView Modify(string id, JsonElement entity)
     {
         var dbSet = Db.Set<Category>();
         var existing = dbSet.Find(id);
@@ -113,7 +113,7 @@ public class CategoryBusiness : Business<Category, CategoryView, CategoryUpdate,
         return updated;
     }
 
-    public override CategoryView Delete(Guid id)
+    public override CategoryView Delete(string id)
     {
         var dbSet = Db.Set<Category>();
         var existing = dbSet.Find(id);
@@ -174,7 +174,7 @@ public class CategoryBusiness : Business<Category, CategoryView, CategoryUpdate,
         var data = (sortedQ ?? q)
             .Select(x => new CategoryView { Id = x.Id,
                   Name = x.Name,
-                  Items = new QueryResult<ItemQuery, ItemView>(new ItemQuery() { _Size = 10, _Page = 1, CategoryId = new List<Guid?>() { x.Id } }) { Result = x.Items!.Select(y1 => new ItemView { Id = y1.Id,
+                  Items = new QueryResult<ItemQuery, ItemView>(new ItemQuery() { _Size = 10, _Page = 1, CategoryId = new List<string?>() { x.Id } }) { Result = x.Items!.Select(y1 => new ItemView { Id = y1.Id,
                       Name = y1.Name,
                       CategoryId = y1.CategoryId }).Take(10) } })
             .ToList();

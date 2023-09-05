@@ -26,14 +26,14 @@ public class SaleItemBusiness : Business<SaleItem, SaleItemView, SaleItemUpdate,
 
         foreach(var c in query.Where)
         {
-            if(c.Column == "SaleId" && c.Values is not null) clientQuery.SaleId = c.Values.Cast<Guid?>();
-            if(c.Column == "ItemId" && c.Values is not null) clientQuery.ItemId = c.Values.Cast<Guid?>();
+            if(c.Column == "SaleId" && c.Values is not null) clientQuery.SaleId = c.Values.Cast<string>();
+            if(c.Column == "ItemId" && c.Values is not null) clientQuery.ItemId = c.Values.Cast<string>();
         }        
 
         return clientQuery;
     }
     
-    public override SaleItemView GetById(Guid id, int maxDepth = 2)
+    public override SaleItemView GetById(string id, int maxDepth = 2)
     {
         var query = Db.Set<SaleItem>()
             .Select(x => new SaleItemView { 
@@ -77,7 +77,7 @@ public class SaleItemBusiness : Business<SaleItem, SaleItemView, SaleItemUpdate,
     {
         var dbSet = Db.Set<SaleItem>();
         var dbEntity = new SaleItem {
-            Id = new Guid(),
+            Id = new Guid().ToString(),
             SaleId = entity.SaleId, ItemId = entity.ItemId, Description = entity.Description, Quantity = entity.Quantity, Price = entity.Price
         };
         dbSet.Add(dbEntity);
@@ -117,7 +117,7 @@ public class SaleItemBusiness : Business<SaleItem, SaleItemView, SaleItemUpdate,
         return added;
     }
 
-    public override SaleItemView Update(Guid id, SaleItemUpdate entity)
+    public override SaleItemView Update(string id, SaleItemUpdate entity)
     {
         var dbSet = Db.Set<SaleItem>();
         var existing = dbSet.Find(id);
@@ -137,7 +137,7 @@ public class SaleItemBusiness : Business<SaleItem, SaleItemView, SaleItemUpdate,
         return updated;
     }
 
-    public override SaleItemView Modify(Guid id, JsonElement entity)
+    public override SaleItemView Modify(string id, JsonElement entity)
     {
         var dbSet = Db.Set<SaleItem>();
         var existing = dbSet.Find(id);
@@ -150,8 +150,8 @@ public class SaleItemBusiness : Business<SaleItem, SaleItemView, SaleItemUpdate,
         {
             var propName = prop.Name.ToLower();
             if (propName == "id") continue;
-            else if (propName == "sale_id") existing.SaleId = prop.Value.GetGuid()!;
-            else if (propName == "item_id") existing.ItemId = prop.Value.GetGuid()!;
+            else if (propName == "sale_id") existing.SaleId = prop.Value.GetString()!;
+            else if (propName == "item_id") existing.ItemId = prop.Value.GetString()!;
             else if (propName == "description") existing.Description = prop.Value.GetString()!;
             else if (propName == "quantity") existing.Quantity = prop.Value.GetInt32()!;
             else if (propName == "price") existing.Price = prop.Value.GetDecimal()!;
@@ -162,7 +162,7 @@ public class SaleItemBusiness : Business<SaleItem, SaleItemView, SaleItemUpdate,
         return updated;
     }
 
-    public override SaleItemView Delete(Guid id)
+    public override SaleItemView Delete(string id)
     {
         var dbSet = Db.Set<SaleItem>();
         var existing = dbSet.Find(id);
@@ -195,15 +195,17 @@ public class SaleItemBusiness : Business<SaleItem, SaleItemView, SaleItemUpdate,
         {
             foreach (var c in query.Where)
             {   
-                if (c.Column == "SaleId" && c.Operator == Operators.IsIn && c.Values != null) 
+                if (c.Column == "SaleId" && c.Operator == Operators.IsIn && c.Value != null) 
                 {
-                    var v = c.Values.Cast<Guid?>().ToList();
-                    q = q.Where(x => v.Contains(x.SaleId));
+                    var v = c.Value.ToString();
+                    if(!string.IsNullOrWhiteSpace(v))
+                        q = q.Where(x => x.SaleId != null && x.SaleId.ToLower().Contains(v.ToLower()));
                 }
-                else if (c.Column == "ItemId" && c.Operator == Operators.IsIn && c.Values != null) 
+                else if (c.Column == "ItemId" && c.Operator == Operators.IsIn && c.Value != null) 
                 {
-                    var v = c.Values.Cast<Guid?>().ToList();
-                    q = q.Where(x => v.Contains(x.ItemId));
+                    var v = c.Value.ToString();
+                    if(!string.IsNullOrWhiteSpace(v))
+                        q = q.Where(x => x.ItemId != null && x.ItemId.ToLower().Contains(v.ToLower()));
                 }                   
             }
         }

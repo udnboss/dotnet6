@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 [Table("category")]
 public class Category :  IEntity
 {
-    [Key][Column("id")][JsonPropertyName("id")][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public Guid Id { get; set; }
+    [Key][Column("id")][JsonPropertyName("id")][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public string Id { get; set; }
     [JsonPropertyName("name")][Column("name")][Required] public string Name { get; set; }
     [JsonPropertyName("items")][InverseProperty("Category")] public IEnumerable<Item>? Items { get; set; }
 }

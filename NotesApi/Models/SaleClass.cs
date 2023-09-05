@@ -8,11 +8,11 @@ using Microsoft.AspNetCore.Identity;
 [Table("sale")]
 public class Sale :  IEntity
 {
-    [Key][Column("id")][JsonPropertyName("id")][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public Guid Id { get; set; }
-    [JsonPropertyName("company_id")][Column("company_id")][Required] public Guid CompanyId { get; set; }
-    [JsonPropertyName("account_id")][Column("account_id")][Required] public Guid AccountId { get; set; }
-    [JsonPropertyName("customer_id")][Column("customer_id")][Required] public Guid CustomerId { get; set; }
-    [JsonPropertyName("currency_id")][Column("currency_id")][Required] public Guid CurrencyId { get; set; }
+    [Key][Column("id")][JsonPropertyName("id")][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public string Id { get; set; }
+    [JsonPropertyName("company_id")][Column("company_id")][Required] public string CompanyId { get; set; }
+    [JsonPropertyName("account_id")][Column("account_id")][Required] public string AccountId { get; set; }
+    [JsonPropertyName("customer_id")][Column("customer_id")][Required] public string CustomerId { get; set; }
+    [JsonPropertyName("currency_id")][Column("currency_id")][Required] public string CurrencyId { get; set; }
     [JsonPropertyName("place")][Column("place")] public string? Place { get; set; }
     [JsonPropertyName("number")][Column("number")][Range(int.MinValue, int.MaxValue)] public int? Number { get; set; }
     [JsonPropertyName("date")][Column("date")][Required] public DateTime Date { get; set; }
@@ -31,10 +31,10 @@ public class Sale :  IEntity
 
 public record SaleView : IRecord
 {
-    [JsonPropertyName("company_id")][Column("company_id")] public Guid? CompanyId { get; set; }
-    [JsonPropertyName("account_id")][Column("account_id")] public Guid? AccountId { get; set; }
-    [JsonPropertyName("customer_id")][Column("customer_id")] public Guid? CustomerId { get; set; }
-    [JsonPropertyName("currency_id")][Column("currency_id")] public Guid? CurrencyId { get; set; }
+    [JsonPropertyName("company_id")][Column("company_id")] public string? CompanyId { get; set; }
+    [JsonPropertyName("account_id")][Column("account_id")] public string? AccountId { get; set; }
+    [JsonPropertyName("customer_id")][Column("customer_id")] public string? CustomerId { get; set; }
+    [JsonPropertyName("currency_id")][Column("currency_id")] public string? CurrencyId { get; set; }
     [JsonPropertyName("place")][Column("place")] public string? Place { get; set; }
     [JsonPropertyName("number")][Column("number")] public int? Number { get; set; }
     [JsonPropertyName("date")][Column("date")] public DateTime? Date { get; set; }
@@ -53,8 +53,8 @@ public record SaleView : IRecord
 
 public record SaleQuery : ClientQuery
 {
-     public IEnumerable<Guid?> CustomerId { get; set; }
-     public IEnumerable<Guid?> AccountId { get; set; }
+     public IEnumerable<string?> CustomerId { get; set; }
+     public IEnumerable<string?> AccountId { get; set; }
      public int? Number { get; set; } = null;
      public DateTime? Date { get; set; } = null;
      public DateTime? ReferenceDate { get; set; } = null;
@@ -63,10 +63,10 @@ public record SaleQuery : ClientQuery
 
 public record SaleCreate : IRecord
 {
-    [JsonPropertyName("company_id")][Column("company_id")][Required] public Guid CompanyId { get; set; }
-    [JsonPropertyName("account_id")][Column("account_id")][Required] public Guid AccountId { get; set; }
-    [JsonPropertyName("customer_id")][Column("customer_id")][Required] public Guid CustomerId { get; set; }
-    [JsonPropertyName("currency_id")][Column("currency_id")][Required] public Guid CurrencyId { get; set; }
+    [JsonPropertyName("company_id")][Column("company_id")][Required] public string CompanyId { get; set; }
+    [JsonPropertyName("account_id")][Column("account_id")][Required] public string AccountId { get; set; }
+    [JsonPropertyName("customer_id")][Column("customer_id")][Required] public string CustomerId { get; set; }
+    [JsonPropertyName("currency_id")][Column("currency_id")][Required] public string CurrencyId { get; set; }
     [JsonPropertyName("place")][Column("place")] public string? Place { get; set; }
     [JsonPropertyName("date")][Column("date")][Required] public DateTime Date { get; set; }
     [JsonPropertyName("reference")][Column("reference")] public string? Reference { get; set; }
@@ -77,10 +77,10 @@ public record SaleCreate : IRecord
 
 public record SaleUpdate : IRecord
 {
-    [JsonPropertyName("company_id")][Column("company_id")][Required] public Guid CompanyId { get; set; }
-    [JsonPropertyName("account_id")][Column("account_id")][Required] public Guid AccountId { get; set; }
-    [JsonPropertyName("customer_id")][Column("customer_id")][Required] public Guid CustomerId { get; set; }
-    [JsonPropertyName("currency_id")][Column("currency_id")][Required] public Guid CurrencyId { get; set; }
+    [JsonPropertyName("company_id")][Column("company_id")][Required] public string CompanyId { get; set; }
+    [JsonPropertyName("account_id")][Column("account_id")][Required] public string AccountId { get; set; }
+    [JsonPropertyName("customer_id")][Column("customer_id")][Required] public string CustomerId { get; set; }
+    [JsonPropertyName("currency_id")][Column("currency_id")][Required] public string CurrencyId { get; set; }
     [JsonPropertyName("place")][Column("place")] public string? Place { get; set; }
     [JsonPropertyName("reference")][Column("reference")] public string? Reference { get; set; }
     [JsonPropertyName("confirmed")][Column("confirmed")][Required] public bool Confirmed { get; set; }
@@ -90,10 +90,10 @@ public record SaleUpdate : IRecord
 
 public record SaleModify : IRecord
 {
-    [JsonPropertyName("company_id")][Column("company_id")] public Guid? CompanyId { get; set; }
-    [JsonPropertyName("account_id")][Column("account_id")] public Guid? AccountId { get; set; }
-    [JsonPropertyName("customer_id")][Column("customer_id")] public Guid? CustomerId { get; set; }
-    [JsonPropertyName("currency_id")][Column("currency_id")] public Guid? CurrencyId { get; set; }
+    [JsonPropertyName("company_id")][Column("company_id")] public string? CompanyId { get; set; }
+    [JsonPropertyName("account_id")][Column("account_id")] public string? AccountId { get; set; }
+    [JsonPropertyName("customer_id")][Column("customer_id")] public string? CustomerId { get; set; }
+    [JsonPropertyName("currency_id")][Column("currency_id")] public string? CurrencyId { get; set; }
     [JsonPropertyName("place")][Column("place")] public string? Place { get; set; }
     [JsonPropertyName("reference")][Column("reference")] public string? Reference { get; set; }
     [JsonPropertyName("confirmed")][Column("confirmed")] public bool? Confirmed { get; set; }

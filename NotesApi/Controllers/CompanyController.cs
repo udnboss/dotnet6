@@ -33,7 +33,7 @@ namespace CompanysApi.Controllers
         // GET: api/Company/5
         [HttpGet("{id}")]
         [RequiredPermissions(AppPermission.CompanyRead)]
-        public ActionResult<CompanyView> GetCompany(Guid id)
+        public ActionResult<CompanyView> GetCompany(string id)
         {
             var company = _business.GetById(id);
 
@@ -49,7 +49,7 @@ namespace CompanysApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [RequiredPermissions(AppPermission.CompanyUpdate)]
-        public ActionResult<CompanyView> PutCompany(Guid id, CompanyUpdate company)
+        public ActionResult<CompanyView> PutCompany(string id, CompanyUpdate company)
         {
             try 
             {
@@ -83,7 +83,7 @@ namespace CompanysApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
         [RequiredPermissions(AppPermission.CompanyUpdate)]
-        public ActionResult<CompanyView> PatchCompany(Guid id, JsonElement company)
+        public ActionResult<CompanyView> PatchCompany(string id, JsonElement company)
         {
             try 
             {
@@ -128,7 +128,7 @@ namespace CompanysApi.Controllers
         // DELETE: api/Company/5
         [HttpDelete("{id}")]
         [RequiredPermissions(AppPermission.CompanyDelete)]
-        public ActionResult<CompanyView> DeleteCompany(Guid id)
+        public ActionResult<CompanyView> DeleteCompany(string id)
         {
             try 
             {
@@ -144,7 +144,7 @@ namespace CompanysApi.Controllers
             return deleted;
         }
 
-        private bool CompanyExists(Guid id)
+        private bool CompanyExists(string id)
         {
             return _context.Set<Company>().Any(e => e.Id == id);
         }

@@ -33,7 +33,7 @@ namespace SalesApi.Controllers
         // GET: api/Sale/5
         [HttpGet("{id}")]
         [RequiredPermissions(AppPermission.SaleRead)]
-        public ActionResult<SaleView> GetSale(Guid id)
+        public ActionResult<SaleView> GetSale(string id)
         {
             var sale = _business.GetById(id);
 
@@ -49,7 +49,7 @@ namespace SalesApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [RequiredPermissions(AppPermission.SaleUpdate)]
-        public ActionResult<SaleView> PutSale(Guid id, SaleUpdate sale)
+        public ActionResult<SaleView> PutSale(string id, SaleUpdate sale)
         {
             try 
             {
@@ -83,7 +83,7 @@ namespace SalesApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
         [RequiredPermissions(AppPermission.SaleUpdate)]
-        public ActionResult<SaleView> PatchSale(Guid id, JsonElement sale)
+        public ActionResult<SaleView> PatchSale(string id, JsonElement sale)
         {
             try 
             {
@@ -128,7 +128,7 @@ namespace SalesApi.Controllers
         // DELETE: api/Sale/5
         [HttpDelete("{id}")]
         [RequiredPermissions(AppPermission.SaleDelete)]
-        public ActionResult<SaleView> DeleteSale(Guid id)
+        public ActionResult<SaleView> DeleteSale(string id)
         {
             try 
             {
@@ -144,7 +144,7 @@ namespace SalesApi.Controllers
             return deleted;
         }
 
-        private bool SaleExists(Guid id)
+        private bool SaleExists(string id)
         {
             return _context.Set<Sale>().Any(e => e.Id == id);
         }

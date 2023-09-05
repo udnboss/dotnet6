@@ -32,8 +32,8 @@ public class SaleBusiness : Business<Sale, SaleView, SaleUpdate, SaleModify, Sal
 
         foreach(var c in query.Where)
         {
-            if(c.Column == "CustomerId" && c.Values is not null) clientQuery.CustomerId = c.Values.Cast<Guid?>();
-            if(c.Column == "AccountId" && c.Values is not null) clientQuery.AccountId = c.Values.Cast<Guid?>();
+            if(c.Column == "CustomerId" && c.Values is not null) clientQuery.CustomerId = c.Values.Cast<string>();
+            if(c.Column == "AccountId" && c.Values is not null) clientQuery.AccountId = c.Values.Cast<string>();
             if(c.Column == "Number") clientQuery.Number = c.Value as int?;
             if(c.Column == "Date") clientQuery.Date = c.Value as DateTime?;
             if(c.Column == "ReferenceDate") clientQuery.ReferenceDate = c.Value as DateTime?;
@@ -42,7 +42,7 @@ public class SaleBusiness : Business<Sale, SaleView, SaleUpdate, SaleModify, Sal
         return clientQuery;
     }
     
-    public override SaleView GetById(Guid id, int maxDepth = 2)
+    public override SaleView GetById(string id, int maxDepth = 2)
     {
         var query = Db.Set<Sale>()
             .Select(x => new SaleView { 
@@ -85,7 +85,7 @@ public class SaleBusiness : Business<Sale, SaleView, SaleUpdate, SaleModify, Sal
                       Contact = x.Company!.Contact,
                       Mobile = x.Company!.Mobile,
                       Email = x.Company!.Email },
-                  Items = new QueryResult<SaleItemQuery, SaleItemView>(new SaleItemQuery() { _Size = 10, _Page = 1, SaleId = new List<Guid?>() { x.Id } }) { Result = x.Items!.Select(y1 => new SaleItemView { Id = y1.Id,
+                  Items = new QueryResult<SaleItemQuery, SaleItemView>(new SaleItemQuery() { _Size = 10, _Page = 1, SaleId = new List<string?>() { x.Id } }) { Result = x.Items!.Select(y1 => new SaleItemView { Id = y1.Id,
                       SaleId = y1.SaleId,
                       ItemId = y1.ItemId,
                       Description = y1.Description,
@@ -108,7 +108,7 @@ public class SaleBusiness : Business<Sale, SaleView, SaleUpdate, SaleModify, Sal
     {
         var dbSet = Db.Set<Sale>();
         var dbEntity = new Sale {
-            Id = new Guid(),
+            Id = new Guid().ToString(),
             CompanyId = entity.CompanyId, AccountId = entity.AccountId, CustomerId = entity.CustomerId, CurrencyId = entity.CurrencyId, Place = entity.Place, Date = entity.Date, Reference = entity.Reference, Confirmed = entity.Confirmed, ReferenceDate = entity.ReferenceDate, DueDate = entity.DueDate
         };
         dbSet.Add(dbEntity);
@@ -153,7 +153,7 @@ public class SaleBusiness : Business<Sale, SaleView, SaleUpdate, SaleModify, Sal
                       Contact = x.Company!.Contact,
                       Mobile = x.Company!.Mobile,
                       Email = x.Company!.Email },
-                  Items = new QueryResult<SaleItemQuery, SaleItemView>(new SaleItemQuery() { _Size = 10, _Page = 1, SaleId = new List<Guid?>() { x.Id } }) { Result = x.Items!.Select(y1 => new SaleItemView { Id = y1.Id,
+                  Items = new QueryResult<SaleItemQuery, SaleItemView>(new SaleItemQuery() { _Size = 10, _Page = 1, SaleId = new List<string?>() { x.Id } }) { Result = x.Items!.Select(y1 => new SaleItemView { Id = y1.Id,
                       SaleId = y1.SaleId,
                       ItemId = y1.ItemId,
                       Description = y1.Description,
@@ -170,7 +170,7 @@ public class SaleBusiness : Business<Sale, SaleView, SaleUpdate, SaleModify, Sal
         return added;
     }
 
-    public override SaleView Update(Guid id, SaleUpdate entity)
+    public override SaleView Update(string id, SaleUpdate entity)
     {
         var dbSet = Db.Set<Sale>();
         var existing = dbSet.Find(id);
@@ -194,7 +194,7 @@ public class SaleBusiness : Business<Sale, SaleView, SaleUpdate, SaleModify, Sal
         return updated;
     }
 
-    public override SaleView Modify(Guid id, JsonElement entity)
+    public override SaleView Modify(string id, JsonElement entity)
     {
         var dbSet = Db.Set<Sale>();
         var existing = dbSet.Find(id);
@@ -207,10 +207,10 @@ public class SaleBusiness : Business<Sale, SaleView, SaleUpdate, SaleModify, Sal
         {
             var propName = prop.Name.ToLower();
             if (propName == "id") continue;
-            else if (propName == "company_id") existing.CompanyId = prop.Value.GetGuid()!;
-            else if (propName == "account_id") existing.AccountId = prop.Value.GetGuid()!;
-            else if (propName == "customer_id") existing.CustomerId = prop.Value.GetGuid()!;
-            else if (propName == "currency_id") existing.CurrencyId = prop.Value.GetGuid()!;
+            else if (propName == "company_id") existing.CompanyId = prop.Value.GetString()!;
+            else if (propName == "account_id") existing.AccountId = prop.Value.GetString()!;
+            else if (propName == "customer_id") existing.CustomerId = prop.Value.GetString()!;
+            else if (propName == "currency_id") existing.CurrencyId = prop.Value.GetString()!;
             else if (propName == "place") existing.Place = prop.Value.GetString()!;
             else if (propName == "reference") existing.Reference = prop.Value.GetString()!;
             else if (propName == "confirmed") existing.Confirmed = prop.Value.GetBoolean()!;
@@ -223,7 +223,7 @@ public class SaleBusiness : Business<Sale, SaleView, SaleUpdate, SaleModify, Sal
         return updated;
     }
 
-    public override SaleView Delete(Guid id)
+    public override SaleView Delete(string id)
     {
         var dbSet = Db.Set<Sale>();
         var existing = dbSet.Find(id);
@@ -256,15 +256,17 @@ public class SaleBusiness : Business<Sale, SaleView, SaleUpdate, SaleModify, Sal
         {
             foreach (var c in query.Where)
             {   
-                if (c.Column == "CustomerId" && c.Operator == Operators.IsIn && c.Values != null) 
+                if (c.Column == "CustomerId" && c.Operator == Operators.IsIn && c.Value != null) 
                 {
-                    var v = c.Values.Cast<Guid?>().ToList();
-                    q = q.Where(x => v.Contains(x.CustomerId));
+                    var v = c.Value.ToString();
+                    if(!string.IsNullOrWhiteSpace(v))
+                        q = q.Where(x => x.CustomerId != null && x.CustomerId.ToLower().Contains(v.ToLower()));
                 }
-                else if (c.Column == "AccountId" && c.Operator == Operators.IsIn && c.Values != null) 
+                else if (c.Column == "AccountId" && c.Operator == Operators.IsIn && c.Value != null) 
                 {
-                    var v = c.Values.Cast<Guid?>().ToList();
-                    q = q.Where(x => v.Contains(x.AccountId));
+                    var v = c.Value.ToString();
+                    if(!string.IsNullOrWhiteSpace(v))
+                        q = q.Where(x => x.AccountId != null && x.AccountId.ToLower().Contains(v.ToLower()));
                 }
                 else if (c.Column == "Number" && c.Operator == Operators.Contains && c.Value != null) 
                 {
@@ -376,7 +378,7 @@ public class SaleBusiness : Business<Sale, SaleView, SaleUpdate, SaleModify, Sal
                       Contact = x.Company!.Contact,
                       Mobile = x.Company!.Mobile,
                       Email = x.Company!.Email },
-                  Items = new QueryResult<SaleItemQuery, SaleItemView>(new SaleItemQuery() { _Size = 10, _Page = 1, SaleId = new List<Guid?>() { x.Id } }) { Result = x.Items!.Select(y1 => new SaleItemView { Id = y1.Id,
+                  Items = new QueryResult<SaleItemQuery, SaleItemView>(new SaleItemQuery() { _Size = 10, _Page = 1, SaleId = new List<string?>() { x.Id } }) { Result = x.Items!.Select(y1 => new SaleItemView { Id = y1.Id,
                       SaleId = y1.SaleId,
                       ItemId = y1.ItemId,
                       Description = y1.Description,

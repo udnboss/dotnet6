@@ -33,7 +33,7 @@ public class UserBusiness : Business<User, UserView, UserUpdate, UserModify, Use
         return clientQuery;
     }
     
-    public override UserView GetById(Guid id, int maxDepth = 2)
+    public override UserView GetById(string id, int maxDepth = 2)
     {
         var query = Db.Set<User>()
             .Select(x => new UserView { 
@@ -56,7 +56,7 @@ public class UserBusiness : Business<User, UserView, UserUpdate, UserModify, Use
                       PhoneNumber = x.Login!.PhoneNumber,
                       PhoneNumberConfirmed = x.Login!.PhoneNumberConfirmed,
                       TwoFactorEnabled = x.Login!.TwoFactorEnabled },
-                  UserRoles = new QueryResult<UserRoleQuery, UserRoleView>(new UserRoleQuery() { _Size = 10, _Page = 1, UserId = new List<Guid?>() { x.Id } }) { Result = x.UserRoles!.Select(y1 => new UserRoleView { Id = y1.Id,
+                  UserRoles = new QueryResult<UserRoleQuery, UserRoleView>(new UserRoleQuery() { _Size = 10, _Page = 1, UserId = new List<string?>() { x.Id } }) { Result = x.UserRoles!.Select(y1 => new UserRoleView { Id = y1.Id,
                       UserId = y1.UserId,
                       RoleId = y1.RoleId }).Take(10) }  
             })
@@ -75,7 +75,7 @@ public class UserBusiness : Business<User, UserView, UserUpdate, UserModify, Use
     {
         var dbSet = Db.Set<User>();
         var dbEntity = new User {
-            Id = new Guid(),
+            Id = new Guid().ToString(),
             Name = entity.Name, Email = entity.Email, LoginId = entity.LoginId
         };
         dbSet.Add(dbEntity);
@@ -100,7 +100,7 @@ public class UserBusiness : Business<User, UserView, UserUpdate, UserModify, Use
                       PhoneNumber = x.Login!.PhoneNumber,
                       PhoneNumberConfirmed = x.Login!.PhoneNumberConfirmed,
                       TwoFactorEnabled = x.Login!.TwoFactorEnabled },
-                  UserRoles = new QueryResult<UserRoleQuery, UserRoleView>(new UserRoleQuery() { _Size = 10, _Page = 1, UserId = new List<Guid?>() { x.Id } }) { Result = x.UserRoles!.Select(y1 => new UserRoleView { Id = y1.Id,
+                  UserRoles = new QueryResult<UserRoleQuery, UserRoleView>(new UserRoleQuery() { _Size = 10, _Page = 1, UserId = new List<string?>() { x.Id } }) { Result = x.UserRoles!.Select(y1 => new UserRoleView { Id = y1.Id,
                       UserId = y1.UserId,
                       RoleId = y1.RoleId }).Take(10) }
             })
@@ -113,7 +113,7 @@ public class UserBusiness : Business<User, UserView, UserUpdate, UserModify, Use
         return added;
     }
 
-    public override UserView Update(Guid id, UserUpdate entity)
+    public override UserView Update(string id, UserUpdate entity)
     {
         var dbSet = Db.Set<User>();
         var existing = dbSet.Find(id);
@@ -131,7 +131,7 @@ public class UserBusiness : Business<User, UserView, UserUpdate, UserModify, Use
         return updated;
     }
 
-    public override UserView Modify(Guid id, JsonElement entity)
+    public override UserView Modify(string id, JsonElement entity)
     {
         var dbSet = Db.Set<User>();
         var existing = dbSet.Find(id);
@@ -146,7 +146,7 @@ public class UserBusiness : Business<User, UserView, UserUpdate, UserModify, Use
             if (propName == "id") continue;
             else if (propName == "name") existing.Name = prop.Value.GetString()!;
             else if (propName == "email") existing.Email = prop.Value.GetString()!;
-            else if (propName == "login_id") existing.LoginId = prop.Value.GetGuid()!;
+            else if (propName == "login_id") existing.LoginId = prop.Value.GetString()!;
         }
 
         Db.SaveChanges();
@@ -154,7 +154,7 @@ public class UserBusiness : Business<User, UserView, UserUpdate, UserModify, Use
         return updated;
     }
 
-    public override UserView Delete(Guid id)
+    public override UserView Delete(string id)
     {
         var dbSet = Db.Set<User>();
         var existing = dbSet.Find(id);
@@ -247,7 +247,7 @@ public class UserBusiness : Business<User, UserView, UserUpdate, UserModify, Use
                       PhoneNumber = x.Login!.PhoneNumber,
                       PhoneNumberConfirmed = x.Login!.PhoneNumberConfirmed,
                       TwoFactorEnabled = x.Login!.TwoFactorEnabled },
-                  UserRoles = new QueryResult<UserRoleQuery, UserRoleView>(new UserRoleQuery() { _Size = 10, _Page = 1, UserId = new List<Guid?>() { x.Id } }) { Result = x.UserRoles!.Select(y1 => new UserRoleView { Id = y1.Id,
+                  UserRoles = new QueryResult<UserRoleQuery, UserRoleView>(new UserRoleQuery() { _Size = 10, _Page = 1, UserId = new List<string?>() { x.Id } }) { Result = x.UserRoles!.Select(y1 => new UserRoleView { Id = y1.Id,
                       UserId = y1.UserId,
                       RoleId = y1.RoleId }).Take(10) } })
             .ToList();

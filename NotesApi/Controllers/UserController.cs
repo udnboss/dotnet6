@@ -33,7 +33,7 @@ namespace UsersApi.Controllers
         // GET: api/User/5
         [HttpGet("{id}")]
         [RequiredPermissions(AppPermission.UserRead)]
-        public ActionResult<UserView> GetUser(Guid id)
+        public ActionResult<UserView> GetUser(string id)
         {
             var user = _business.GetById(id);
 
@@ -49,7 +49,7 @@ namespace UsersApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [RequiredPermissions(AppPermission.UserUpdate)]
-        public ActionResult<UserView> PutUser(Guid id, UserUpdate user)
+        public ActionResult<UserView> PutUser(string id, UserUpdate user)
         {
             try 
             {
@@ -83,7 +83,7 @@ namespace UsersApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
         [RequiredPermissions(AppPermission.UserUpdate)]
-        public ActionResult<UserView> PatchUser(Guid id, JsonElement user)
+        public ActionResult<UserView> PatchUser(string id, JsonElement user)
         {
             try 
             {
@@ -128,7 +128,7 @@ namespace UsersApi.Controllers
         // DELETE: api/User/5
         [HttpDelete("{id}")]
         [RequiredPermissions(AppPermission.UserDelete)]
-        public ActionResult<UserView> DeleteUser(Guid id)
+        public ActionResult<UserView> DeleteUser(string id)
         {
             try 
             {
@@ -144,7 +144,7 @@ namespace UsersApi.Controllers
             return deleted;
         }
 
-        private bool UserExists(Guid id)
+        private bool UserExists(string id)
         {
             return _context.Set<User>().Any(e => e.Id == id);
         }

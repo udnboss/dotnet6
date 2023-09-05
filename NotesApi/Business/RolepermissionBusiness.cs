@@ -26,14 +26,14 @@ public class RolePermissionBusiness : Business<RolePermission, RolePermissionVie
 
         foreach(var c in query.Where)
         {
-            if(c.Column == "RoleId" && c.Values is not null) clientQuery.RoleId = c.Values.Cast<Guid?>();
-            if(c.Column == "PermissionId" && c.Values is not null) clientQuery.PermissionId = c.Values.Cast<Guid?>();
+            if(c.Column == "RoleId" && c.Values is not null) clientQuery.RoleId = c.Values.Cast<string>();
+            if(c.Column == "PermissionId" && c.Values is not null) clientQuery.PermissionId = c.Values.Cast<string>();
         }        
 
         return clientQuery;
     }
     
-    public override RolePermissionView GetById(Guid id, int maxDepth = 2)
+    public override RolePermissionView GetById(string id, int maxDepth = 2)
     {
         var query = Db.Set<RolePermission>()
             .Select(x => new RolePermissionView { 
@@ -64,7 +64,7 @@ public class RolePermissionBusiness : Business<RolePermission, RolePermissionVie
     {
         var dbSet = Db.Set<RolePermission>();
         var dbEntity = new RolePermission {
-            Id = new Guid(),
+            Id = new Guid().ToString(),
             RoleId = entity.RoleId, PermissionId = entity.PermissionId
         };
         dbSet.Add(dbEntity);
@@ -91,7 +91,7 @@ public class RolePermissionBusiness : Business<RolePermission, RolePermissionVie
         return added;
     }
 
-    public override RolePermissionView Update(Guid id, RolePermissionUpdate entity)
+    public override RolePermissionView Update(string id, RolePermissionUpdate entity)
     {
         var dbSet = Db.Set<RolePermission>();
         var existing = dbSet.Find(id);
@@ -108,7 +108,7 @@ public class RolePermissionBusiness : Business<RolePermission, RolePermissionVie
         return updated;
     }
 
-    public override RolePermissionView Modify(Guid id, JsonElement entity)
+    public override RolePermissionView Modify(string id, JsonElement entity)
     {
         var dbSet = Db.Set<RolePermission>();
         var existing = dbSet.Find(id);
@@ -121,8 +121,8 @@ public class RolePermissionBusiness : Business<RolePermission, RolePermissionVie
         {
             var propName = prop.Name.ToLower();
             if (propName == "id") continue;
-            else if (propName == "role_id") existing.RoleId = prop.Value.GetGuid()!;
-            else if (propName == "permission_id") existing.PermissionId = prop.Value.GetGuid()!;
+            else if (propName == "role_id") existing.RoleId = prop.Value.GetString()!;
+            else if (propName == "permission_id") existing.PermissionId = prop.Value.GetString()!;
         }
 
         Db.SaveChanges();
@@ -130,7 +130,7 @@ public class RolePermissionBusiness : Business<RolePermission, RolePermissionVie
         return updated;
     }
 
-    public override RolePermissionView Delete(Guid id)
+    public override RolePermissionView Delete(string id)
     {
         var dbSet = Db.Set<RolePermission>();
         var existing = dbSet.Find(id);
@@ -163,15 +163,17 @@ public class RolePermissionBusiness : Business<RolePermission, RolePermissionVie
         {
             foreach (var c in query.Where)
             {   
-                if (c.Column == "RoleId" && c.Operator == Operators.IsIn && c.Values != null) 
+                if (c.Column == "RoleId" && c.Operator == Operators.IsIn && c.Value != null) 
                 {
-                    var v = c.Values.Cast<Guid?>().ToList();
-                    q = q.Where(x => v.Contains(x.RoleId));
+                    var v = c.Value.ToString();
+                    if(!string.IsNullOrWhiteSpace(v))
+                        q = q.Where(x => x.RoleId != null && x.RoleId.ToLower().Contains(v.ToLower()));
                 }
-                else if (c.Column == "PermissionId" && c.Operator == Operators.IsIn && c.Values != null) 
+                else if (c.Column == "PermissionId" && c.Operator == Operators.IsIn && c.Value != null) 
                 {
-                    var v = c.Values.Cast<Guid?>().ToList();
-                    q = q.Where(x => v.Contains(x.PermissionId));
+                    var v = c.Value.ToString();
+                    if(!string.IsNullOrWhiteSpace(v))
+                        q = q.Where(x => x.PermissionId != null && x.PermissionId.ToLower().Contains(v.ToLower()));
                 }                   
             }
         }

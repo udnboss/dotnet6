@@ -33,7 +33,7 @@ namespace CategorysApi.Controllers
         // GET: api/Category/5
         [HttpGet("{id}")]
         [RequiredPermissions(AppPermission.CategoryRead)]
-        public ActionResult<CategoryView> GetCategory(Guid id)
+        public ActionResult<CategoryView> GetCategory(string id)
         {
             var category = _business.GetById(id);
 
@@ -49,7 +49,7 @@ namespace CategorysApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [RequiredPermissions(AppPermission.CategoryUpdate)]
-        public ActionResult<CategoryView> PutCategory(Guid id, CategoryUpdate category)
+        public ActionResult<CategoryView> PutCategory(string id, CategoryUpdate category)
         {
             try 
             {
@@ -83,7 +83,7 @@ namespace CategorysApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
         [RequiredPermissions(AppPermission.CategoryUpdate)]
-        public ActionResult<CategoryView> PatchCategory(Guid id, JsonElement category)
+        public ActionResult<CategoryView> PatchCategory(string id, JsonElement category)
         {
             try 
             {
@@ -128,7 +128,7 @@ namespace CategorysApi.Controllers
         // DELETE: api/Category/5
         [HttpDelete("{id}")]
         [RequiredPermissions(AppPermission.CategoryDelete)]
-        public ActionResult<CategoryView> DeleteCategory(Guid id)
+        public ActionResult<CategoryView> DeleteCategory(string id)
         {
             try 
             {
@@ -144,7 +144,7 @@ namespace CategorysApi.Controllers
             return deleted;
         }
 
-        private bool CategoryExists(Guid id)
+        private bool CategoryExists(string id)
         {
             return _context.Set<Category>().Any(e => e.Id == id);
         }

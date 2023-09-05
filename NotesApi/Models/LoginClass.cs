@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Identity;
 #pragma warning disable CS8618
 
 [Table("login")]
-public class Login : IdentityUser<Guid>, IEntity
+public class Login : IdentityUser, IEntity
 {
-    [Key][Column("id")][JsonPropertyName("id")][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public override Guid Id { get; set; }
+    [Key][Column("id")][JsonPropertyName("id")][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public override string Id { get; set; }
     [JsonPropertyName("userName")][Column("userName")][Required][EmailAddress][MinLength(3)][MaxLength(100)] public override string UserName { get; set; }
     [JsonPropertyName("normalizedUserName")][Column("normalizedUserName")][Required][MinLength(3)][MaxLength(256)] public override string NormalizedUserName { get; set; }
     [JsonPropertyName("passwordHash")][Column("passwordHash")][Required][MinLength(8)][MaxLength(512)] public override string PasswordHash { get; set; }

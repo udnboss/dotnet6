@@ -30,7 +30,7 @@ public class CompanyBusiness : Business<Company, CompanyView, CompanyUpdate, Com
         return clientQuery;
     }
     
-    public override CompanyView GetById(Guid id, int maxDepth = 2)
+    public override CompanyView GetById(string id, int maxDepth = 2)
     {
         var query = Db.Set<Company>()
             .Select(x => new CompanyView { 
@@ -58,7 +58,7 @@ public class CompanyBusiness : Business<Company, CompanyView, CompanyUpdate, Com
     {
         var dbSet = Db.Set<Company>();
         var dbEntity = new Company {
-            Id = new Guid(),
+            Id = new Guid().ToString(),
             Name = entity.Name, Address = entity.Address, Crn = entity.Crn, Trn = entity.Trn, Contact = entity.Contact, Mobile = entity.Mobile, Email = entity.Email
         };
         dbSet.Add(dbEntity);
@@ -82,7 +82,7 @@ public class CompanyBusiness : Business<Company, CompanyView, CompanyUpdate, Com
         return added;
     }
 
-    public override CompanyView Update(Guid id, CompanyUpdate entity)
+    public override CompanyView Update(string id, CompanyUpdate entity)
     {
         var dbSet = Db.Set<Company>();
         var existing = dbSet.Find(id);
@@ -104,7 +104,7 @@ public class CompanyBusiness : Business<Company, CompanyView, CompanyUpdate, Com
         return updated;
     }
 
-    public override CompanyView Modify(Guid id, JsonElement entity)
+    public override CompanyView Modify(string id, JsonElement entity)
     {
         var dbSet = Db.Set<Company>();
         var existing = dbSet.Find(id);
@@ -131,7 +131,7 @@ public class CompanyBusiness : Business<Company, CompanyView, CompanyUpdate, Com
         return updated;
     }
 
-    public override CompanyView Delete(Guid id)
+    public override CompanyView Delete(string id)
     {
         var dbSet = Db.Set<Company>();
         var existing = dbSet.Find(id);

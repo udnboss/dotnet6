@@ -33,7 +33,7 @@ namespace UserRolesApi.Controllers
         // GET: api/UserRole/5
         [HttpGet("{id}")]
         [RequiredPermissions(AppPermission.UserRoleRead)]
-        public ActionResult<UserRoleView> GetUserRole(Guid id)
+        public ActionResult<UserRoleView> GetUserRole(string id)
         {
             var userRole = _business.GetById(id);
 
@@ -49,7 +49,7 @@ namespace UserRolesApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [RequiredPermissions(AppPermission.UserRoleUpdate)]
-        public ActionResult<UserRoleView> PutUserRole(Guid id, UserRoleUpdate userRole)
+        public ActionResult<UserRoleView> PutUserRole(string id, UserRoleUpdate userRole)
         {
             try 
             {
@@ -83,7 +83,7 @@ namespace UserRolesApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
         [RequiredPermissions(AppPermission.UserRoleUpdate)]
-        public ActionResult<UserRoleView> PatchUserRole(Guid id, JsonElement userRole)
+        public ActionResult<UserRoleView> PatchUserRole(string id, JsonElement userRole)
         {
             try 
             {
@@ -128,7 +128,7 @@ namespace UserRolesApi.Controllers
         // DELETE: api/UserRole/5
         [HttpDelete("{id}")]
         [RequiredPermissions(AppPermission.UserRoleDelete)]
-        public ActionResult<UserRoleView> DeleteUserRole(Guid id)
+        public ActionResult<UserRoleView> DeleteUserRole(string id)
         {
             try 
             {
@@ -144,7 +144,7 @@ namespace UserRolesApi.Controllers
             return deleted;
         }
 
-        private bool UserRoleExists(Guid id)
+        private bool UserRoleExists(string id)
         {
             return _context.Set<UserRole>().Any(e => e.Id == id);
         }

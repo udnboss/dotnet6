@@ -33,7 +33,7 @@ namespace AccountsApi.Controllers
         // GET: api/Account/5
         [HttpGet("{id}")]
         [RequiredPermissions(AppPermission.AccountRead)]
-        public ActionResult<AccountView> GetAccount(Guid id)
+        public ActionResult<AccountView> GetAccount(string id)
         {
             var account = _business.GetById(id);
 
@@ -49,7 +49,7 @@ namespace AccountsApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [RequiredPermissions(AppPermission.AccountUpdate)]
-        public ActionResult<AccountView> PutAccount(Guid id, AccountUpdate account)
+        public ActionResult<AccountView> PutAccount(string id, AccountUpdate account)
         {
             try 
             {
@@ -83,7 +83,7 @@ namespace AccountsApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
         [RequiredPermissions(AppPermission.AccountUpdate)]
-        public ActionResult<AccountView> PatchAccount(Guid id, JsonElement account)
+        public ActionResult<AccountView> PatchAccount(string id, JsonElement account)
         {
             try 
             {
@@ -128,7 +128,7 @@ namespace AccountsApi.Controllers
         // DELETE: api/Account/5
         [HttpDelete("{id}")]
         [RequiredPermissions(AppPermission.AccountDelete)]
-        public ActionResult<AccountView> DeleteAccount(Guid id)
+        public ActionResult<AccountView> DeleteAccount(string id)
         {
             try 
             {
@@ -144,7 +144,7 @@ namespace AccountsApi.Controllers
             return deleted;
         }
 
-        private bool AccountExists(Guid id)
+        private bool AccountExists(string id)
         {
             return _context.Set<Account>().Any(e => e.Id == id);
         }

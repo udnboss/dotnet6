@@ -28,7 +28,7 @@ public class CurrencyBusiness : Business<Currency, CurrencyView, CurrencyUpdate,
         return clientQuery;
     }
     
-    public override CurrencyView GetById(Guid id, int maxDepth = 2)
+    public override CurrencyView GetById(string id, int maxDepth = 2)
     {
         var query = Db.Set<Currency>()
             .Select(x => new CurrencyView { 
@@ -51,7 +51,7 @@ public class CurrencyBusiness : Business<Currency, CurrencyView, CurrencyUpdate,
     {
         var dbSet = Db.Set<Currency>();
         var dbEntity = new Currency {
-            Id = new Guid(),
+            Id = new Guid().ToString(),
             Name = entity.Name, Symbol = entity.Symbol
         };
         dbSet.Add(dbEntity);
@@ -70,7 +70,7 @@ public class CurrencyBusiness : Business<Currency, CurrencyView, CurrencyUpdate,
         return added;
     }
 
-    public override CurrencyView Update(Guid id, CurrencyUpdate entity)
+    public override CurrencyView Update(string id, CurrencyUpdate entity)
     {
         var dbSet = Db.Set<Currency>();
         var existing = dbSet.Find(id);
@@ -87,7 +87,7 @@ public class CurrencyBusiness : Business<Currency, CurrencyView, CurrencyUpdate,
         return updated;
     }
 
-    public override CurrencyView Modify(Guid id, JsonElement entity)
+    public override CurrencyView Modify(string id, JsonElement entity)
     {
         var dbSet = Db.Set<Currency>();
         var existing = dbSet.Find(id);
@@ -109,7 +109,7 @@ public class CurrencyBusiness : Business<Currency, CurrencyView, CurrencyUpdate,
         return updated;
     }
 
-    public override CurrencyView Delete(Guid id)
+    public override CurrencyView Delete(string id)
     {
         var dbSet = Db.Set<Currency>();
         var existing = dbSet.Find(id);

@@ -8,40 +8,40 @@ using Microsoft.AspNetCore.Identity;
 [Table("item")]
 public class Item :  IEntity
 {
-    [Key][Column("id")][JsonPropertyName("id")][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public Guid Id { get; set; }
+    [Key][Column("id")][JsonPropertyName("id")][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public string Id { get; set; }
     [JsonPropertyName("name")][Column("name")][Required] public string Name { get; set; }
-    [JsonPropertyName("category_id")][Column("category_id")] public Guid? CategoryId { get; set; }
+    [JsonPropertyName("category_id")][Column("category_id")] public string? CategoryId { get; set; }
     [JsonPropertyName("category")][ForeignKey("CategoryId")] public Category? Category { get; set; }
 }
 
 public record ItemView : IRecord
 {
     [JsonPropertyName("name")][Column("name")] public string? Name { get; set; }
-    [JsonPropertyName("category_id")][Column("category_id")] public Guid? CategoryId { get; set; }
+    [JsonPropertyName("category_id")][Column("category_id")] public string? CategoryId { get; set; }
     [JsonPropertyName("category")][ForeignKey("CategoryId")] public CategoryView? Category { get; set; }
 }
 
 public record ItemQuery : ClientQuery
 {
      public string? Name { get; set; } = "";
-     public IEnumerable<Guid?> CategoryId { get; set; }
+     public IEnumerable<string?> CategoryId { get; set; }
     public ItemQuery() { }
 }
 
 public record ItemCreate : IRecord
 {
     [JsonPropertyName("name")][Column("name")][Required] public string Name { get; set; }
-    [JsonPropertyName("category_id")][Column("category_id")] public Guid? CategoryId { get; set; }
+    [JsonPropertyName("category_id")][Column("category_id")] public string? CategoryId { get; set; }
 }
 
 public record ItemUpdate : IRecord
 {
     [JsonPropertyName("name")][Column("name")][Required] public string Name { get; set; }
-    [JsonPropertyName("category_id")][Column("category_id")] public Guid? CategoryId { get; set; }
+    [JsonPropertyName("category_id")][Column("category_id")] public string? CategoryId { get; set; }
 }
 
 public record ItemModify : IRecord
 {
     [JsonPropertyName("name")][Column("name")] public string? Name { get; set; }
-    [JsonPropertyName("category_id")][Column("category_id")] public Guid? CategoryId { get; set; }
+    [JsonPropertyName("category_id")][Column("category_id")] public string? CategoryId { get; set; }
 }

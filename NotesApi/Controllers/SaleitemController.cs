@@ -33,7 +33,7 @@ namespace SaleItemsApi.Controllers
         // GET: api/SaleItem/5
         [HttpGet("{id}")]
         [RequiredPermissions(AppPermission.SaleItemRead)]
-        public ActionResult<SaleItemView> GetSaleItem(Guid id)
+        public ActionResult<SaleItemView> GetSaleItem(string id)
         {
             var saleItem = _business.GetById(id);
 
@@ -49,7 +49,7 @@ namespace SaleItemsApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [RequiredPermissions(AppPermission.SaleItemUpdate)]
-        public ActionResult<SaleItemView> PutSaleItem(Guid id, SaleItemUpdate saleItem)
+        public ActionResult<SaleItemView> PutSaleItem(string id, SaleItemUpdate saleItem)
         {
             try 
             {
@@ -83,7 +83,7 @@ namespace SaleItemsApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("{id}")]
         [RequiredPermissions(AppPermission.SaleItemUpdate)]
-        public ActionResult<SaleItemView> PatchSaleItem(Guid id, JsonElement saleItem)
+        public ActionResult<SaleItemView> PatchSaleItem(string id, JsonElement saleItem)
         {
             try 
             {
@@ -128,7 +128,7 @@ namespace SaleItemsApi.Controllers
         // DELETE: api/SaleItem/5
         [HttpDelete("{id}")]
         [RequiredPermissions(AppPermission.SaleItemDelete)]
-        public ActionResult<SaleItemView> DeleteSaleItem(Guid id)
+        public ActionResult<SaleItemView> DeleteSaleItem(string id)
         {
             try 
             {
@@ -144,7 +144,7 @@ namespace SaleItemsApi.Controllers
             return deleted;
         }
 
-        private bool SaleItemExists(Guid id)
+        private bool SaleItemExists(string id)
         {
             return _context.Set<SaleItem>().Any(e => e.Id == id);
         }
