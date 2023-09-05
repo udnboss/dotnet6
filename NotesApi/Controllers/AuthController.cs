@@ -58,6 +58,9 @@ namespace WebAPI.Controllers
                 return Unauthorized("Invalid password");
             }
 
+            // sign in the user and set the cookie
+            await _signInManager.SignInAsync(user, true);
+
             // do something with the authenticated user
             return Ok();
 
@@ -131,9 +134,9 @@ namespace WebAPI.Controllers
                     return BadRequest(result.Errors);
                 }
 
-                var claims = LoadLoginClaims(user.Id);
+                //var claims = LoadLoginClaims(user.Id);
                 // add the claims to the user
-                await _userManager.AddClaimsAsync(user, claims);
+                //await _userManager.AddClaimsAsync(user, claims);
 
                 // sign in the user and set the cookie
                 await _signInManager.SignInAsync(user, true);
@@ -141,9 +144,9 @@ namespace WebAPI.Controllers
                 // return a success response to the client
                 return Ok();
             }
-            catch
+            catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex.Message);
             }
         }
 

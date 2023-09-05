@@ -18,10 +18,10 @@ builder.Services.AddScoped<SignInManager<IdentityUser>, SignInManager<IdentityUs
 // builder.Services.AddTransient<IUserStore<IdentityUser>, MyUserStore>();
 
 // get an instance of IdentityBuilder with IdentityUser as the user entity class
-var identityBuilder = builder.Services.AddIdentityCore<IdentityUser>();
-
 // register the custom user store as an implementation of the IUserStore<IdentityUser> interface
-identityBuilder.AddUserStore<MyUserStore>();
+builder.Services.AddIdentityCore<IdentityUser>().AddUserStore<MyUserStore>();
+
+
 
 
 
@@ -34,14 +34,21 @@ identityBuilder.AddUserStore<MyUserStore>();
 builder.Services.AddHttpContextAccessor();
 
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.Cookie.Name = "MyCookie";
-        options.ExpireTimeSpan = TimeSpan.FromDays(1);
-        options.SlidingExpiration = true;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    });
+// register the cookie authentication handler with the scheme name 'Identity.Application'
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultSignInScheme = "Identity.Application";
+    options.DefaultChallengeScheme = "Identity.Application";
+    options.DefaultScheme = "Identity.Application";
+})
+.AddCookie("Identity.Application", options =>
+{
+    options.Cookie.Name = "MyCookie";
+    options.ExpireTimeSpan = TimeSpan.FromDays(1);
+    options.SlidingExpiration = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
+
 
 
 builder.Services.AddControllers();
@@ -58,7 +65,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<CustomAuthorizationMiddleware>();
+// app.UseMiddleware<CustomAuthorizationMiddleware>();
 
 app.UseHttpsRedirection();
 

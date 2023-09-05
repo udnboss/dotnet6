@@ -1,7 +1,8 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-public class MyUserStore : IUserStore<IdentityUser>, IUserPasswordStore<IdentityUser>
+public class MyUserStore : IUserStore<IdentityUser>, IUserPasswordStore<IdentityUser>, IUserClaimStore<IdentityUser>
 {
     private MyContext _context;
 
@@ -10,12 +11,17 @@ public class MyUserStore : IUserStore<IdentityUser>, IUserPasswordStore<Identity
         _context = context;
     }
 
+    private Login CreateLoginFromIdentityUser(IdentityUser user)
+    {
+        var login = new Login {Id = user.Id, UserName = user.UserName, NormalizedUserName = user.NormalizedUserName, PasswordHash = user.PasswordHash};
+        return login;
+    }
     public Task<IdentityResult> CreateAsync(IdentityUser user, CancellationToken cancellationToken)
     {
         
         try 
         {
-            var login = new Login {Id = user.Id, UserName = user.UserName, NormalizedUserName = user.NormalizedUserName, PasswordHash = user.PasswordHash};
+            var login = CreateLoginFromIdentityUser(user);
             _context.Logins.Add(login);
             
             //create a user for the login
@@ -133,7 +139,7 @@ public class MyUserStore : IUserStore<IdentityUser>, IUserPasswordStore<Identity
     {
         try
         {
-            var login = new Login {Id = user.Id, UserName = user.UserName, PasswordHash = user.PasswordHash};
+            var login = CreateLoginFromIdentityUser(user);
             _context.Logins.Entry(login).State = EntityState.Modified;
             _context.SaveChanges();
             return Task.FromResult(IdentityResult.Success);
@@ -148,4 +154,42 @@ public class MyUserStore : IUserStore<IdentityUser>, IUserPasswordStore<Identity
         }
     }
 
+    public Task<IList<Claim>> GetClaimsAsync(IdentityUser user, CancellationToken cancellationToken)
+    {
+        var login = _context.Logins.First(x => x.UserName == user.UserName);
+        var u = _context.Users.First(u => u.LoginId == login.Id);
+            
+        //load user permissions
+        var claims = _context.Users
+            .Where(u => u.Id == user.Id)
+            .SelectMany(u => u.UserRoles!)
+            .Select(ur => ur.Role!)
+            .SelectMany(r => r.RolePermissions!)
+            .Select(rp => rp.Permission!)
+            .Distinct()                    
+            .Select(p => new Claim("Permission", p.Code))
+            .ToList() as IList<Claim>;
+
+        return Task.FromResult(claims);
+    }
+
+    public Task AddClaimsAsync(IdentityUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task ReplaceClaimAsync(IdentityUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task RemoveClaimsAsync(IdentityUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IList<IdentityUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
 }
