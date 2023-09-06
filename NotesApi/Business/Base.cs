@@ -241,11 +241,14 @@ public class DataQuery
     public int Offset { get; set; } = 0;
 }
 
+#pragma warning disable CS8618
 public record IRecord
 {
     [Key]
     public string Id { get; set; }
 }
+
+#pragma warning restore CS8618
 
 public interface IEntity
 {

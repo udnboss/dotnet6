@@ -1,4 +1,6 @@
+using System.Net;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 
@@ -25,10 +27,10 @@ builder.Services.AddIdentityCore<IdentityUser>().AddUserStore<MyUserStore>();
 
 
 
-// builder.Services.ConfigureApplicationCookie(options =>
-// {
-//     options.LoginPath = "api/Auth/Login";
-// });
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/api/Auth/Login";
+});
 
 // register the IHttpContextAccessor service as a singleton
 builder.Services.AddHttpContextAccessor();
@@ -37,17 +39,41 @@ builder.Services.AddHttpContextAccessor();
 // register the cookie authentication handler with the scheme name 'Identity.Application'
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultSignInScheme = "Identity.Application";
-    options.DefaultChallengeScheme = "Identity.Application";
-    options.DefaultScheme = "Identity.Application";
+    options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultSignOutScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultScheme = IdentityConstants.ApplicationScheme;
 })
-.AddCookie("Identity.Application", options =>
+.AddCookie(IdentityConstants.TwoFactorUserIdScheme, options =>
 {
-    options.Cookie.Name = "MyCookie";
+    options.Cookie.Name = IdentityConstants.ExternalScheme;
     options.ExpireTimeSpan = TimeSpan.FromDays(1);
     options.SlidingExpiration = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+})
+.AddCookie(IdentityConstants.ExternalScheme, options =>
+{
+    options.Cookie.Name = IdentityConstants.ExternalScheme;
+    options.ExpireTimeSpan = TimeSpan.FromDays(1);
+    options.SlidingExpiration = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+})
+.AddCookie(IdentityConstants.ApplicationScheme, options =>
+{
+    options.Cookie.Name = IdentityConstants.ApplicationScheme;
+    options.ExpireTimeSpan = TimeSpan.FromDays(1);
+    options.SlidingExpiration = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Events.OnRedirectToAccessDenied = UnAuthorizedResponse;
+    options.Events.OnRedirectToLogin = UnAuthorizedResponse;
 });
+
+static Task UnAuthorizedResponse(RedirectContext<CookieAuthenticationOptions> context)
+{
+    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+    return Task.CompletedTask;
+}
 
 
 

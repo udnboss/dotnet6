@@ -41,11 +41,10 @@ public class MyUserStore : IUserStore<IdentityUser>, IUserPasswordStore<Identity
         }
         catch (Exception ex)
         {
-            throw ex;
             return Task.FromResult(IdentityResult.Failed(new IdentityError
             {
                 Code = "DuplicateUserId",
-                Description = "A user with this id already exists."
+                Description = "A user with this id already exists. " + ex.Message
             }));
         }
     }
@@ -157,11 +156,11 @@ public class MyUserStore : IUserStore<IdentityUser>, IUserPasswordStore<Identity
     public Task<IList<Claim>> GetClaimsAsync(IdentityUser user, CancellationToken cancellationToken)
     {
         var login = _context.Logins.First(x => x.UserName == user.UserName);
-        var u = _context.Users.First(u => u.LoginId == login.Id);
+        var dbUser = _context.Users.First(u => u.LoginId == login.Id);
             
         //load user permissions
         var claims = _context.Users
-            .Where(u => u.Id == user.Id)
+            .Where(u => u.Id == dbUser.Id) //.Include("UserRoles.Role.RolePermissions.Permission")
             .SelectMany(u => u.UserRoles!)
             .Select(ur => ur.Role!)
             .SelectMany(r => r.RolePermissions!)
