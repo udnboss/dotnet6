@@ -82,11 +82,7 @@ public class MyUserStore : IUserStore<IdentityUser>, IUserPasswordStore<Identity
 
     public Task<IdentityUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
     {
-        var login  = _context.Logins.FirstOrDefault(u => u.NormalizedUserName == normalizedUserName);
-        if (login is null)
-        {
-            return Task.FromResult<IdentityUser>(null);
-        }
+        var login  = _context.Logins.First(u => u.NormalizedUserName == normalizedUserName);
         var user = new IdentityUser { Id = login.Id, UserName = login.UserName, PasswordHash = login.PasswordHash, NormalizedUserName = login.NormalizedUserName };
         return Task.FromResult(user);
     }
